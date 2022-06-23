@@ -46,6 +46,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 				g_shot_texture.m_renderer = m_renderer->getRenderer();
 				g_particle_texture.m_renderer = m_renderer->getRenderer();
 				g_particle_shimmer_texture.m_renderer = m_renderer->getRenderer();
+				g_asteroid_big_texture.m_renderer = m_renderer->getRenderer();
 				m_renderer->changeColor(0x00, 0x00, 0x00, 0xFF);
 				int img_flags = IMG_INIT_PNG;
 				    //init SDL_image
@@ -95,6 +96,10 @@ bool Game::loadMedia() {
 		printf("Failed to load ship shimmer particle texture");
 		success = false;
 	}
+	if (!g_asteroid_big_texture.loadFromFile("data/img/asteroid1.bmp")) {
+		printf("Failed to load asteroid big 1 texture");
+		success = false;
+	}
 
 	return success;
 }
@@ -108,7 +113,8 @@ void Game::start() {
 	if (!m_pause_text_texture.loadFromRenderedText(pause_text.str().c_str(), white_color, m_pause_ttf)) {
 		std::cout << "Unable to render FPS texture!" << '\n';
 	}
-	    //start fps timer
+	generateAsteroids();
+	//start fps timer
 	fps_timer.start();
 }
 
@@ -145,10 +151,14 @@ void Game::gameLoop() {
 	time_step = step_timer.getTicks() / 1000.0;
 	    //while in pause, we don't take account of keys to move the spaceship
 	if (!pause) {
+		m_ship->resume();
 		m_ship->handleInput(current_key_states);
 	}
 	    //move spaceship
 	m_ship->move(time_step);
+	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
+		m_asteroids[i]->move(time_step);
+	}
 	    //restart step timer
 	step_timer.start();
 
@@ -156,10 +166,14 @@ void Game::gameLoop() {
 	m_renderer->clear();
 	    //Render
 	m_ship->render();
+	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
+		m_asteroids[i]->render();
+	}
 	m_fps_text_texture.render(0, 0);
 	    //Render PAUSE text while game is paused
 	if (pause) {
 		step_timer.pause();
+		m_ship->pause();
 		m_pause_text_texture.render(
 			SCREEN_WIDTH / 2 - m_pause_text_texture.getWidth() / 2,
 			SCREEN_HEIGHT / 2 - m_pause_text_texture.getHeight() / 2
@@ -174,5 +188,16 @@ void Game::gameLoop() {
 	{
 		    //Wait remaining time
 		SDL_Delay(SCREEN_TICKS_PER_FRAME - frame_ticks);
+	}
+}
+
+void Game::generateAsteroids() {
+	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
+		int x_x = rand() % 2;
+		int y_y = rand() % 2;
+		double x = rand() % 600 + x_x * (SCREEN_WIDTH)+300 * (x_x - 1);
+		double y = rand() % 600 + y_y * (SCREEN_HEIGHT)+300 * (y_y - 1);
+		Pos p = { x,y };
+		m_asteroids[i] = new Asteroid(p, BIG_ASTEROID);
 	}
 }

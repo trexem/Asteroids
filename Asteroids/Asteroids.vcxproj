@@ -74,6 +74,10 @@
     <IncludePath>P:\Libraries\SDL2_image-2.0.5\include;P:\Libraries\SDL2_ttf-2.0.18\include;P:\Libraries\SDL2-2.0.22\include;$(IncludePath)</IncludePath>
     <LibraryPath>P:\Libraries\SDL2-2.0.22\lib\x64;P:\Libraries\SDL2_ttf-2.0.18\lib\x64;P:\Libraries\SDL2_image-2.0.5\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>P:\Libraries\SDL2_image-2.0.5\include;P:\Libraries\SDL2_ttf-2.0.18\include;P:\Libraries\SDL2-2.0.22\include;$(IncludePath)</IncludePath>
+    <LibraryPath>P:\Libraries\SDL2-2.0.22\lib\x64;P:\Libraries\SDL2_ttf-2.0.18\lib\x64;P:\Libraries\SDL2_image-2.0.5\lib\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -84,6 +88,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -132,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\asteroid.cpp" />
     <ClCompile Include="src\AsteroidsGame.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\particle.cpp" />
@@ -142,13 +148,28 @@
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\asteroid.hpp" />
     <ClInclude Include="src\game.hpp" />
     <ClInclude Include="src\particle.hpp" />
     <ClInclude Include="src\renderer.hpp" />
     <ClInclude Include="src\ship.hpp" />
     <ClInclude Include="src\texture.hpp" />
     <ClInclude Include="src\timer.hpp" />
+    <ClInclude Include="src\utils.hpp" />
     <ClInclude Include="src\window.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="data\fonts\consola.ttf" />
+    <Font Include="data\fonts\consolab.ttf" />
+    <Font Include="data\fonts\consolai.ttf" />
+    <Font Include="data\fonts\Consolas.ttf" />
+    <Font Include="data\fonts\consolaz.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\img\ship_particle.bmp" />
+    <Image Include="data\img\ship_particle_shimmer.bmp" />
+    <Image Include="data\img\shot.png" />
+    <Image Include="data\img\spaceship.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

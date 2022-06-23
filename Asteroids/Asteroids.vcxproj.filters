@@ -39,6 +39,9 @@
     <ClCompile Include="src\window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\asteroid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\game.hpp">
@@ -62,5 +65,42 @@
     <ClInclude Include="src\window.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\asteroid.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="data\fonts\consola.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="data\fonts\consolab.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="data\fonts\consolai.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="data\fonts\Consolas.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="data\fonts\consolaz.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\img\ship_particle.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="data\img\ship_particle_shimmer.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="data\img\shot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="data\img\spaceship.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

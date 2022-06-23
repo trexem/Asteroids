@@ -62,6 +62,7 @@ Ship::Ship(SDL_Renderer * t_renderer) {
 		int x = (int)(m_pos_x + m_texture->getWidth() / 2 + sin(radians) * m_texture->getHeight() / 2);
 		int y = (int)(m_pos_y + m_texture->getHeight() - cos(radians) * m_texture->getHeight() / 2);
 		particles[i] = new Particle(x, y);
+		particles[i]->kill();
 	}
 }
 
@@ -175,6 +176,18 @@ void Ship::setPos(double t_x, double t_y, double t_rot_degrees) {
 	m_pos_x = t_x - m_texture->getWidth() / 2;
 	m_pos_y = t_y - m_texture->getHeight() / 2;
 	m_rot_degrees = t_rot_degrees;
+}
+
+void Ship::pause() {
+	for (int i = 0; i < TOTAL_PARTICLES; i++) {
+		particles[i]->pause();
+	}
+}
+
+void Ship::resume() {
+	for (int i = 0; i < TOTAL_PARTICLES; i++) {
+		particles[i]->resume();
+	}
 }
 
 void Ship::restart(void) {

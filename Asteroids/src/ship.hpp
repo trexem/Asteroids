@@ -1,13 +1,12 @@
+#pragma once
 #ifndef _SHIP_H_
 #define _SHIP_H_
 
 #include "texture.hpp"
+#include "utils.hpp"
 #include "particle.hpp"
 
 const int SHIP_MAX_SHOTS = 10;
-const int SCREEN_WIDTH = 1080;
-const int SCREEN_HEIGHT = 720;
-const double PI = 3.14159264;
 
 class Shot {
 public:
@@ -56,6 +55,10 @@ public:
 	void move(double t_time_step);
 //Set position function, x, y and rotation
 	void setPos(double t_x, double t_y, double t_rot_degrees);
+	//Pause particles
+	void pause(void);
+	//Resume particles
+	void resume(void);
 	    //restart spaceship to the center, also restarts shots
 	void restart(void);
 	    //Render function in

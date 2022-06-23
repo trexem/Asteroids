@@ -1,3 +1,4 @@
+#pragma once
 #ifndef _GAME_H_
 #define _GAME_H_
 
@@ -17,6 +18,7 @@ const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 #include "window.hpp"
 #include "timer.hpp"
 #include "ship.hpp"
+#include "asteroid.hpp"
 
 class Game {
 public:
@@ -27,6 +29,7 @@ public:
 	bool loadMedia(void);
 	void start(void);
 	void gameLoop(void);
+	void generateAsteroids(void);
 	Renderer getRenderer(void);
 	Window getWindow(void);
 
@@ -39,6 +42,7 @@ public:
 
 private:
 	Ship* m_ship;
+	Asteroid* m_asteroids[TOTAL_ASTEROIDS];
 	Window m_window;
 	Renderer* m_renderer;
 	Texture m_fps_text_texture, m_pause_text_texture;
