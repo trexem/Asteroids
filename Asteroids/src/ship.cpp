@@ -1,8 +1,8 @@
 #include "ship.hpp"
 
 Shot::Shot(int t_x, int t_y, double t_degrees, Texture* t_texture) {
-	m_pos_x = t_x;
-	m_pos_y = t_y;
+	m_pos.x = t_x;
+	m_pos.y = t_y;
 	m_rot_degrees = t_degrees;
 	m_texture = t_texture;
 }
@@ -11,40 +11,34 @@ void Shot::move(double t_time_step) {
 	if (!isDead()) {
 		    //Convert degrees to radians
 		double radians = m_rot_degrees * PI / 180;
-		m_pos_x += SHOT_SPEED * t_time_step * sin(radians);
-		m_pos_y -= SHOT_SPEED * t_time_step * cos(radians);
+		m_pos.x += SHOT_SPEED * t_time_step * sin(radians);
+		m_pos.y -= SHOT_SPEED * t_time_step * cos(radians);
 	}
-}
-
-void Shot::setPos(double t_x, double t_y, double t_rot_degrees) {
-	m_pos_x = t_x;
-	m_pos_y = t_y;
-	m_rot_degrees = t_rot_degrees;
 }
 
 void Shot::render() {
 	if (!isDead()) {
-		m_texture->renderEx(m_pos_x, m_pos_y, nullptr, m_rot_degrees, nullptr, SDL_FLIP_NONE);
+		m_texture->renderEx((int)m_pos.x, (int)m_pos.y, nullptr, m_rot_degrees, nullptr, SDL_FLIP_NONE);
 	}
 }
 bool Shot::isDead() {
-	if (m_pos_x > SCREEN_WIDTH + 15 || m_pos_x < -15 || m_pos_y > SCREEN_HEIGHT + 15 || m_pos_y < -15) {
+	if (m_pos.x > SCREEN_WIDTH + 15 || m_pos.x < -15 || m_pos.y > SCREEN_HEIGHT + 15 || m_pos.y < -15) {
 		return true;
 	}
 	return false;
 }
 
 Ship::Ship() {
-	m_pos_x = 0;
-	m_pos_y = 0;
+	m_pos.x = 0;
+	m_pos.y = 0;
 	m_rot_degrees = 0;
 	m_vel = 0;
 	m_rot_vel = 0;
 }
 
 Ship::Ship(SDL_Renderer * t_renderer) {
-	m_pos_x = 0;
-	m_pos_y = 0;
+	m_pos.x = 0;
+	m_pos.y = 0;
 	m_rot_degrees = 0;
 	m_vel = 0;
 	m_rot_vel = 0;
@@ -59,9 +53,10 @@ Ship::Ship(SDL_Renderer * t_renderer) {
 	}
 	for (int i = 0; i < TOTAL_PARTICLES; i++) {
 		double radians = m_rot_degrees * PI / 180;
-		int x = (int)(m_pos_x + m_texture->getWidth() / 2 + sin(radians) * m_texture->getHeight() / 2);
-		int y = (int)(m_pos_y + m_texture->getHeight() - cos(radians) * m_texture->getHeight() / 2);
-		particles[i] = new Particle(x, y);
+		Pos p;
+		p.x = (int)(m_pos.x + m_texture->getWidth() / 2 + sin(radians) * m_texture->getHeight() / 2);
+		p.y = (int)(m_pos.y + m_texture->getHeight() - cos(radians) * m_texture->getHeight() / 2);
+		particles[i] = new Particle(p);
 		particles[i]->kill();
 	}
 }
@@ -134,24 +129,24 @@ void Ship::move(double t_time_step) {
 		m_rot_vel = -SHIP_TOP_ROTATION_SPEED;
 	}
 	    //move X
-	m_pos_x += m_vel * t_time_step * sin(radians);
-	if (m_pos_x > SCREEN_WIDTH - m_texture->getWidth()) {
-		m_pos_x = SCREEN_WIDTH - m_texture->getWidth();
+	m_pos.x += m_vel * t_time_step * sin(radians);
+	if (m_pos.x > SCREEN_WIDTH - m_texture->getWidth()) {
+		m_pos.x = SCREEN_WIDTH - m_texture->getWidth();
 		m_vel = 0;
 		m_rot_vel = 0;
-	} else if (m_pos_x < 0) {
-		m_pos_x = 0;
+	} else if (m_pos.x < 0) {
+		m_pos.x = 0;
 		m_vel = 0;
 		m_rot_vel = 0;
 	}
 	    //move Y, -= because Y axis is inverted
-	m_pos_y -= m_vel * t_time_step * cos(radians);
-	if (m_pos_y > SCREEN_HEIGHT - m_texture->getHeight()) {
-		m_pos_y = SCREEN_HEIGHT - m_texture->getHeight();
+	m_pos.y -= m_vel * t_time_step * cos(radians);
+	if (m_pos.y > SCREEN_HEIGHT - m_texture->getHeight()) {
+		m_pos.y = SCREEN_HEIGHT - m_texture->getHeight();
 		m_vel = 0;
 		m_rot_vel = 0;
-	} else if (m_pos_y < 0) {
-		m_pos_y = 0;
+	} else if (m_pos.y < 0) {
+		m_pos.y = 0;
 		m_vel = 0;
 		m_rot_vel = 0;
 	}
@@ -173,8 +168,8 @@ void Ship::move(double t_time_step) {
 }
 
 void Ship::setPos(double t_x, double t_y, double t_rot_degrees) {
-	m_pos_x = t_x - m_texture->getWidth() / 2;
-	m_pos_y = t_y - m_texture->getHeight() / 2;
+	m_pos.x = t_x - m_texture->getWidth() / 2;
+	m_pos.y = t_y - m_texture->getHeight() / 2;
 	m_rot_degrees = t_rot_degrees;
 }
 
@@ -195,7 +190,7 @@ void Ship::restart(void) {
 	m_vel = 0;
 	m_rot_vel = 0;
 	for (int i = 0; i < SHIP_MAX_SHOTS; ++i) {
-		m_shots[i]->setPos(-20, -20, 0);
+		m_shots[i]->setPos({ -20, -20 }, 0);
 	}
 	for (int i = 0; i < TOTAL_PARTICLES; ++i) {
 		particles[i]->kill();
@@ -204,7 +199,7 @@ void Ship::restart(void) {
 
 void Ship::render(void) {
 	    //x, y, null to show the entire ship, degrees, null to take the center as the pivot to rotate, and no flipped image
-	m_texture->renderEx(m_pos_x, m_pos_y, nullptr, m_rot_degrees, nullptr, SDL_FLIP_NONE);
+	m_texture->renderEx((int)m_pos.x, (int)m_pos.y, nullptr, m_rot_degrees, nullptr, SDL_FLIP_NONE);
 	renderParticles();
 	renderShots();
 }
@@ -214,9 +209,10 @@ void Ship::renderParticles() {
 		if (particles[i]->isDead()) {
 			if (is_moving) {
 				double radians = m_rot_degrees * PI / 180;
-				int x = (int)(m_pos_x + m_texture->getWidth() / 2 - sin(radians) * m_texture->getHeight() / 2);
-				int y = (int)(m_pos_y + m_texture->getHeight() / 2 + cos(radians) * m_texture->getHeight() / 2);
-				particles[i]->setPos(x, y);
+				Pos p;
+				p.x = (int)(m_pos.x + m_texture->getWidth() / 2 - sin(radians) * m_texture->getHeight() / 2);
+				p.y = (int)(m_pos.y + m_texture->getHeight() / 2 + cos(radians) * m_texture->getHeight() / 2);
+				particles[i]->setPos(p);
 			}
 		}
 	}
@@ -233,8 +229,8 @@ void Ship::shoot() {
 			    //we delete current shot if is dead
 			delete m_shots[i];
 			double radians = m_rot_degrees * PI / 180;
-			int x = (int) (m_pos_x + m_texture->getWidth() / 2 + sin(radians) * m_texture->getHeight() / 2);
-			int y = (int) (m_pos_y + m_texture->getHeight() / 2 - cos(radians) * m_texture->getHeight() / 2);
+			int x = (int) (m_pos.x + m_texture->getWidth() / 2 + sin(radians) * m_texture->getHeight() / 2);
+			int y = (int) (m_pos.y + m_texture->getHeight() / 2 - cos(radians) * m_texture->getHeight() / 2);
 			    //create new shot with the position of the tip off the spaceship
 			m_shots[i] = new Shot(x, y, m_rot_degrees, m_shot_texture);
 			i = SHIP_MAX_SHOTS; //could also be an "exit for" or "break"
@@ -244,17 +240,6 @@ void Ship::shoot() {
 void Ship::free(void) {
 	m_texture->free();
 	m_shot_texture->free();
-}
-double Ship::getX() {
-	return m_pos_x;
-}
-    //get y position (top left corner)
-double Ship::getY() {
-	return m_pos_y;
-}
-    //get degrees of rotation
-double Ship::getDegrees() {
-	return m_rot_degrees;
 }
     //get the texture of the ship
 //Texture Ship::getTexture() {

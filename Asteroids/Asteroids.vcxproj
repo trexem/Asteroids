@@ -140,6 +140,7 @@
     <ClCompile Include="src\asteroid.cpp" />
     <ClCompile Include="src\AsteroidsGame.cpp" />
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\gameObject.cpp" />
     <ClCompile Include="src\particle.cpp" />
     <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\ship.cpp" />
@@ -150,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="src\asteroid.hpp" />
     <ClInclude Include="src\game.hpp" />
+    <ClInclude Include="src\gameObject.hpp" />
     <ClInclude Include="src\particle.hpp" />
     <ClInclude Include="src\renderer.hpp" />
     <ClInclude Include="src\ship.hpp" />
@@ -170,6 +172,9 @@
     <Image Include="data\img\ship_particle_shimmer.bmp" />
     <Image Include="data\img\shot.png" />
     <Image Include="data\img\spaceship.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

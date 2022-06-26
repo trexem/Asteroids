@@ -167,7 +167,7 @@ void Game::gameLoop() {
 	    //Render
 	m_ship->render();
 	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
-		m_asteroids[i]->render();
+		m_asteroids[i]->renderEx();
 	}
 	m_fps_text_texture.render(0, 0);
 	    //Render PAUSE text while game is paused

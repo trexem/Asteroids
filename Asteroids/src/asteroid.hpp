@@ -2,6 +2,7 @@
 #ifndef _ASTEROID_H_
 #define _ASTEROID_H_
 
+#include "gameObject.hpp"
 #include "texture.hpp"
 #include "utils.hpp"
 
@@ -14,7 +15,7 @@ enum asteroid_type
 	SMALL_ASTEROID
 };
 
-class Asteroid {
+class Asteroid : public GameObject {
 public:
 	Asteroid(Pos t_pos, asteroid_type t_asteroid_type);
 	~Asteroid();
@@ -22,16 +23,10 @@ public:
 	void move(double t_time_step);
 	void setPos(Pos t_pos, double t_rot_degrees);
 	void destroy(void);
-	void render(void);
 	void free(void);
-	Pos getPos();
-	double getX();
-	double getY();
 
 private:
-	Pos m_pos;
-	double m_rot_degrees{ 0 },m_dir_degrees, m_vel;
-	Texture* m_texture;
+	double m_dir_degrees{0}, m_vel{0};
 };
 
 #endif // !_ASTEROID_H_

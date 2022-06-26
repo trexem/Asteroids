@@ -14,12 +14,23 @@ GameObject::~GameObject() {
 
 }
 
-void GameObject::render() {
-	m_texture->render(m_pos.x, m_pos.y);
+void GameObject::renderEx() {
+	m_texture->renderEx((int)m_pos.x, (int)m_pos.y, nullptr, m_rot_degrees, nullptr, SDL_FLIP_NONE);
 }
 
-void GameObject::setPos(Pos p) {
-	m_pos = p;
+void GameObject::render() {
+	m_texture->render((int)m_pos.x, (int)m_pos.y);
+}
+
+void GameObject::setPos(Pos t_pos, double t_rot_degrees) {
+	m_pos = t_pos;
+	m_rot_degrees = t_rot_degrees;
 }
 
 Pos GameObject::getPos() { return m_pos; }
+
+double GameObject::getX() { return m_pos.x; }
+
+double GameObject::getY() { return m_pos.y; }
+
+double GameObject::getDegrees() {return m_rot_degrees;}

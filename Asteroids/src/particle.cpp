@@ -1,23 +1,20 @@
 #include "particle.hpp"
 
-Particle::Particle(int x, int y) {
-	setPos(x, y);
+Particle::Particle(Pos t_pos) : GameObject(t_pos) {
 	m_texture = &g_particle_texture;
-}
-
-Particle::Particle(Pos p) {
-	setPos(p.x, p.y);
-	m_texture = &g_particle_texture;
+	m_frame = 0;
+	m_shim_frame = 0;
+	m_paused = false;
 }
 
 void Particle::render() {
 	if (m_frame % 6 == 0 || m_shim_frame < 3) {
-		g_particle_shimmer_texture.render(m_pos_x,m_pos_y);
+		g_particle_shimmer_texture.render(m_pos.x,m_pos.y);
 		if (!m_paused)
 			m_shim_frame++;
 	}
 	else {
-		m_texture->render(m_pos_x, m_pos_y);
+		m_texture->render(m_pos.x, m_pos.y);
 		if (!m_paused)
 			m_shim_frame = 0;
 	}
@@ -25,9 +22,9 @@ void Particle::render() {
 		m_frame++;
 }
 
-void Particle::setPos(int x, int y) {
-	m_pos_x = x - 5 + (rand() % 10);
-	m_pos_y = y - 5 + (rand() % 10);
+void Particle::setPos(Pos t_pos) {
+	m_pos.x = t_pos.x - 5 + (rand() % 10);
+	m_pos.y = t_pos.y - 5 + (rand() % 10);
 	m_frame = rand() % 30;
 }
 

@@ -2,30 +2,29 @@
 #ifndef _PARTICLE_H_
 #define _PARTICLE_H_
 
+#include "gameObject.hpp"
 #include "texture.hpp"
 #include "utils.hpp"
 
 const int TOTAL_PARTICLES = 40;
 
-class Particle {
+class Particle : public GameObject {
 public:
-	Particle(int x, int y);
-	Particle(Pos p);
+	Particle(Pos t_pos);
 
 	void render(void);
-	void setPos(int x, int y);
 	void pause(void);
 	void resume(void);
 	void kill(void);
 
+	void setPos(Pos t_pos);
+
 	bool isDead();
 
 private:
-	int m_pos_x, m_pos_y;
 
-	int m_frame;
-	int m_shim_frame;
-	bool m_paused;
-	Texture* m_texture;
+	int m_frame{0};
+	int m_shim_frame{0};
+	bool m_paused{false};
 };
 #endif // !_PARTICLE_H_

@@ -43,18 +43,6 @@ void Asteroid::destroy() {
 	//Animation on destroy
 }
 
-void Asteroid::render() {
-	m_texture->renderEx(m_pos.x, m_pos.y, nullptr, m_rot_degrees, nullptr, SDL_FLIP_NONE);
-}
-
 void Asteroid::free() {
 	m_texture->free();
 }
-
-Pos Asteroid::getPos() {
-	return m_pos;
-}
-
-double Asteroid::getX() { return m_pos.x; }
-
-double Asteroid::getY() { return m_pos.y; }

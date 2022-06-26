@@ -3,7 +3,7 @@
 #define _GAMEOBJECT_H_
 
 #include "texture.hpp"
-#include "utils.hpp"voi
+#include "utils.hpp"
 
 class GameObject
 {
@@ -12,12 +12,17 @@ public:
 	GameObject(Pos p);
 	~GameObject();
 
+	void renderEx(void);
 	void render(void);
-	void setPos(Pos p);
+	void setPos(Pos t_pos, double t_rot_degrees);
 	Pos getPos();
+	double getX();
+	double getY();
+	double getDegrees();
 
-private:
-	Pos m_pos;
+protected:
+	Pos m_pos{0,0};
+	double m_rot_degrees{ 0 };
 	Texture* m_texture;
 };
 

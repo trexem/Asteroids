@@ -2,13 +2,12 @@
 #ifndef _SHIP_H_
 #define _SHIP_H_
 
-#include "texture.hpp"
-#include "utils.hpp"
+#include "gameObject.hpp"
 #include "particle.hpp"
 
 const int SHIP_MAX_SHOTS = 10;
 
-class Shot {
+class Shot : public GameObject {
 public:
 	    //Speed for the shot, must be faster than the max speed of spaceship
 	const int SHOT_SPEED = 1000;
@@ -18,22 +17,15 @@ public:
 //Move function, needs the time that has passed since last movement
 	void move(double t_time_step);
 
-	    //Set Position x, y and rotation
-	void setPos(double t_x, double t_y, double t_rot_degrees);
-
 	    //Renders if it is not dead
 	void render(void);
 
 	    //Returns true if shot is outside of the window + 15 pixels to be able to see the tail
 	bool isDead(void);
 
-private:
-	int m_pos_x{0}, m_pos_y{0};
-	double m_rot_degrees{0};
-	Texture* m_texture;
 };
 
-class Ship {
+class Ship : public GameObject {
 public:
 	    //TOP speed of ship, must be lower than the speed of shot
 	const int SHIP_TOP_SPEED = 500;
@@ -67,14 +59,6 @@ public:
 	void shoot(void);
 	    //free textures
 	void free(void);
-	    //get x position (top left corner)
-	double getX();
-	    //get y position (top left corner)
-	double getY();
-	    //get degrees of rotation
-	double getDegrees();
-	    //get the texture of the ship
-	//Texture getTexture();
 private:
 	    //Calls to render all shots that are not dead
 	void renderShots();
@@ -82,9 +66,8 @@ private:
 	Particle* particles[TOTAL_PARTICLES];
 	void renderParticles();
 	Shot* m_shots[SHIP_MAX_SHOTS];//pointer array of shots
-	double m_pos_x{0}, m_pos_y{0}, m_rot_degrees{0};
 	double m_vel{0}, m_rot_vel{0};
-	Texture *m_texture, *m_shot_texture;
+	Texture *m_shot_texture;
 	SDL_Renderer* m_renderer;
 	double m_last_shot;
 	bool is_moving;
