@@ -11,7 +11,7 @@ Particle::Particle(Pos p) {
 }
 
 void Particle::render() {
-	if (m_frame % 4 == 0 || m_shim_frame < 2) {
+	if (m_frame % 6 == 0 || m_shim_frame < 3) {
 		g_particle_shimmer_texture.render(m_pos_x,m_pos_y);
 		if (!m_paused)
 			m_shim_frame++;
