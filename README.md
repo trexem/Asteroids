@@ -23,4 +23,4 @@ Download the `/release` folder and run `AsteroidsGame`
  - [X] GAME (god)class
  - [ ] Refactor Game class
  - [ ] Refactor all (x,y) to use Pos
- - [ ] Create GambeObject class and refactor all project to use it
+ - [X] Create GambeObject class and refactor all project to use it
