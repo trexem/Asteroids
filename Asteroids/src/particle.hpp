@@ -3,8 +3,6 @@
 #define _PARTICLE_H_
 
 #include "gameObject.hpp"
-#include "texture.hpp"
-#include "utils.hpp"
 
 const int TOTAL_PARTICLES = 40;
 

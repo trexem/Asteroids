@@ -144,8 +144,10 @@
     <ClCompile Include="src\particle.cpp" />
     <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\ship.cpp" />
+    <ClCompile Include="src\shot.cpp" />
     <ClCompile Include="src\texture.cpp" />
     <ClCompile Include="src\timer.cpp" />
+    <ClCompile Include="src\utils.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -155,6 +157,7 @@
     <ClInclude Include="src\particle.hpp" />
     <ClInclude Include="src\renderer.hpp" />
     <ClInclude Include="src\ship.hpp" />
+    <ClInclude Include="src\shot.hpp" />
     <ClInclude Include="src\texture.hpp" />
     <ClInclude Include="src\timer.hpp" />
     <ClInclude Include="src\utils.hpp" />

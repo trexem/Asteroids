@@ -28,10 +28,13 @@ public:
 	bool initialize(const char* t_title, int t_x, int t_y, int t_width, int t_height, Uint32 flags);
 	bool loadMedia(void);
 	void start(void);
+	void restart(void);
 	void gameLoop(void);
 	void generateAsteroids(void);
 	Renderer getRenderer(void);
 	Window getWindow(void);
+	void checkCollisions(void);
+	void deleteAsteroids(void);
 
 	Timer fps_timer, cap_timer, step_timer;
 	std::stringstream time_text, pause_text; //strings to print: fps and PAUSE

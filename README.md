@@ -15,12 +15,12 @@ Download the `/release` folder and run `AsteroidsGame`
 ### TODO
 
  - [X] asteroids class
- - [ ] add collision (destroy asteroids kill ship)
+ - [X] add collision (destroy asteroids kill ship)
  - [ ] implement asteroid::destroy (animation and change to medium/small asteroid)
  - [X] particle when moving ship
  - [X] window class
  - [X] renderer class
  - [X] GAME (god)class
  - [ ] Refactor Game class
- - [ ] Refactor all (x,y) to use Pos
+ - [X] Refactor all (x,y) to use Pos
  - [X] Create GambeObject class and refactor all project to use it

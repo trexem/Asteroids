@@ -34,3 +34,5 @@ double GameObject::getX() { return m_pos.x; }
 double GameObject::getY() { return m_pos.y; }
 
 double GameObject::getDegrees() {return m_rot_degrees;}
+
+SDL_Rect GameObject::getCollider() { return m_collider; }

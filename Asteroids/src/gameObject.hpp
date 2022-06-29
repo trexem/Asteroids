@@ -19,11 +19,13 @@ public:
 	double getX();
 	double getY();
 	double getDegrees();
+	SDL_Rect getCollider();
 
 protected:
 	Pos m_pos{0,0};
 	double m_rot_degrees{ 0 };
 	Texture* m_texture;
+	SDL_Rect m_collider;
 };
 
 #endif // !_GAMEOBJECT_H_

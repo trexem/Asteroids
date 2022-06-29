@@ -8,7 +8,7 @@ Particle::Particle(Pos t_pos) : GameObject(t_pos) {
 }
 
 void Particle::render() {
-	if (m_frame % 6 == 0 || m_shim_frame < 3) {
+ 	if (m_frame % 6 == 0 || m_shim_frame < 3) {
 		g_particle_shimmer_texture.render(m_pos.x,m_pos.y);
 		if (!m_paused)
 			m_shim_frame++;

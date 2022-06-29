@@ -3,8 +3,6 @@
 #define _ASTEROID_H_
 
 #include "gameObject.hpp"
-#include "texture.hpp"
-#include "utils.hpp"
 
 const int TOTAL_ASTEROIDS = 20;
 
@@ -21,12 +19,17 @@ public:
 	~Asteroid();
 
 	void move(double t_time_step);
+	void render(void);
 	void setPos(Pos t_pos, double t_rot_degrees);
 	void destroy(void);
 	void free(void);
 
+	bool isDead(void);
+	bool isDying(void);
+
 private:
 	double m_dir_degrees{0}, m_vel{0};
+	bool m_is_dying{ false }, m_is_dead{ false };
 };
 
 #endif // !_ASTEROID_H_

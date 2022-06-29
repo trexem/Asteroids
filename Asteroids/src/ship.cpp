@@ -1,52 +1,19 @@
 #include "ship.hpp"
 
-Shot::Shot(int t_x, int t_y, double t_degrees, Texture* t_texture) {
-	m_pos.x = t_x;
-	m_pos.y = t_y;
-	m_rot_degrees = t_degrees;
-	m_texture = t_texture;
-}
-
-void Shot::move(double t_time_step) {
-	if (!isDead()) {
-		    //Convert degrees to radians
-		double radians = m_rot_degrees * PI / 180;
-		m_pos.x += SHOT_SPEED * t_time_step * sin(radians);
-		m_pos.y -= SHOT_SPEED * t_time_step * cos(radians);
-	}
-}
-
-void Shot::render() {
-	if (!isDead()) {
-		m_texture->renderEx((int)m_pos.x, (int)m_pos.y, nullptr, m_rot_degrees, nullptr, SDL_FLIP_NONE);
-	}
-}
-bool Shot::isDead() {
-	if (m_pos.x > SCREEN_WIDTH + 15 || m_pos.x < -15 || m_pos.y > SCREEN_HEIGHT + 15 || m_pos.y < -15) {
-		return true;
-	}
-	return false;
-}
-
 Ship::Ship() {
+	is_moving = 0;
+	m_last_shot = 0;
 	m_pos.x = 0;
 	m_pos.y = 0;
 	m_rot_degrees = 0;
 	m_vel = 0;
 	m_rot_vel = 0;
-}
-
-Ship::Ship(SDL_Renderer * t_renderer) {
-	m_pos.x = 0;
-	m_pos.y = 0;
-	m_rot_degrees = 0;
-	m_vel = 0;
-	m_rot_vel = 0;
-	m_renderer = t_renderer;
 	//m_texture = &Texture(m_renderer);
 	//m_shot_texture = &Texture(m_renderer);
 	m_texture = &g_ship_texture; 
 	m_shot_texture = &g_shot_texture;
+	m_collider.h = m_texture->getHeight();
+	m_collider.w = m_texture->getWidth();
 	    //initialize shots outside of the scree, so "dead" shots
 	for (int i = 0; i < SHIP_MAX_SHOTS; i++) {
 		m_shots[i] = new Shot(-20, -20, 0, m_shot_texture);
@@ -112,8 +79,11 @@ void Ship::handleInput(const Uint8* t_current_key_states) {
 void Ship::move(double t_time_step) {
 	m_last_shot += t_time_step;
 	for (int i = 0; i < SHIP_MAX_SHOTS; i++) {
-		m_shots[i]->move(t_time_step);
+		if (m_shots[i] != nullptr) {
+			m_shots[i]->move(t_time_step);
+		}
 	}
+	checkShots();
 	    //convert degrees to radians
 	double radians = m_rot_degrees * PI / 180;
 	    //top max and min speed
@@ -150,6 +120,9 @@ void Ship::move(double t_time_step) {
 		m_vel = 0;
 		m_rot_vel = 0;
 	}
+	//set collider (x,y) to m_pos
+	m_collider.x = m_pos.x;
+	m_collider.y = m_pos.y;
 	    //move degrees
 	m_rot_degrees += m_rot_vel * t_time_step;
 	    //to avoid going to infinite degrees we stay between -180 and 180
@@ -190,7 +163,9 @@ void Ship::restart(void) {
 	m_vel = 0;
 	m_rot_vel = 0;
 	for (int i = 0; i < SHIP_MAX_SHOTS; ++i) {
-		m_shots[i]->setPos({ -20, -20 }, 0);
+		if (m_shots[i] != nullptr) {
+			m_shots[i]->setPos({ -20, -20 }, 0);
+		}
 	}
 	for (int i = 0; i < TOTAL_PARTICLES; ++i) {
 		particles[i]->kill();
@@ -225,9 +200,7 @@ void Ship::renderParticles() {
     //Shoot a singleshot from the tip of the spaceship
 void Ship::shoot() {
 	for (int i = 0; i < SHIP_MAX_SHOTS; i++) {
-		if (m_shots[i]->isDead()) {
-			    //we delete current shot if is dead
-			delete m_shots[i];
+ 		if (m_shots[i] == nullptr) {
 			double radians = m_rot_degrees * PI / 180;
 			int x = (int) (m_pos.x + m_texture->getWidth() / 2 + sin(radians) * m_texture->getHeight() / 2);
 			int y = (int) (m_pos.y + m_texture->getHeight() / 2 - cos(radians) * m_texture->getHeight() / 2);
@@ -248,6 +221,18 @@ void Ship::free(void) {
 //Calls to render all shots that are not dead
 void Ship::renderShots() {
 	for (int i = 0; i < SHIP_MAX_SHOTS; i++) {
-		m_shots[i]->render();
+		if (m_shots[i] != nullptr) {
+			m_shots[i]->render();
+		}
+	}
+}
+
+void Ship::checkShots(){
+	for (int i = 0; i < SHIP_MAX_SHOTS; ++i) {
+		if (m_shots[i] != nullptr) {
+			if (m_shots[i]->isDead()) {
+				m_shots[i] = nullptr;
+			}
+		}
 	}
 }

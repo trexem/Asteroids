@@ -15,6 +15,7 @@ Game::~Game() {
 	g_particle_texture.free();
 	g_particle_shimmer_texture.free();
 	g_shot_texture.free();
+	g_asteroid_big_texture.free();
 	TTF_CloseFont(m_fps_ttf);
 	TTF_CloseFont(m_pause_ttf);
 	m_fps_ttf = nullptr;
@@ -105,7 +106,7 @@ bool Game::loadMedia() {
 }
 
 void Game::start() {
-	m_ship = new Ship(m_renderer->getRenderer());
+	m_ship = new Ship();
 	m_ship->setPos(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0);
 	pause_text.str("");
 	pause_text << "PAUSE";
@@ -116,6 +117,10 @@ void Game::start() {
 	generateAsteroids();
 	//start fps timer
 	fps_timer.start();
+}
+
+void Game::restart() {
+	m_ship->restart();
 }
 
 void Game::gameLoop() {
@@ -129,7 +134,7 @@ void Game::gameLoop() {
 				pause = !pause;
 			}
 			if (e.key.keysym.sym == SDLK_r) {//R for restart. Will change in the future for an option in the pause menu
-				m_ship->restart();
+				restart();
 			}
 		}
 	}
@@ -159,6 +164,8 @@ void Game::gameLoop() {
 	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
 		m_asteroids[i]->move(time_step);
 	}
+	//Check collisions
+	checkCollisions();
 	    //restart step timer
 	step_timer.start();
 
@@ -167,7 +174,7 @@ void Game::gameLoop() {
 	    //Render
 	m_ship->render();
 	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
-		m_asteroids[i]->renderEx();
+		m_asteroids[i]->render();
 	}
 	m_fps_text_texture.render(0, 0);
 	    //Render PAUSE text while game is paused
@@ -199,5 +206,43 @@ void Game::generateAsteroids() {
 		double y = rand() % 600 + y_y * (SCREEN_HEIGHT)+300 * (y_y - 1);
 		Pos p = { x,y };
 		m_asteroids[i] = new Asteroid(p, BIG_ASTEROID);
+	}
+}
+
+void Game::checkCollisions() {
+	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
+		//Check collision between ship and asteroid
+		if (checkCollision(m_ship->getCollider(), m_asteroids[i]->getCollider())) {
+			//TODO: Stop game, show final score and options menu
+			//for now let's restart
+			restart();
+		}
+		//check collisions between each shot and each asteroid
+		for (int j = 0; j < SHIP_MAX_SHOTS; ++j) {
+			if (m_ship->m_shots[j] != nullptr) {
+				if (checkCollision(m_ship->m_shots[j]->getCollider(), m_asteroids[i]->getCollider())) {
+					//Destroy asteroid
+					m_asteroids[i]->destroy();
+					//Destroy shot
+					m_ship->m_shots[j]->kill();
+					//+1 to score
+				}
+			}
+		}
+	}
+	deleteAsteroids();
+}
+
+void Game::deleteAsteroids() {
+	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
+		if (m_asteroids[i]->isDead()) {
+			delete m_asteroids[i];
+			int x_x = rand() % 2;
+			int y_y = rand() % 2;
+			double x = rand() % 600 + x_x * (SCREEN_WIDTH)+300 * (x_x - 1);
+			double y = rand() % 600 + y_y * (SCREEN_HEIGHT)+300 * (y_y - 1);
+			Pos p = { x,y };
+			m_asteroids[i] = new Asteroid(p, BIG_ASTEROID);
+		}
 	}
 }
