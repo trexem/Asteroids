@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <memory>
+#include <time.h>
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -31,6 +32,7 @@ public:
 	void restart(void);
 	void gameLoop(void);
 	void generateAsteroids(void);
+	Pos generateSingleAsteroidPos(void);
 	Renderer getRenderer(void);
 	Window getWindow(void);
 	void checkCollisions(void);

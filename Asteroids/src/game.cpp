@@ -117,6 +117,8 @@ void Game::start() {
 	generateAsteroids();
 	//start fps timer
 	fps_timer.start();
+	//Initialize srand with time so it-s always different
+	srand(time(NULL));
 }
 
 void Game::restart() {
@@ -200,13 +202,23 @@ void Game::gameLoop() {
 
 void Game::generateAsteroids() {
 	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
-		int x_x = rand() % 2;
-		int y_y = rand() % 2;
-		double x = rand() % 600 + x_x * (SCREEN_WIDTH)+300 * (x_x - 1);
-		double y = rand() % 600 + y_y * (SCREEN_HEIGHT)+300 * (y_y - 1);
-		Pos p = { x,y };
+		Pos p = generateSingleAsteroidPos();
 		m_asteroids[i] = new Asteroid(p, BIG_ASTEROID);
 	}
+}
+
+Pos Game::generateSingleAsteroidPos() {
+	int x_x = rand() % 2;
+	int y_y = rand() % 2;
+	double x = x_x > 0
+		? rand() % 2160 - 120
+		: (rand() % 240 - 360) + y_y * (SCREEN_WIDTH + 360);
+
+	double y = x_x > 0
+		? (rand() % 240 - 360) + y_y * (SCREEN_HEIGHT + 360)
+		: rand() % 1320 - 120;
+	
+	return { x,y };
 }
 
 void Game::checkCollisions() {
@@ -225,7 +237,7 @@ void Game::checkCollisions() {
 					m_asteroids[i]->destroy();
 					//Destroy shot
 					m_ship->m_shots[j]->kill();
-					//+1 to score
+					//TODO +1 to score
 				}
 			}
 		}
@@ -237,11 +249,8 @@ void Game::deleteAsteroids() {
 	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
 		if (m_asteroids[i]->isDead()) {
 			delete m_asteroids[i];
-			int x_x = rand() % 2;
-			int y_y = rand() % 2;
-			double x = rand() % 600 + x_x * (SCREEN_WIDTH)+300 * (x_x - 1);
-			double y = rand() % 600 + y_y * (SCREEN_HEIGHT)+300 * (y_y - 1);
-			Pos p = { x,y };
+			
+			Pos p = generateSingleAsteroidPos();
 			m_asteroids[i] = new Asteroid(p, BIG_ASTEROID);
 		}
 	}
