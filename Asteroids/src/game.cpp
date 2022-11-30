@@ -241,6 +241,13 @@ void Game::checkCollisions() {
 				}
 			}
 		}
+		//check if asteroid is out of bounds
+		if ( m_asteroids[i]->getX() > 2300 || m_asteroids[i]->getX() < -500 ||
+			 m_asteroids[i]->getY() > 1500 || m_asteroids[i]->getY() < -500 ) {
+			//Destroy asteroid
+			m_asteroids[i]->destroy();
+		}
+
 	}
 	deleteAsteroids();
 }
