@@ -36,6 +36,7 @@ public:
 	Renderer getRenderer(void);
 	Window getWindow(void);
 	void checkCollisions(void);
+	void deleteDeadAsteroids(void);
 	void deleteAsteroids(void);
 
 	Timer fps_timer, cap_timer, step_timer;

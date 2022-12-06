@@ -123,6 +123,8 @@ void Game::start() {
 
 void Game::restart() {
 	m_ship->restart();
+	deleteAsteroids();
+	generateAsteroids();
 }
 
 void Game::gameLoop() {
@@ -249,10 +251,10 @@ void Game::checkCollisions() {
 		}
 
 	}
-	deleteAsteroids();
+	deleteDeadAsteroids();
 }
 
-void Game::deleteAsteroids() {
+void Game::deleteDeadAsteroids() {
 	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
 		if (m_asteroids[i]->isDead()) {
 			delete m_asteroids[i];
@@ -260,5 +262,11 @@ void Game::deleteAsteroids() {
 			Pos p = generateSingleAsteroidPos();
 			m_asteroids[i] = new Asteroid(p, BIG_ASTEROID);
 		}
+	}
+}
+
+void Game::deleteAsteroids() {
+	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
+		delete m_asteroids[i];
 	}
 }
