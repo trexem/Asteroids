@@ -18,8 +18,10 @@ Game::~Game() {
 	g_asteroid_big_texture.free();
 	TTF_CloseFont(m_fps_ttf);
 	TTF_CloseFont(m_pause_ttf);
+	TTF_CloseFont(m_score_ttf);
 	m_fps_ttf = nullptr;
 	m_pause_ttf = nullptr;
+	m_score_ttf = nullptr;
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
@@ -43,6 +45,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 			} else {
 				m_fps_text_texture.m_renderer = m_renderer->getRenderer();
 				m_pause_text_texture.m_renderer = m_renderer->getRenderer();
+				m_score_text_texture.m_renderer = m_renderer->getRenderer();
 				g_ship_texture.m_renderer = m_renderer->getRenderer();
 				g_shot_texture.m_renderer = m_renderer->getRenderer();
 				g_particle_texture.m_renderer = m_renderer->getRenderer();
@@ -78,6 +81,11 @@ bool Game::loadMedia() {
 	}
 	m_pause_ttf = TTF_OpenFont("data/fonts/consola.ttf", 58);
 	if (m_pause_ttf == NULL) {
+		std::cout << "Failed to load consola font! SDL_ttf Error:" << TTF_GetError() << '\n';
+		success = false;
+	}
+	m_score_ttf = TTF_OpenFont("data/fonts/consola.ttf", 18);
+	if (m_score_ttf == NULL) {
 		std::cout << "Failed to load consola font! SDL_ttf Error:" << TTF_GetError() << '\n';
 		success = false;
 	}
@@ -125,6 +133,7 @@ void Game::restart() {
 	m_ship->restart();
 	deleteAsteroids();
 	generateAsteroids();
+	restartScore();
 }
 
 void Game::gameLoop() {
@@ -151,10 +160,18 @@ void Game::gameLoop() {
 		avg_fps = 0;
 	}
 	    //Set text for the fps
-	time_text.str("");
-	time_text << "Average FPS: " << avg_fps;
-	if (!m_fps_text_texture.loadFromRenderedText(time_text.str().c_str(), white_color, m_fps_ttf)) {
-		std::cout << "Unable to render FPS texture!" << '\n';
+	if (IS_FPS_VISIBLE) {
+		time_text.str("");
+		time_text << "Average FPS: " << avg_fps;
+		if (!m_fps_text_texture.loadFromRenderedText(time_text.str().c_str(), white_color, m_fps_ttf)) {
+			std::cout << "Unable to render FPS texture!" << '\n';
+		}
+	}
+	//Set Score text
+	score_text.str("");
+	score_text << "Score: " << m_score;
+	if (!m_score_text_texture.loadFromRenderedText(score_text.str().c_str(), white_color, m_score_ttf)) {
+		std::cout << "Unable to render Score texture!" << '\n';
 	}
 	    //Calculate time between previous movement and now
 	time_step = step_timer.getTicks() / 1000.0;
@@ -180,7 +197,8 @@ void Game::gameLoop() {
 	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
 		m_asteroids[i]->render();
 	}
-	m_fps_text_texture.render(0, 0);
+	if (IS_FPS_VISIBLE) { m_fps_text_texture.render(0, 0); }
+	m_score_text_texture.render(0, 0);
 	    //Render PAUSE text while game is paused
 	if (pause) {
 		step_timer.pause();
@@ -239,7 +257,8 @@ void Game::checkCollisions() {
 					m_asteroids[i]->destroy();
 					//Destroy shot
 					m_ship->m_shots[j]->kill();
-					//TODO +1 to score
+					//+1 to score
+					scoreUp();
 				}
 			}
 		}
@@ -269,4 +288,12 @@ void Game::deleteAsteroids() {
 	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
 		delete m_asteroids[i];
 	}
+}
+
+void Game::scoreUp() {
+	m_score++;
+}
+
+void Game::restartScore() {
+	m_score = 0;
 }
