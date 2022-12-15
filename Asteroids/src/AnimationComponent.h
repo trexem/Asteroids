@@ -1,5 +1,7 @@
 #pragma once
 #include "RenderComponent.h"
+#include <SDL.h>
+
 class AnimationComponent : public RenderComponent {
 	AnimationComponent(SDL_Renderer* t_renderer, SDL_Texture* t_texture, int t_num_frames);
 

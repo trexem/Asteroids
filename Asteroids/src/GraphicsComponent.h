@@ -1,5 +1,7 @@
 #pragma once
 #include "RenderComponent.h"
+#include <SDL.h>
+
 class GraphicsComponent : public RenderComponent {
 	GraphicsComponent(SDL_Renderer* t_renderer, SDL_Texture* t_texture,
 		int t_width, int t_height);

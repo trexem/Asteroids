@@ -1,5 +1,6 @@
 #include "AnimationComponent.h"
 #include "PositionComponent.h"
+#include "Entity.h"
 
 AnimationComponent::AnimationComponent(SDL_Renderer* t_renderer, SDL_Texture* t_texture, int t_num_frames) :
 	m_renderer(t_renderer),

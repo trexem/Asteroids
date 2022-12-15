@@ -1,12 +1,17 @@
 #pragma once
+#ifndef __ENTITY_H_
+#define __ENTITY_H_
+
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <typeinfo>
 #include <SDL.h>
+
 #include "Component.h"
 
-
 using ComponentMap = std::unordered_map<std::string, std::vector<Component*>>;
+
 class Entity
 {
 public:
@@ -42,4 +47,4 @@ public:
 private:
 	ComponentMap m_components;
 };
-
+#endif // !__ENTITY_H_

@@ -1,7 +1,10 @@
 #pragma once
-#include "Entity.h"
-class Component
-{
+#ifndef __COMPONENT_H_
+#define __COMPONENT_H_
+
+class Entity;
+
+class Component {
 public:
 	virtual ~Component() = default;
 
@@ -16,4 +19,4 @@ private:
 
 	friend class Entity;
 };
-
+#endif // !__COMPONENT_H_

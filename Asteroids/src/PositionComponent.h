@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
-class PositionComponent :
-    public Component {
+
+class PositionComponent : public Component {
 public:
     PositionComponent(int t_x, int t_y);
 
