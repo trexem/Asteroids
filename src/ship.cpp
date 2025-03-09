@@ -1,4 +1,7 @@
 #include "ship.hpp"
+#include <unordered_map>
+#include <cmath>
+#include <functional>
 
 Ship::Ship() {
 	is_moving = 0;
@@ -40,41 +43,61 @@ Ship::~Ship() {
 void Ship::handleInput(const Uint8* t_current_key_states) {
 	    //There are so many ifs because it moved weirdly with separate ifs for each key
 	    //So i have to add the cases for more than one key pressed at the same time
-	if (t_current_key_states[SDL_SCANCODE_UP] || t_current_key_states[SDL_SCANCODE_W]) {
-		m_vel += SHIP_SPEED;
-	} else if (t_current_key_states[SDL_SCANCODE_DOWN] || t_current_key_states[SDL_SCANCODE_S]) { //Key DOWN
-		m_vel -= SHIP_SPEED;
-	} else if (!t_current_key_states[SDL_SCANCODE_UP] && !t_current_key_states[SDL_SCANCODE_DOWN] &&
-	           !t_current_key_states[SDL_SCANCODE_W] && !t_current_key_states[SDL_SCANCODE_S]) {
-		    //If no UP or DOWN are pressed we desacelerate
-		m_vel *= 0.95;
-		if (m_vel < 1 && m_vel > -1) { //if the number is too small we round down to 0
-			m_vel = 0;
+		using Action = std::function<void()>;
+		std::unordered_map<SDL_Scancode, Action> keyActions = {
+			{SDL_SCANCODE_UP, [&]() { m_vel += SHIP_SPEED; }},
+			{SDL_SCANCODE_W, [&]() { m_vel += SHIP_SPEED; }},
+			{SDL_SCANCODE_DOWN, [&]() { m_vel -= SHIP_SPEED; }},
+			{SDL_SCANCODE_S, [&]() { m_vel -= SHIP_SPEED; }},
+			{SDL_SCANCODE_LEFT, [&]() { 
+				if (m_rot_vel > 0) {
+					m_rot_vel = 0;
+				}
+				m_rot_vel -= SHIP_ROT_SPEED; 
+			}},
+			{SDL_SCANCODE_A, [&]() { 
+				if (m_rot_vel > 0) {
+					m_rot_vel = 0;
+				}
+				m_rot_vel -= SHIP_ROT_SPEED; 
+			}},
+			{SDL_SCANCODE_RIGHT, [&]() { 
+				if (m_rot_vel < 0) {
+					m_rot_vel = 0;
+				}
+				m_rot_vel += SHIP_ROT_SPEED; 
+			}},
+			{SDL_SCANCODE_D, [&]() { 
+				if (m_rot_vel < 0) {
+					m_rot_vel = 0;
+				}
+				m_rot_vel += SHIP_ROT_SPEED; 
+			}},
+			{SDL_SCANCODE_SPACE, [&]() { if (m_last_shot > SHIP_SHOT_DELAY) { shoot(); m_last_shot = 0; }}},
+		};
+	
+		for (const auto& [key, action] : keyActions) {
+			if (t_current_key_states[key]) {
+				action();
+			}
+		}
+		if (!(t_current_key_states[SDL_SCANCODE_UP] || t_current_key_states[SDL_SCANCODE_DOWN] ||
+			  t_current_key_states[SDL_SCANCODE_W] || t_current_key_states[SDL_SCANCODE_S])) {
+			//If no UP or DOWN are pressed we desacelerate
+			m_vel *= 0.95;
+			if (std::abs(m_vel) < 1) { //if the number is too small we round down to 0
+				m_vel = 0;
+			}
+		}
+		if (!(t_current_key_states[SDL_SCANCODE_LEFT] || t_current_key_states[SDL_SCANCODE_RIGHT] ||
+			  t_current_key_states[SDL_SCANCODE_A] || t_current_key_states[SDL_SCANCODE_D])) {
+				//If no LEFT or RIGHT are pressed we desacelerate the turn
+			m_rot_vel *= 0.95;
+			if (std::abs(m_rot_vel) < 1) {     //if the number is too small we round down to 0
+				m_rot_vel = 0;
+			}
 		}
 	}
-	if (t_current_key_states[SDL_SCANCODE_LEFT] || t_current_key_states[SDL_SCANCODE_A]) {
-		if (m_rot_vel > 0) {
-			m_rot_vel = 0;
-		}
-		m_rot_vel -= SHIP_ROT_SPEED;
-	} else if (t_current_key_states[SDL_SCANCODE_RIGHT] || t_current_key_states[SDL_SCANCODE_D]) {
-		if (m_rot_vel < 0) {
-			m_rot_vel = 0;
-		}
-		m_rot_vel += SHIP_ROT_SPEED;
-	} else if (!t_current_key_states[SDL_SCANCODE_LEFT] && !t_current_key_states[SDL_SCANCODE_RIGHT] &&
-	           !t_current_key_states[SDL_SCANCODE_A] && !t_current_key_states[SDL_SCANCODE_D]) {
-		    //If no LEFT or RIGHT are pressed we desacelerate the turn
-		m_rot_vel *= 0.95;
-		if (m_rot_vel < 1 && m_rot_vel > -1) {     //if the number is too small we round down to 0
-			m_rot_vel = 0;
-		}
-	}
-	if (t_current_key_states[SDL_SCANCODE_SPACE] && m_last_shot > SHIP_SHOT_DELAY) {
-		shoot();
-		m_last_shot = 0;
-	}
-}
 
 void Ship::move(double t_time_step) {
 	m_last_shot += t_time_step;

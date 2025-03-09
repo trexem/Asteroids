@@ -1,4 +1,5 @@
 #include "shot.hpp"
+#include <cmath>
 
 Shot::Shot(int t_x, int t_y, double t_degrees, Texture* t_texture) {
 	m_pos.x = t_x;

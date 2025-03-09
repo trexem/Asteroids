@@ -1,4 +1,5 @@
 #include "asteroid.hpp"
+#include <cmath>
 
 Pos g_screen_center = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
 
