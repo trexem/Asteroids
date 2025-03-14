@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <memory>
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 struct SDL_Renderer_Deleter {
 	void operator()(SDL_Renderer* renderer) {
@@ -15,7 +15,7 @@ struct SDL_Renderer_Deleter {
 class Renderer {
 public:
 	Renderer();
-	Renderer(SDL_Window* window, int index, Uint32 flags);
+	Renderer(SDL_Window* window, const char * name);
 	void changeColor(int r, int g, int b, int alpha);
 	SDL_Renderer* getRenderer(void);
 	void clear(void);

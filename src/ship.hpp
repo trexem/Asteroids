@@ -25,7 +25,7 @@ public:
 	    //Desctructor, we also delete all shots
 	~Ship(void);
 	    //Handle inputs that control the spaceship
-	void handleInput(const Uint8* t_current_key_states);
+	void handleInput(const bool* t_current_key_states);
 	    //Move function, needs the time that has passed since last movement
 	void move(double t_time_step);
 //Set position function, x, y and rotation

@@ -23,13 +23,12 @@ Game::~Game() {
 	m_pause_ttf = nullptr;
 	m_score_ttf = nullptr;
 	TTF_Quit();
-	IMG_Quit();
 	SDL_Quit();
 }
 
 bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_height, Uint32 flags) {
 	bool success = true;
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+	if (!SDL_Init(SDL_INIT_VIDEO)) {
 		std::cout << "SDL could not initialize! SDL_ERROR: " << SDL_GetError() << '\n';
 		success = false;
 	} else {
@@ -38,7 +37,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 			std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << '\n';
 			success = false;
 		} else {
-			m_renderer = new Renderer(m_window.getWindow(), -1, SDL_RENDERER_ACCELERATED);
+			m_renderer = new Renderer(m_window.getWindow(), NULL);
 			if (!m_renderer->getRenderer()) {
 				std::cout << "Renderer could not be created! SDL Error: " << SDL_GetError() << '\n';
 				success = false;
@@ -52,17 +51,10 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 				g_particle_shimmer_texture.m_renderer = m_renderer->getRenderer();
 				g_asteroid_big_texture.m_renderer = m_renderer->getRenderer();
 				m_renderer->changeColor(0x00, 0x00, 0x00, 0xFF);
-				int img_flags = IMG_INIT_PNG;
-				    //init SDL_image
-				if (!(IMG_Init(img_flags) & img_flags)) {
-					    //print error
-					std::cout << "SDL_image could not initialize! SDL_image ERROR: " << IMG_GetError() << '\n';
-					success = false;
-				}
 				    //init SDL_ttf
-				if (TTF_Init() == -1)
+				if (!TTF_Init())
 				{
-					std::cout << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << '\n';
+					std::cout << "SDL_ttf could not initialize! SDL_ttf Error: " << SDL_GetError() << '\n';
 					success = false;
 				}
 			}
@@ -76,17 +68,17 @@ bool Game::loadMedia() {
 
 	m_fps_ttf = TTF_OpenFont("data/fonts/consola.ttf", 14);
 	if (m_fps_ttf == NULL) {
-		std::cout << "Failed to load consola font! SDL_ttf Error:" << TTF_GetError() << '\n';
+		std::cout << "Failed to load consola font! SDL_ttf Error:" << SDL_GetError() << '\n';
 		success = false;
 	}
 	m_pause_ttf = TTF_OpenFont("data/fonts/consola.ttf", 58);
 	if (m_pause_ttf == NULL) {
-		std::cout << "Failed to load consola font! SDL_ttf Error:" << TTF_GetError() << '\n';
+		std::cout << "Failed to load consola font! SDL_ttf Error:" << SDL_GetError() << '\n';
 		success = false;
 	}
 	m_score_ttf = TTF_OpenFont("data/fonts/consola.ttf", 18);
 	if (m_score_ttf == NULL) {
-		std::cout << "Failed to load consola font! SDL_ttf Error:" << TTF_GetError() << '\n';
+		std::cout << "Failed to load consola font! SDL_ttf Error:" << SDL_GetError() << '\n';
 		success = false;
 	}
 	if (!g_ship_texture.loadFromFile("data/img/spaceship.bmp")) {
@@ -140,19 +132,19 @@ void Game::gameLoop() {
 	cap_timer.start(); //start cap timer at the beggining of the "frame"
 	while (SDL_PollEvent(&e) != 0) {
 		    //Quit if the X button is pressed
-		if (e.type == SDL_QUIT) {
+		if (e.type == SDL_EVENT_QUIT) {
 			quit = true;
-		} else if (e.type == SDL_KEYDOWN) {
-			if (e.key.keysym.sym == SDLK_p) {//P for pause
+		} else if (e.type == SDL_EVENT_KEY_DOWN) {
+			if (e.key.key == SDLK_P) {//P for pause
 				pause = !pause;
 			}
-			if (e.key.keysym.sym == SDLK_r) {//R for restart. Will change in the future for an option in the pause menu
+			if (e.key.key == SDLK_R) {//R for restart. Will change in the future for an option in the pause menu
 				restart();
 			}
 		}
 	}
 	    //The array current_key_states has the state of the pressed keys
-	const Uint8* current_key_states = SDL_GetKeyboardState(NULL);
+	const bool* current_key_states = SDL_GetKeyboardState(NULL);
 
 	    //calculate fps: how many frames divided by the time that has passed since the game started
 	float avg_fps = counted_frames / (fps_timer.getTicks() / 1000.f);

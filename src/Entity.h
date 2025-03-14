@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 #include <typeinfo>
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 #include "Component.h"
 

@@ -14,7 +14,7 @@ void GraphicsComponent::update() {}
 void GraphicsComponent::render() {
 	auto position = entity()->getComponents<PositionComponent>()[0];
 
-	SDL_Rect rect{ position->x(), position->y(), m_width, m_height };
+	SDL_FRect rect{ position->x(), position->y(), m_width, m_height };
 
-	SDL_RenderCopy(m_renderer, m_texture, nullptr, &rect);
+	SDL_RenderTexture(m_renderer, m_texture, nullptr, &rect);
 }

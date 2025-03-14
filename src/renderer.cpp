@@ -1,7 +1,7 @@
 #include "renderer.hpp"
 
-Renderer::Renderer(SDL_Window* window, int index, Uint32 flags) {
-	m_renderer = std::unique_ptr<SDL_Renderer, SDL_Renderer_Deleter>(SDL_CreateRenderer(window, index, flags));
+Renderer::Renderer(SDL_Window* window, const char * name) {
+	m_renderer = std::unique_ptr<SDL_Renderer, SDL_Renderer_Deleter>(SDL_CreateRenderer(window, name));
 	if (!m_renderer) {
 		    //if error whielcreating renderer, print error
 		std::cout << "Renderer could not be created! SDL Error: " << SDL_GetError() << '\n';

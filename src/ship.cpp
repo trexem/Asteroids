@@ -40,7 +40,7 @@ Ship::~Ship() {
 	}
 }
 
-void Ship::handleInput(const Uint8* t_current_key_states) {
+void Ship::handleInput(const bool* t_current_key_states) {
 	    //There are so many ifs because it moved weirdly with separate ifs for each key
 	    //So i have to add the cases for more than one key pressed at the same time
 		using Action = std::function<void()>;

@@ -35,3 +35,4 @@ release/*
 /Asteroids/x64
 /x64/Debug
 /Asteroids/Asteroids.vcxproj
+build/*

@@ -12,7 +12,7 @@ int main(int argc, char const* argv[]) {
 		SDL_WINDOWPOS_CENTERED,
 		SCREEN_WIDTH,
 		SCREEN_HEIGHT,
-		SDL_WINDOW_SHOWN
+		SDL_WINDOW_HIDDEN
 	);
 	if (!is_initialized) {
 		std::cout << "Failed to initialize" << '\n';

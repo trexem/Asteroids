@@ -6,13 +6,13 @@
 #include <iostream>
 #include <string>
 #include <memory>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
+#include <SDL3_ttf/SDL_ttf.h>
 
 struct SDL_Surface_Deleter {
 	void operator()(SDL_Surface* surface) {
-		SDL_FreeSurface(surface);
+		SDL_DestroySurface(surface);
 	}
 };
 
@@ -26,7 +26,7 @@ public:
 	bool loadFromRenderedText(std::string t_texture_text, SDL_Color t_text_color, TTF_Font* g_font);
 	void free(void);
 	void render(int t_x, int t_y);
-	void renderEx(int t_x, int t_y, SDL_Rect* t_clip, double t_angle, SDL_Point* t_center, SDL_RendererFlip t_flip);
+	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, SDL_FlipMode t_flip);
 
 	int getWidth();
 	int getHeight();

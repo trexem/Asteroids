@@ -19,8 +19,8 @@ void AnimationComponent::render() {
 
 	auto position = entity()->getComponents<PositionComponent>()[0];
 
-	SDL_Rect src_rect{ m_current_frame * m_frame_width, 0, m_frame_width, m_frame_height };
-	SDL_Rect dest_rect{ position->x(), position->y(), m_frame_width, m_frame_height };
+	SDL_FRect src_rect{ m_current_frame * m_frame_width, 0, m_frame_width, m_frame_height };
+	SDL_FRect dest_rect{ position->x(), position->y(), m_frame_width, m_frame_height };
 	
-	SDL_RenderCopy(m_renderer, m_texture, &src_rect, &dest_rect);
+	SDL_RenderTexture(m_renderer, m_texture, &src_rect, &dest_rect);
 }

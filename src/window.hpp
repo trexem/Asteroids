@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <memory>
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 struct SDL_Window_Deleter {
 	void operator()(SDL_Window* window) {
