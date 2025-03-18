@@ -106,6 +106,8 @@ bool Game::loadMedia() {
 }
 
 void Game::start() {
+	uint32_t ship = entityManager.createEntity();
+	entityManager.addComponent(ship, ComponentType::Transform);
 	m_ship = new Ship();
 	m_ship->setPos(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0);
 	pause_text.str("");
@@ -119,6 +121,8 @@ void Game::start() {
 	fps_timer.start();
 	//Initialize srand with time so it-s always different
 	srand(time(NULL));
+	uiSystem = UISystem();
+	pSystem = PlayerSystem();
 }
 
 void Game::restart() {
@@ -131,6 +135,7 @@ void Game::restart() {
 void Game::gameLoop() {
 	cap_timer.start(); //start cap timer at the beggining of the "frame"
 	while (SDL_PollEvent(&e) != 0) {
+		keySystem.handleEvent(e);
 		    //Quit if the X button is pressed
 		if (e.type == SDL_EVENT_QUIT) {
 			quit = true;

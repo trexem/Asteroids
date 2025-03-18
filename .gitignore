@@ -31,6 +31,7 @@
 *.out
 *.app
 release/*
+/.vscode/*
 /.vs/Asteroids
 /Asteroids/x64
 /x64/Debug

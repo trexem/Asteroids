@@ -16,12 +16,17 @@
 const int SCREEN_FPS = 60;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 const bool IS_FPS_VISIBLE = false;
+const uint32_t MAX_ENTITIES = 1000;
 
 #include "renderer.hpp"
 #include "window.hpp"
 #include "timer.hpp"
+#include "EntityManager.h"
 #include "ship.hpp"
 #include "asteroid.hpp"
+#include "UISystem.h"
+#include "PlayerSystem.h"
+#include "KeyboardSystem.h"
 
 class Game {
 public:
@@ -52,6 +57,10 @@ public:
 
 private:
 	Ship* m_ship;
+	EntityManager entityManager = EntityManager(MAX_ENTITIES);
+	KeyboardSystem keySystem = KeyboardSystem();
+	UISystem uiSystem;
+	PlayerSystem pSystem;
 	Asteroid* m_asteroids[TOTAL_ASTEROIDS];
 	Window m_window;
 	Renderer* m_renderer;
