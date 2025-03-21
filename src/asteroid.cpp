@@ -3,7 +3,7 @@
 
 Pos g_screen_center = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
 
-Asteroid::Asteroid(Pos t_pos, asteroid_type t_asteroid_type) {
+Asteroid::Asteroid(FPair t_pos, asteroid_type t_asteroid_type) {
 	m_pos = t_pos;
 	m_rot_degrees = rand() % 180;
 	m_vel = rand() % 100 + 50;
@@ -51,7 +51,7 @@ void Asteroid::render() {
 	}
 }
 
-void Asteroid::setPos(Pos t_pos, double t_rot_degrees) {
+void Asteroid::setPos(FPair t_pos, double t_rot_degrees) {
 	m_pos = t_pos;
 	m_rot_degrees = t_rot_degrees;
 	m_dir_degrees = atan((g_screen_center.y - m_pos.y) / (g_screen_center.x - m_pos.x)) - 1 + (rand() % 200) / 100;

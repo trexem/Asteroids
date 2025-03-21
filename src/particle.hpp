@@ -8,14 +8,14 @@ const int TOTAL_PARTICLES = 40;
 
 class Particle : public GameObject {
 public:
-	Particle(Pos t_pos);
+	Particle(FPair t_pos);
 
 	void render(void);
 	void pause(void);
 	void resume(void);
 	void kill(void);
 
-	void setPos(Pos t_pos);
+	void setPos(FPair t_pos);
 
 	bool isDead();
 

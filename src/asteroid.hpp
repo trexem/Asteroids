@@ -15,12 +15,12 @@ enum asteroid_type
 
 class Asteroid : public GameObject {
 public:
-	Asteroid(Pos t_pos, asteroid_type t_asteroid_type);
+	Asteroid(FPair t_pos, asteroid_type t_asteroid_type);
 	~Asteroid();
 
 	void move(double t_time_step);
 	void render(void);
-	void setPos(Pos t_pos, double t_rot_degrees);
+	void setPos(FPair t_pos, double t_rot_degrees);
 	void destroy(void);
 	void free(void);
 

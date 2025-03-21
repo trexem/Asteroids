@@ -23,7 +23,7 @@ Ship::Ship() {
 	}
 	for (int i = 0; i < TOTAL_PARTICLES; i++) {
 		double radians = m_rot_degrees * PI / 180;
-		Pos p;
+		FPair p;
 		p.x = (int)(m_pos.x + m_texture->getWidth() / 2 + sin(radians) * m_texture->getHeight() / 2);
 		p.y = (int)(m_pos.y + m_texture->getHeight() - cos(radians) * m_texture->getHeight() / 2);
 		particles[i] = new Particle(p);
@@ -207,7 +207,7 @@ void Ship::renderParticles() {
 		if (particles[i]->isDead()) {
 			if (is_moving) {
 				double radians = m_rot_degrees * PI / 180;
-				Pos p;
+				FPair p;
 				p.x = (int)(m_pos.x + m_texture->getWidth() / 2 - sin(radians) * m_texture->getHeight() / 2);
 				p.y = (int)(m_pos.y + m_texture->getHeight() / 2 + cos(radians) * m_texture->getHeight() / 2);
 				particles[i]->setPos(p);

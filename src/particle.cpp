@@ -1,6 +1,6 @@
 #include "particle.hpp"
 
-Particle::Particle(Pos t_pos) : GameObject(t_pos) {
+Particle::Particle(FPair t_pos) : GameObject(t_pos) {
 	m_texture = &g_particle_texture;
 	m_frame = 0;
 	m_shim_frame = 0;
@@ -22,7 +22,7 @@ void Particle::render() {
 		m_frame++;
 }
 
-void Particle::setPos(Pos t_pos) {
+void Particle::setPos(FPair t_pos) {
 	m_pos.x = t_pos.x - 5 + (rand() % 10);
 	m_pos.y = t_pos.y - 5 + (rand() % 10);
 	m_frame = rand() % 30;

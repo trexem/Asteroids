@@ -27,6 +27,7 @@ const uint32_t MAX_ENTITIES = 1000;
 #include "UISystem.h"
 #include "PlayerSystem.h"
 #include "KeyboardSystem.h"
+#include "RenderSystem.h"
 
 class Game {
 public:
@@ -39,7 +40,7 @@ public:
 	void restart(void);
 	void gameLoop(void);
 	void generateAsteroids(void);
-	Pos generateSingleAsteroidPos(void);
+	FPair generateSingleAsteroidPos(void);
 	Renderer getRenderer(void);
 	Window getWindow(void);
 	void checkCollisions(void);
@@ -59,11 +60,10 @@ private:
 	Ship* m_ship;
 	EntityManager entityManager = EntityManager(MAX_ENTITIES);
 	KeyboardSystem keySystem = KeyboardSystem();
+	RenderSystem* renderSystem;
 	UISystem uiSystem;
 	PlayerSystem pSystem;
-	Asteroid* m_asteroids[TOTAL_ASTEROIDS];
 	Window m_window;
-	Renderer* m_renderer;
 	Texture m_fps_text_texture, m_pause_text_texture, m_score_text_texture;
 	Texture g_particle_shimmer_texture;
 	TTF_Font* m_fps_ttf;

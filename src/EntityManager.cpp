@@ -34,6 +34,15 @@ void EntityManager::destroyEntity(uint32_t entityID) {
 
 void EntityManager::addComponent(uint32_t entityID, ComponentType type) {
     assert(entityID < maxEntities);
+    // Add TransformComponent if renderComponent is being added
+    if (type == ComponentType::Render && !hasComponent<TransformComponent>(entityID)) {
+        entityComponentMasks[entityID][static_cast<size_t>(ComponentType::Transform)] = true;
+        if (componentPools[static_cast<size_t>(ComponentType::Transform)].size() <= entityID) {
+            componentPools[static_cast<size_t>(ComponentType::Transform)].resize(entityID + 1);
+        }
+        componentPools[static_cast<size_t>(ComponentType::Transform)][entityID] = nullptr;
+    }
+
     entityComponentMasks[entityID][static_cast<size_t>(type)] = true;
     if (componentPools[static_cast<size_t>(type)].size() <= entityID) {
         componentPools[static_cast<size_t>(type)].resize(entityID + 1);

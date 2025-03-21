@@ -5,7 +5,7 @@ GameObject::GameObject() {
 	m_texture = nullptr;
 }
 
-GameObject::GameObject(Pos p) {
+GameObject::GameObject(FPair p) {
 	m_pos = p;
 	m_texture = nullptr;
 }
@@ -22,12 +22,12 @@ void GameObject::render() {
 	m_texture->render((int)m_pos.x, (int)m_pos.y);
 }
 
-void GameObject::setPos(Pos t_pos, double t_rot_degrees) {
+void GameObject::setPos(FPair t_pos, double t_rot_degrees) {
 	m_pos = t_pos;
 	m_rot_degrees = t_rot_degrees;
 }
 
-Pos GameObject::getPos() { return m_pos; }
+FPair GameObject::getPos() { return m_pos; }
 
 double GameObject::getX() { return m_pos.x; }
 

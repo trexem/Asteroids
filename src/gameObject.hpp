@@ -4,25 +4,26 @@
 
 #include "texture.hpp"
 #include "utils.hpp"
+#include "FPair.h"
 
 class GameObject
 {
 public:
 	GameObject();
-	GameObject(Pos p);
+	GameObject(FPair p);
 	~GameObject();
 
 	void renderEx(void);
 	void render(void);
-	void setPos(Pos t_pos, double t_rot_degrees);
-	Pos getPos();
+	void setPos(FPair t_pos, double t_rot_degrees);
+	FPair getPos();
 	double getX();
 	double getY();
 	double getDegrees();
 	SDL_Rect getCollider();
 
 protected:
-	Pos m_pos{0,0};
+	FPair m_pos{0,0};
 	double m_rot_degrees{ 0 };
 	Texture* m_texture;
 	SDL_Rect m_collider;
