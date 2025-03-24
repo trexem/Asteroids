@@ -4,16 +4,11 @@
 
 #include "System.h"
 #include "MessageManager.h"
-#include "ApplyForceMessage.h"
 #include "EntityManager.h"
 
 class PhysicsSystem : public System {
 public:
-    PhysicsSystem(EntityManager* eManager);
-
-private:
-    void handleApplyForceMessage(std::shared_ptr<ApplyForceMessage> msg);
-    EntityManager* eManager;
+    void update(EntityManager* eManager);
 };
 
 #endif // !__PHYSICS_SYSTEM_H_

@@ -84,6 +84,8 @@ private:
             return ComponentType::Player;
         } else if constexpr (std::is_same<T, StatsComponent>::value) {
             return ComponentType::Stats;
+        } else if constexpr (std::is_same<T, MovementComponent>::value) {
+            return ComponentType::Movement;
         }
     }
 

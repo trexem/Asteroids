@@ -14,8 +14,20 @@ enum class ComponentType {
     Damage,
     Player,
     Stats,
+    Movement,
 
     Count
+};
+
+enum MoveState {
+    MOVE_UP,
+    MOVE_DOWN,
+    MOVE_LEFT,
+    MOVE_RIGHT,
+    TURN_LEFT,
+    TURN_RIGHT,
+
+    count
 };
 
 struct TransformComponent {
@@ -25,13 +37,14 @@ struct TransformComponent {
 
 struct PhysicsComponent {
     FPair velocity;
-    float rotVelocity;
+    float rotVelocity {0.0f};
     FPair acceleration;
     float mass {1.0f};
 };
 
 struct CollisionComponent {
-
+    float height {1.0f};
+    float width {1.0f};
 };
 
 struct RenderComponent {
@@ -59,4 +72,8 @@ struct StatsComponent {
     float maxRotationSpeed {1.0f};
     float maxHealth {1.0f};
     float fireSpeed {1.0f};
+};
+
+struct MovementComponent {
+    std::bitset<MoveState::count> moveState;
 };

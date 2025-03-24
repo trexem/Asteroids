@@ -30,6 +30,8 @@ const uint32_t MAX_ENTITIES = 1000;
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
 #include "MovementSystem.h"
+#include "CollisionSystem.h"
+
 
 class Game {
 public:
@@ -71,9 +73,10 @@ private:
 	std::unique_ptr<KeyboardSystem> keySystem;
 	std::unique_ptr<RenderSystem> renderSystem;
 	std::unique_ptr<UISystem> uiSystem;
-	std::unique_ptr<PlayerSystem> pSystem;
+	std::unique_ptr<PlayerSystem> playerSystem;
 	std::unique_ptr<PhysicsSystem> physicsSystem;
 	std::unique_ptr<MovementSystem> movementSystem;
+	std::unique_ptr<CollisionSystem> collisionSystem;
 	Window m_window;
 	Texture m_fps_text_texture, m_pause_text_texture, m_score_text_texture;
 	Texture g_particle_shimmer_texture;

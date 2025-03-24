@@ -22,7 +22,7 @@ public:
 private:
     void handleKeyboardInput(std::shared_ptr<KeyboardMessage> msg) {
         if (msg->pressed) {
-            std::cout << "UI system Key pressed: " << SDL_GetKeyName(msg->key) << std::endl;
+            // std::cout << "UI system Key pressed: " << SDL_GetKeyName(msg->key) << std::endl;
         }
     }
 };

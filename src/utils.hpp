@@ -15,7 +15,7 @@ const int SCREEN_HEIGHT = 1080;
 const double PI = 3.14159264;
 extern Pos g_screen_center;
 
-bool checkCollision(SDL_Rect a, SDL_Rect b);
+bool checkCollision(SDL_FRect a, SDL_FRect b);
 
 #endif // !_UTILS_H_
 

@@ -12,6 +12,7 @@
 class PlayerSystem : public System {
 public:
     PlayerSystem(EntityManager* eManager);
+    void update();
 
 private:
     void handleKeyboardInput(std::shared_ptr<KeyboardMessage> msg);

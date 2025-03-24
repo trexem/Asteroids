@@ -1,6 +1,6 @@
 #include "utils.hpp"
 
-bool checkCollision(SDL_Rect a, SDL_Rect b) {
+bool checkCollision(SDL_FRect a, SDL_FRect b) {
     //If any of the sides from A are outside of B
     if (a.y + a.h <= b.y)
     {

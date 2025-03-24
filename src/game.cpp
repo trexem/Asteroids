@@ -9,9 +9,10 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	tick = 0;
 	keySystem = std::make_unique<KeyboardSystem>();
 	uiSystem = std::make_unique<UISystem>();
-	pSystem = std::make_unique<PlayerSystem>(&entityManager);
-	physicsSystem = std::make_unique<PhysicsSystem>(&entityManager);
+	playerSystem = std::make_unique<PlayerSystem>(&entityManager);
+	physicsSystem = std::make_unique<PhysicsSystem>();
 	movementSystem = std::make_unique<MovementSystem>();
+	collisionSystem = std::make_unique<CollisionSystem>();
 }
 
 Game::~Game() {
@@ -116,6 +117,8 @@ void Game::start() {
 	entityManager.addComponent(ship, ComponentType::Player);
 	entityManager.addComponent(ship, ComponentType::Physics);
 	entityManager.addComponent(ship, ComponentType::Render);
+	entityManager.addComponent(ship, ComponentType::Movement);
+	entityManager.addComponent(ship, ComponentType::Collision);
 	TransformComponent shipTransform;
 	shipTransform.position.x = SCREEN_WIDTH / 2;
 	shipTransform.position.y = SCREEN_HEIGHT / 2;
@@ -134,8 +137,14 @@ void Game::start() {
 	PhysicsComponent shipPhys;
 	entityManager.setComponentData<PhysicsComponent>(ship, shipPhys);
 	PlayerComponent shipPlayer;
-	shipPlayer.shipType = false;
+	shipPlayer.shipType = true;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
+	MovementComponent shipMovement;
+	entityManager.setComponentData<MovementComponent>(ship, shipMovement);
+	CollisionComponent shipCollision;
+	shipCollision.height = shipTexture.texture->getHeight();
+	shipCollision.width = shipTexture.texture->getWidth();
+	entityManager.setComponentData<CollisionComponent>(ship, shipCollision);
 	pause_text.str("");
 	pause_text << "PAUSE";
 	counted_frames = 0;
@@ -158,7 +167,7 @@ void Game::restart() {
 
 void Game::gameLoop() {
 	cap_timer.start(); //start cap timer at the beggining of the "frame"
-	while (SDL_PollEvent(&e) != 0) {
+	while (SDL_PollEvent(&e)) {
 		keySystem->handleEvent(e);
 		    //Quit if the X button is pressed
 		if (e.type == SDL_EVENT_QUIT) {
@@ -202,6 +211,8 @@ void Game::gameLoop() {
 		//m_ship->handleInput(current_key_states);
 	}
 	    //move spaceship
+		physicsSystem->update(&entityManager);
+		playerSystem->update();
 		movementSystem->update(&entityManager, time_step);
 	//m_ship->move(time_step);
 	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
@@ -209,6 +220,7 @@ void Game::gameLoop() {
 	}
 	//Check collisions
 	//checkCollisions();
+	collisionSystem->update(&entityManager);
 	    //restart step timer
 	step_timer.start();
 	
@@ -247,6 +259,7 @@ void Game::generateAsteroids() {
 		uint32_t asteroid = entityManager.createEntity();
 		entityManager.addComponent(asteroid, ComponentType::Render);
 		entityManager.addComponent(asteroid, ComponentType::Physics);
+		entityManager.addComponent(asteroid, ComponentType::Collision);
 		FPair p = generateSingleAsteroidPos();
 		TransformComponent astTransform;
 		astTransform.position = p;
@@ -261,6 +274,10 @@ void Game::generateAsteroids() {
 		astStats.speed = 10.0f;
 		astStats.maxSpeed = 100.0f;
 		entityManager.setComponentData<StatsComponent>(asteroid, astStats);
+		CollisionComponent astCollision;
+		astCollision.height = astTexture.texture->getHeight();
+		astCollision.width = astTexture.texture->getWidth();
+		entityManager.setComponentData<CollisionComponent>(asteroid, astCollision);
 	}
 	std::cout << std::endl;
 }
