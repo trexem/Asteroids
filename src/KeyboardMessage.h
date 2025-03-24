@@ -10,8 +10,6 @@ public:
     SDL_Keycode key;
     bool pressed;
     KeyboardMessage(SDL_Keycode key, bool pressed) : key(key), pressed(pressed) {}
-
-
 };
 
 #endif //!__KEYBOARD_MESSAGE_H_

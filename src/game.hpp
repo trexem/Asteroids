@@ -28,9 +28,18 @@ const uint32_t MAX_ENTITIES = 1000;
 #include "PlayerSystem.h"
 #include "KeyboardSystem.h"
 #include "RenderSystem.h"
+#include "PhysicsSystem.h"
+#include "MovementSystem.h"
 
 class Game {
 public:
+	const int SHIP_TOP_SPEED = 500; //TOP speed of ship, must be lower than the speed of shot
+	const int SHIP_MIN_SPEED = -200; //Min speed in reverse (lower than forward speed)
+	const int SHIP_TOP_ROTATION_SPEED = 540; //1.5 turn per second
+	const int SHIP_SPEED = 15; //acceleration, instead of speed
+	const int SHIP_ROT_SPEED = 10; //acceleration, instead of speed
+	const float SHIP_SHOT_DELAY = .25; //How fast will the ship shoot?
+
 	Game();
 	~Game();
 
@@ -55,14 +64,16 @@ public:
 	double time_step;
 	SDL_Color white_color = {255, 255, 255, 255};
 	int counted_frames = 0;
+	EntityManager entityManager;  // Only one instance of EntityManager
 
 private:
 	Ship* m_ship;
-	EntityManager entityManager = EntityManager(MAX_ENTITIES);
-	KeyboardSystem keySystem = KeyboardSystem();
-	RenderSystem* renderSystem;
-	UISystem uiSystem;
-	PlayerSystem pSystem;
+	std::unique_ptr<KeyboardSystem> keySystem;
+	std::unique_ptr<RenderSystem> renderSystem;
+	std::unique_ptr<UISystem> uiSystem;
+	std::unique_ptr<PlayerSystem> pSystem;
+	std::unique_ptr<PhysicsSystem> physicsSystem;
+	std::unique_ptr<MovementSystem> movementSystem;
 	Window m_window;
 	Texture m_fps_text_texture, m_pause_text_texture, m_score_text_texture;
 	Texture g_particle_shimmer_texture;

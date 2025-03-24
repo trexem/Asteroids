@@ -13,7 +13,7 @@ void RenderSystem::render(EntityManager& eM) {
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::Render)) {
         RenderComponent rComp = eM.getComponentData<RenderComponent>(eID);
         TransformComponent trComp = eM.getComponentData<TransformComponent>(eID);
-        rComp.texture->renderEx((int)trComp.Position.x, (int)trComp.Position.y, nullptr, (int)trComp.rot_degrees, nullptr, SDL_FLIP_NONE);
+        rComp.texture->renderEx((int)trComp.position.x, (int)trComp.position.y, nullptr, (int)trComp.rotDegrees, nullptr, SDL_FLIP_NONE);
     }
     renderer->render();
 

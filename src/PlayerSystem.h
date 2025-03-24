@@ -7,23 +7,15 @@
 #include "System.h"
 #include "MessageManager.h"
 #include "KeyboardMessage.h"
+#include "EntityManager.h"
 
 class PlayerSystem : public System {
 public:
-    PlayerSystem() {
-        std::cout << " PlayerSystem Subscribing to: ";
-        // Subscribe to KeyboardMessages
-        MessageManager::getInstance().subscribe<KeyboardMessage>(
-            [this](std::shared_ptr<KeyboardMessage> msg) { handleKeyboardInput(msg); }
-        );
-    }
+    PlayerSystem(EntityManager* eManager);
 
 private:
-    void handleKeyboardInput(std::shared_ptr<KeyboardMessage> msg) {
-        if (msg->pressed) {
-            std::cout << "Player system Key pressed: " << SDL_GetKeyName(msg->key) << std::endl;
-        }
-    }
+    void handleKeyboardInput(std::shared_ptr<KeyboardMessage> msg);
+    EntityManager* eManager;
 };
 
 #endif // !__PLAYER_SYSTEM_H_

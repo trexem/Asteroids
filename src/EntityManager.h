@@ -61,6 +61,8 @@ public:
     }
 
     std::vector<uint32_t> getEntitiesWithComponent(ComponentType type);
+    size_t maxEntities;
+    std::vector<std::bitset<64>> entityComponentMasks;
 private:
     uint32_t findAvailableEntityID();
 
@@ -80,13 +82,15 @@ private:
             return ComponentType::Damage;
         } else if constexpr (std::is_same<T, PlayerComponent>::value) {
             return ComponentType::Player;
+        } else if constexpr (std::is_same<T, StatsComponent>::value) {
+            return ComponentType::Stats;
         }
     }
 
-    size_t maxEntities;
+    
     size_t entityCount = 0;
     std::vector<uint32_t> entities;
-    std::vector<std::bitset<64>> entityComponentMasks;
+    
     std::vector<std::vector<std::shared_ptr<void>>> componentPools;
 };
 

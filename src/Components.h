@@ -13,17 +13,19 @@ enum class ComponentType {
     Health,
     Damage,
     Player,
+    Stats,
 
     Count
 };
 
 struct TransformComponent {
-    FPair Position {0.0f, 0.0f};
-    double rot_degrees {0.0f};
+    FPair position {0.0f, 0.0f};
+    double rotDegrees {0.0f};
 };
 
 struct PhysicsComponent {
     FPair velocity;
+    float rotVelocity;
     FPair acceleration;
     float mass {1.0f};
 };
@@ -46,4 +48,15 @@ struct DamageComponent {
 };
 
 struct PlayerComponent {
+    bool shipType {true};
+};
+
+struct StatsComponent {
+    float speed {1.0f};
+    float maxSpeed {1.0f};
+    float minSpeed {-1.0f};
+    float rotationSpeed {1.0f};
+    float maxRotationSpeed {1.0f};
+    float maxHealth {1.0f};
+    float fireSpeed {1.0f};
 };

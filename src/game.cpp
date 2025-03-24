@@ -2,11 +2,16 @@
 
 #include <iostream>
 
-Game::Game() {
+Game::Game() : entityManager(MAX_ENTITIES) {
 	quit = false;
 	pause = false;
 	last_tick = 0;
 	tick = 0;
+	keySystem = std::make_unique<KeyboardSystem>();
+	uiSystem = std::make_unique<UISystem>();
+	pSystem = std::make_unique<PlayerSystem>(&entityManager);
+	physicsSystem = std::make_unique<PhysicsSystem>(&entityManager);
+	movementSystem = std::make_unique<MovementSystem>();
 }
 
 Game::~Game() {
@@ -39,7 +44,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 			std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << '\n';
 			success = false;
 		} else {
-			renderSystem = new RenderSystem(m_window.getWindow(), NULL);
+			renderSystem = std::make_unique<RenderSystem>(m_window.getWindow(), "");
 			if (!renderSystem->getRenderer()) {
 				std::cout << "Renderer could not be created! SDL Error: " << SDL_GetError() << '\n';
 				success = false;
@@ -112,12 +117,25 @@ void Game::start() {
 	entityManager.addComponent(ship, ComponentType::Physics);
 	entityManager.addComponent(ship, ComponentType::Render);
 	TransformComponent shipTransform;
-	shipTransform.Position.x = SCREEN_WIDTH / 2;
-	shipTransform.Position.y = SCREEN_HEIGHT / 2;
+	shipTransform.position.x = SCREEN_WIDTH / 2;
+	shipTransform.position.y = SCREEN_HEIGHT / 2;
 	entityManager.setComponentData<TransformComponent>(ship, shipTransform);
 	RenderComponent shipTexture;
 	shipTexture.texture = &g_ship_texture;
 	entityManager.setComponentData<RenderComponent>(ship, shipTexture);
+	StatsComponent shipStats;
+	shipStats.maxSpeed = SHIP_TOP_SPEED;
+	shipStats.minSpeed = SHIP_MIN_SPEED;
+	shipStats.maxRotationSpeed = SHIP_TOP_ROTATION_SPEED;
+	shipStats.speed = SHIP_SPEED;
+	shipStats.rotationSpeed = SHIP_ROT_SPEED;
+	shipStats.fireSpeed = SHIP_SHOT_DELAY;
+	entityManager.setComponentData<StatsComponent>(ship, shipStats);
+	PhysicsComponent shipPhys;
+	entityManager.setComponentData<PhysicsComponent>(ship, shipPhys);
+	PlayerComponent shipPlayer;
+	shipPlayer.shipType = false;
+	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
 	pause_text.str("");
 	pause_text << "PAUSE";
 	counted_frames = 0;
@@ -129,8 +147,6 @@ void Game::start() {
 	fps_timer.start();
 	//Initialize srand with time so it-s always different
 	srand(time(NULL));
-	uiSystem = UISystem();
-	pSystem = PlayerSystem();
 }
 
 void Game::restart() {
@@ -143,7 +159,7 @@ void Game::restart() {
 void Game::gameLoop() {
 	cap_timer.start(); //start cap timer at the beggining of the "frame"
 	while (SDL_PollEvent(&e) != 0) {
-		keySystem.handleEvent(e);
+		keySystem->handleEvent(e);
 		    //Quit if the X button is pressed
 		if (e.type == SDL_EVENT_QUIT) {
 			quit = true;
@@ -186,6 +202,7 @@ void Game::gameLoop() {
 		//m_ship->handleInput(current_key_states);
 	}
 	    //move spaceship
+		movementSystem->update(&entityManager, time_step);
 	//m_ship->move(time_step);
 	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
 		//m_asteroids[i]->move(time_step);
@@ -229,13 +246,21 @@ void Game::generateAsteroids() {
 		std::cout << i << " ";
 		uint32_t asteroid = entityManager.createEntity();
 		entityManager.addComponent(asteroid, ComponentType::Render);
+		entityManager.addComponent(asteroid, ComponentType::Physics);
 		FPair p = generateSingleAsteroidPos();
 		TransformComponent astTransform;
-		astTransform.Position = p;
+		astTransform.position = p;
 		RenderComponent astTexture;
 		astTexture.texture = &g_asteroid_big_texture;
 		entityManager.setComponentData<TransformComponent>(asteroid, astTransform);
 		entityManager.setComponentData<RenderComponent>(asteroid, astTexture);
+		PhysicsComponent astPhys;
+		astPhys.velocity = FPair(10.0f, 50.0f);
+		entityManager.setComponentData<PhysicsComponent>(asteroid, astPhys);
+		StatsComponent astStats;
+		astStats.speed = 10.0f;
+		astStats.maxSpeed = 100.0f;
+		entityManager.setComponentData<StatsComponent>(asteroid, astStats);
 	}
 	std::cout << std::endl;
 }
