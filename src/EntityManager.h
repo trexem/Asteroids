@@ -2,12 +2,13 @@
 #ifndef __ENTITY_MANAGER_H_
 #define __ENTITY_MANAGER_H_
 
-#include <vector>
-#include <bitset>
 #include <algorithm>
+#include <bitset>
+#include <cassert>
 #include <memory>
 #include <stdexcept>
-#include <cassert>
+#include <vector>
+
 #include "Components.h"
 
 class EntityManager {

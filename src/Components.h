@@ -1,7 +1,9 @@
 #pragma once
 
 #include <vector>
+#include <unordered_map>
 
+#include "abilities.h"
 #include "FPair.h"
 #include "texture.hpp"
 
@@ -27,7 +29,13 @@ enum MoveState {
     TURN_LEFT,
     TURN_RIGHT,
 
-    count
+    MoveStateCount
+};
+
+enum ShipType {
+    TANK,
+    FREE_MOVE,
+
 };
 
 struct TransformComponent {
@@ -61,7 +69,10 @@ struct DamageComponent {
 };
 
 struct PlayerComponent {
-    bool shipType {true};
+    ShipType type;
+    std::bitset<static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilities;
+    std::unordered_map<ShipAbilities, double> abilityCooldowns;
+    std::unordered_map<ShipAbilities, uint> abilityLevels;
 };
 
 struct StatsComponent {
@@ -71,9 +82,10 @@ struct StatsComponent {
     float rotationSpeed {1.0f};
     float maxRotationSpeed {1.0f};
     float maxHealth {1.0f};
-    float fireSpeed {1.0f};
+    float fireSpeed {0.0f}; // goes from 0 to .9999, higher is faster, represents percentage of base weapon cooldown
+    float projectileSpeed {1.0f};
 };
 
 struct MovementComponent {
-    std::bitset<MoveState::count> moveState;
+    std::bitset<static_cast<size_t>(MoveState::MoveStateCount)> moveState;
 };

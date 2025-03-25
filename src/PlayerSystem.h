@@ -4,15 +4,20 @@
 
 #include <iostream>
 
-#include "System.h"
-#include "MessageManager.h"
-#include "KeyboardMessage.h"
+#include "AbilityMessage.h"
 #include "EntityManager.h"
+#include "KeyboardMessage.h"
+#include "MessageManager.h"
+#include "System.h"
 
 class PlayerSystem : public System {
 public:
     PlayerSystem(EntityManager* eManager);
-    void update();
+    void update(double dT);
+
+    void updateMovement(uint32_t eID);
+    void updateAbilities(uint32_t eID, double dT);
+    void addAbility(uint32_t eID, ShipAbilities ability);
 
 private:
     void handleKeyboardInput(std::shared_ptr<KeyboardMessage> msg);

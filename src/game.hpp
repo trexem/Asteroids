@@ -85,6 +85,8 @@ private:
 	TTF_Font* m_score_ttf;
 	Uint32 last_tick = 0, tick = 0, m_score = 0;
 	SDL_Event e; //event to catch keypresses
+
+	void createShip(ShipType type);
 };
 
 

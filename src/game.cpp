@@ -113,38 +113,7 @@ bool Game::loadMedia() {
 }
 
 void Game::start() {
-	uint32_t ship = entityManager.createEntity();
-	entityManager.addComponent(ship, ComponentType::Player);
-	entityManager.addComponent(ship, ComponentType::Physics);
-	entityManager.addComponent(ship, ComponentType::Render);
-	entityManager.addComponent(ship, ComponentType::Movement);
-	entityManager.addComponent(ship, ComponentType::Collision);
-	TransformComponent shipTransform;
-	shipTransform.position.x = SCREEN_WIDTH / 2;
-	shipTransform.position.y = SCREEN_HEIGHT / 2;
-	entityManager.setComponentData<TransformComponent>(ship, shipTransform);
-	RenderComponent shipTexture;
-	shipTexture.texture = &g_ship_texture;
-	entityManager.setComponentData<RenderComponent>(ship, shipTexture);
-	StatsComponent shipStats;
-	shipStats.maxSpeed = SHIP_TOP_SPEED;
-	shipStats.minSpeed = SHIP_MIN_SPEED;
-	shipStats.maxRotationSpeed = SHIP_TOP_ROTATION_SPEED;
-	shipStats.speed = SHIP_SPEED;
-	shipStats.rotationSpeed = SHIP_ROT_SPEED;
-	shipStats.fireSpeed = SHIP_SHOT_DELAY;
-	entityManager.setComponentData<StatsComponent>(ship, shipStats);
-	PhysicsComponent shipPhys;
-	entityManager.setComponentData<PhysicsComponent>(ship, shipPhys);
-	PlayerComponent shipPlayer;
-	shipPlayer.shipType = true;
-	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
-	MovementComponent shipMovement;
-	entityManager.setComponentData<MovementComponent>(ship, shipMovement);
-	CollisionComponent shipCollision;
-	shipCollision.height = shipTexture.texture->getHeight();
-	shipCollision.width = shipTexture.texture->getWidth();
-	entityManager.setComponentData<CollisionComponent>(ship, shipCollision);
+	createShip(ShipType::TANK);
 	pause_text.str("");
 	pause_text << "PAUSE";
 	counted_frames = 0;
@@ -212,7 +181,7 @@ void Game::gameLoop() {
 	}
 	    //move spaceship
 		physicsSystem->update(&entityManager);
-		playerSystem->update();
+		playerSystem->update(time_step);
 		movementSystem->update(&entityManager, time_step);
 	//m_ship->move(time_step);
 	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
@@ -351,4 +320,47 @@ void Game::scoreUp() {
 
 void Game::restartScore() {
 	m_score = 0;
+}
+
+void Game::createShip(ShipType type) {
+	uint32_t ship = entityManager.createEntity();
+	entityManager.addComponent(ship, ComponentType::Player);
+	entityManager.addComponent(ship, ComponentType::Physics);
+	entityManager.addComponent(ship, ComponentType::Render);
+	entityManager.addComponent(ship, ComponentType::Movement);
+	entityManager.addComponent(ship, ComponentType::Collision);
+	 //Transform
+	TransformComponent shipTransform;
+	shipTransform.position.x = SCREEN_WIDTH / 2;
+	shipTransform.position.y = SCREEN_HEIGHT / 2;
+	entityManager.setComponentData<TransformComponent>(ship, shipTransform);
+	//Render
+	RenderComponent shipTexture;
+	shipTexture.texture = &g_ship_texture;
+	entityManager.setComponentData<RenderComponent>(ship, shipTexture);
+	// Stats
+	StatsComponent shipStats;
+	shipStats.maxSpeed = SHIP_TOP_SPEED;
+	shipStats.minSpeed = SHIP_MIN_SPEED;
+	shipStats.maxRotationSpeed = SHIP_TOP_ROTATION_SPEED;
+	shipStats.speed = SHIP_SPEED;
+	shipStats.rotationSpeed = SHIP_ROT_SPEED;
+	shipStats.fireSpeed = SHIP_SHOT_DELAY;
+	entityManager.setComponentData<StatsComponent>(ship, shipStats);
+	// Physics
+	PhysicsComponent shipPhys;
+	entityManager.setComponentData<PhysicsComponent>(ship, shipPhys);
+	// Player
+	PlayerComponent shipPlayer;
+	shipPlayer.type = type;
+	shipPlayer.abilities[ShipAbilities::LaserGun] = true;
+	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
+	// Movement
+	MovementComponent shipMovement;
+	entityManager.setComponentData<MovementComponent>(ship, shipMovement);
+	// Collision
+	CollisionComponent shipCollision;
+	shipCollision.height = shipTexture.texture->getHeight();
+	shipCollision.width = shipTexture.texture->getWidth();
+	entityManager.setComponentData<CollisionComponent>(ship, shipCollision);
 }

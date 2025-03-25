@@ -2,8 +2,9 @@
 #ifndef __KEYBOARD_MESSAGE_H_
 #define __KEYBOARD_MESSAGE_H_
 
-#include "message.h"
 #include <SDL3/SDL.h>
+
+#include "message.h"
 
 class KeyboardMessage : public Message {
 public:

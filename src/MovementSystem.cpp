@@ -23,7 +23,7 @@ void MovementSystem::updatePlayer(EntityManager* eMgr, double dT, uint32_t eID) 
     StatsComponent statsComp = eMgr->getComponentData<StatsComponent>(eID);
     TransformComponent transComp = eMgr->getComponentData<TransformComponent>(eID);
     PlayerComponent playerComp = eMgr->getComponentData<PlayerComponent>(eID);
-    if (playerComp.shipType) {
+    if (playerComp.type == ShipType::TANK) {
         double radians = transComp.rotDegrees * PI / 180;
         transComp.position.x += physComp.velocity.y * dT * sin(radians);
         transComp.position.y -= physComp.velocity.y * dT * cos(radians);
@@ -33,7 +33,7 @@ void MovementSystem::updatePlayer(EntityManager* eMgr, double dT, uint32_t eID) 
         } else if (transComp.rotDegrees < -180) {
             transComp.rotDegrees += 360;
         }
-    } else {
+    } else if (playerComp.type == ShipType::FREE_MOVE) {
         transComp.position += physComp.velocity * dT;
     }
     // physComp.velocity.x *= 0.95;

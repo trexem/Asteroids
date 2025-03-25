@@ -8,67 +8,10 @@ PlayerSystem::PlayerSystem(EntityManager* eManager) : eManager(eManager) {
     );
 }
 
-void PlayerSystem::update() {
+void PlayerSystem::update(double dT) {
     for (uint32_t eID : eManager->getEntitiesWithComponent(ComponentType::Player)) {
-        MovementComponent moveComp = eManager->getComponentData<MovementComponent>(eID);
-        PhysicsComponent physics = eManager->getComponentData<PhysicsComponent>(eID);
-        PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(eID);
-        StatsComponent statsComp = eManager->getComponentData<StatsComponent>(eID);
-        if (playerComp.shipType) {
-            if (moveComp.moveState[MoveState::MOVE_UP]) {
-                physics.velocity.y += statsComp.speed;
-            } else if (moveComp.moveState[MoveState::MOVE_DOWN]) {
-                physics.velocity.y -= statsComp.speed;
-            } else if (!moveComp.moveState[MoveState::MOVE_UP] && !moveComp.moveState[MoveState::MOVE_DOWN]) {
-                physics.velocity.y *= 0.95;
-                if (std::abs(physics.velocity.y) < 1) { //if the number is too small we round down to 0
-                    physics.velocity.y = 0;
-                }
-            }
-            if (moveComp.moveState[MoveState::MOVE_LEFT]) {
-                if (physics.rotVelocity > 0) {
-                    physics.rotVelocity = 0;
-                }
-                physics.rotVelocity -= statsComp.rotationSpeed;
-            } else if (moveComp.moveState[MoveState::MOVE_RIGHT]) {
-                if (physics.rotVelocity < 0) {
-                    physics.rotVelocity = 0;
-                }
-                physics.rotVelocity += statsComp.rotationSpeed;
-            } else if (!moveComp.moveState[MoveState::MOVE_LEFT] && !moveComp.moveState[MoveState::MOVE_RIGHT]) {
-                physics.rotVelocity *= 0.95;
-                if (std::abs(physics.rotVelocity) < 1) {     //if the number is too small we round down to 0
-                    physics.rotVelocity = 0;
-                }
-            }
-        } else {
-            if (moveComp.moveState[MoveState::MOVE_UP]) {
-                physics.velocity.y += statsComp.speed;
-            } else if (moveComp.moveState[MoveState::MOVE_DOWN]) {
-                physics.velocity.y -= statsComp.speed;
-            }
-            if (moveComp.moveState[MoveState::MOVE_LEFT]) {
-                physics.velocity.x -= statsComp.speed;
-            } else if (moveComp.moveState[MoveState::MOVE_RIGHT]) {
-                physics.velocity.x += statsComp.speed;
-            }
-        }
-        if (physics.velocity.y > statsComp.maxSpeed) { 
-            physics.velocity.y = statsComp.maxSpeed; 
-        } else if (physics.velocity.y < statsComp.minSpeed) {
-            physics.velocity.y = statsComp.minSpeed;
-        }
-        if (physics.velocity.x > statsComp.maxSpeed) { 
-            physics.velocity.x = statsComp.maxSpeed; 
-        } else if (physics.velocity.x < statsComp.minSpeed) {
-            physics.velocity.x = statsComp.minSpeed; 
-        }
-        if (physics.rotVelocity > statsComp.maxRotationSpeed) { 
-            physics.rotVelocity = statsComp.maxRotationSpeed; 
-        } else if (physics.rotVelocity < -statsComp.maxRotationSpeed) { 
-            physics.rotVelocity = -statsComp.maxRotationSpeed;
-        }
-        eManager->setComponentData<PhysicsComponent>(eID, physics);
+        updateMovement(eID);
+        updateAbilities(eID, dT);
     }
 }
 
@@ -83,4 +26,96 @@ void PlayerSystem::handleKeyboardInput(std::shared_ptr<KeyboardMessage> msg) {
         if (msg->key == SDLK_D) moveComp.moveState[MoveState::MOVE_RIGHT] = msg->pressed;
         eManager->setComponentData<MovementComponent>(eID, moveComp);
     }
+}
+
+void PlayerSystem::updateMovement(uint32_t eID) {
+    MovementComponent moveComp = eManager->getComponentData<MovementComponent>(eID);
+    PhysicsComponent physics = eManager->getComponentData<PhysicsComponent>(eID);
+    PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(eID);
+    StatsComponent stats = eManager->getComponentData<StatsComponent>(eID);
+    
+    if (playerComp.type == ShipType::TANK) {
+        if (moveComp.moveState[MoveState::MOVE_UP]) {
+            physics.velocity.y += stats.speed;
+        } else if (moveComp.moveState[MoveState::MOVE_DOWN]) {
+            physics.velocity.y -= stats.speed;
+        } else if (!moveComp.moveState[MoveState::MOVE_UP] && !moveComp.moveState[MoveState::MOVE_DOWN]) {
+            physics.velocity.y *= 0.95;
+            if (std::abs(physics.velocity.y) < 1) { //if the number is too small we round down to 0
+                physics.velocity.y = 0;
+            }
+        }
+        if (moveComp.moveState[MoveState::MOVE_LEFT]) {
+            if (physics.rotVelocity > 0) {
+                physics.rotVelocity = 0;
+            }
+            physics.rotVelocity -= stats.rotationSpeed;
+        } else if (moveComp.moveState[MoveState::MOVE_RIGHT]) {
+            if (physics.rotVelocity < 0) {
+                physics.rotVelocity = 0;
+            }
+            physics.rotVelocity += stats.rotationSpeed;
+        } else if (!moveComp.moveState[MoveState::MOVE_LEFT] && !moveComp.moveState[MoveState::MOVE_RIGHT]) {
+            physics.rotVelocity *= 0.95;
+            if (std::abs(physics.rotVelocity) < 1) {     //if the number is too small we round down to 0
+                physics.rotVelocity = 0;
+            }
+        }
+    } else if (playerComp.type == ShipType::FREE_MOVE) {
+        if (moveComp.moveState[MoveState::MOVE_UP]) {
+            physics.velocity.y += stats.speed;
+        } else if (moveComp.moveState[MoveState::MOVE_DOWN]) {
+            physics.velocity.y -= stats.speed;
+        }
+        if (moveComp.moveState[MoveState::MOVE_LEFT]) {
+            physics.velocity.x -= stats.speed;
+        } else if (moveComp.moveState[MoveState::MOVE_RIGHT]) {
+            physics.velocity.x += stats.speed;
+        }
+    }
+    if (physics.velocity.y > stats.maxSpeed) { 
+        physics.velocity.y = stats.maxSpeed; 
+    } else if (physics.velocity.y < stats.minSpeed) {
+        physics.velocity.y = stats.minSpeed;
+    }
+    if (physics.velocity.x > stats.maxSpeed) { 
+        physics.velocity.x = stats.maxSpeed; 
+    } else if (physics.velocity.x < stats.minSpeed) {
+        physics.velocity.x = stats.minSpeed; 
+    }
+    if (physics.rotVelocity > stats.maxRotationSpeed) { 
+        physics.rotVelocity = stats.maxRotationSpeed; 
+    } else if (physics.rotVelocity < -stats.maxRotationSpeed) { 
+        physics.rotVelocity = -stats.maxRotationSpeed;
+    }
+    eManager->setComponentData<PhysicsComponent>(eID, physics);
+}
+
+void PlayerSystem::updateAbilities(uint32_t eID, double dT) {
+    PlayerComponent player = eManager->getComponentData<PlayerComponent>(eID);
+    StatsComponent stats = eManager->getComponentData<StatsComponent>(eID);
+    for (size_t i = 0; i < static_cast<size_t>(ShipAbilities::ShipAbilitiesCount); i++) {
+        ShipAbilities ability = static_cast<ShipAbilities>(i);
+
+        if (player.abilities.test(i)) {
+            int level = player.abilityLevels[ability];
+            if (level >= 0 && level < 10) {
+                double cooldown = weaponCooldowns[i][level];
+                cooldown *= (1 - stats.fireSpeed);
+                player.abilityCooldowns[ability] += dT;
+                if (player.abilityCooldowns[ability] > cooldown) {
+                    auto msg = std::make_shared<AbilityMessage>(eID, ability);
+                    MessageManager::getInstance().sendMessage(msg);
+                    player.abilityCooldowns[ability] = 0;
+                }
+            }
+        }
+    }
+    eManager->setComponentData<PlayerComponent>(eID, player);
+}
+
+void PlayerSystem::addAbility(uint32_t eID, ShipAbilities ability) {
+    PlayerComponent player = eManager->getComponentData<PlayerComponent>(eID);
+    player.abilities[ability] = true;
+    eManager->setComponentData<PlayerComponent>(eID, player);
 }
