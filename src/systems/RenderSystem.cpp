@@ -1,7 +1,7 @@
 #include "RenderSystem.h"
 
-RenderSystem::RenderSystem(SDL_Window* window, const char * name) {
-    renderer = new Renderer(window, name);
+RenderSystem::RenderSystem(SDL_Window* window, const char * name)
+    : renderer(std::make_unique<Renderer>(window, name)) {
     renderer->changeColor(0x00, 0x00, 0x00, 0xFF);
 }
 

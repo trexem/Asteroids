@@ -8,10 +8,11 @@
 class RenderSystem : public System {
 public:
     RenderSystem(SDL_Window* window, const char * name);
+    ~RenderSystem() = default;
     void render(EntityManager& eM);
     SDL_Renderer* getRenderer();
 private:
-    Renderer* renderer;
+    std::unique_ptr<Renderer> renderer;
 };
 
 #endif // !__RENDER_SYSTEM_H_

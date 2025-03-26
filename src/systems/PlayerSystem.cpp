@@ -36,13 +36,13 @@ void PlayerSystem::updateMovement(uint32_t eID) {
     
     if (playerComp.type == ShipType::TANK) {
         if (moveComp.moveState[MoveState::MOVE_UP]) {
-            physics.velocity.y += stats.speed;
+            physics.velocity += stats.speed;
         } else if (moveComp.moveState[MoveState::MOVE_DOWN]) {
-            physics.velocity.y -= stats.speed;
+            physics.velocity -= stats.speed;
         } else if (!moveComp.moveState[MoveState::MOVE_UP] && !moveComp.moveState[MoveState::MOVE_DOWN]) {
-            physics.velocity.y *= 0.95;
-            if (std::abs(physics.velocity.y) < 1) { //if the number is too small we round down to 0
-                physics.velocity.y = 0;
+            physics.velocity *= 0.95;
+            if (std::abs(physics.velocity) < 1) { //if the number is too small we round down to 0
+                physics.velocity = 0;
             }
         }
         if (moveComp.moveState[MoveState::MOVE_LEFT]) {
@@ -63,25 +63,20 @@ void PlayerSystem::updateMovement(uint32_t eID) {
         }
     } else if (playerComp.type == ShipType::FREE_MOVE) {
         if (moveComp.moveState[MoveState::MOVE_UP]) {
-            physics.velocity.y += stats.speed;
+            physics.velocity += stats.speed;
         } else if (moveComp.moveState[MoveState::MOVE_DOWN]) {
-            physics.velocity.y -= stats.speed;
+            physics.velocity -= stats.speed;
         }
         if (moveComp.moveState[MoveState::MOVE_LEFT]) {
-            physics.velocity.x -= stats.speed;
+            physics.velocity -= stats.speed;
         } else if (moveComp.moveState[MoveState::MOVE_RIGHT]) {
-            physics.velocity.x += stats.speed;
+            physics.velocity += stats.speed;
         }
     }
-    if (physics.velocity.y > stats.maxSpeed) { 
-        physics.velocity.y = stats.maxSpeed; 
-    } else if (physics.velocity.y < stats.minSpeed) {
-        physics.velocity.y = stats.minSpeed;
-    }
-    if (physics.velocity.x > stats.maxSpeed) { 
-        physics.velocity.x = stats.maxSpeed; 
-    } else if (physics.velocity.x < stats.minSpeed) {
-        physics.velocity.x = stats.minSpeed; 
+    if (physics.velocity > stats.maxSpeed) { 
+        physics.velocity = stats.maxSpeed; 
+    } else if (physics.velocity < stats.minSpeed) {
+        physics.velocity = stats.minSpeed;
     }
     if (physics.rotVelocity > stats.maxRotationSpeed) { 
         physics.rotVelocity = stats.maxRotationSpeed; 
@@ -100,7 +95,7 @@ void PlayerSystem::updateAbilities(uint32_t eID, double dT) {
         if (player.abilities.test(i)) {
             int level = player.abilityLevels[ability];
             if (level >= 0 && level < 10) {
-                double cooldown = weaponCooldowns[i][level];
+                double cooldown = abilitiesCooldowns[i][level];
                 cooldown *= (1 - stats.fireSpeed);
                 player.abilityCooldowns[ability] += dT;
                 if (player.abilityCooldowns[ability] > cooldown) {

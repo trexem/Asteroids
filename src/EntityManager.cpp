@@ -27,7 +27,15 @@ uint32_t EntityManager::createEntity() {
 void EntityManager::destroyEntity(uint32_t entityID) {
     if (entityExists(entityID)) {
         entities.erase(std::remove(entities.begin(), entities.end(), entityID), entities.end());
+        
         entityComponentMasks[entityID].reset();
+
+        for (size_t i = 0; i < componentPools.size(); i++) {
+            if (entityID < componentPools[i].size()) {
+                componentPools[i][entityID].reset();  //Properly releases memory
+            }
+        }
+        
         entityCount--;
     }
 }
@@ -62,11 +70,7 @@ void EntityManager::addComponent(uint32_t entityID, ComponentType type) {
 void EntityManager::addComponents(uint32_t entityID, const std::vector<ComponentType>& types) {
     assert(entityID < maxEntities);
     for (const ComponentType type : types) {
-        entityComponentMasks[entityID][static_cast<size_t>(type)] = true;
-        if (componentPools[static_cast<size_t>(type)].size() <= entityID) {
-            componentPools[static_cast<size_t>(type)].resize(entityID + 1);
-        }
-        componentPools[static_cast<size_t>(type)][entityID] = nullptr;
+        addComponent(entityID, type);
     }
 }
 

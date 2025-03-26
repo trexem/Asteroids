@@ -13,10 +13,10 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	physicsSystem = std::make_unique<PhysicsSystem>();
 	movementSystem = std::make_unique<MovementSystem>();
 	collisionSystem = std::make_unique<CollisionSystem>();
+	abilitySystem = std::make_unique<AbilitySystem>(&entityManager);
 }
 
 Game::~Game() {
-	m_ship->free();
 	m_fps_text_texture.free();
 	m_pause_text_texture.free();
 	g_ship_texture.free();
@@ -128,7 +128,6 @@ void Game::start() {
 }
 
 void Game::restart() {
-	m_ship->restart();
 	deleteAsteroids();
 	generateAsteroids();
 	restartScore();
@@ -229,24 +228,38 @@ void Game::generateAsteroids() {
 		entityManager.addComponent(asteroid, ComponentType::Render);
 		entityManager.addComponent(asteroid, ComponentType::Physics);
 		entityManager.addComponent(asteroid, ComponentType::Collision);
+		entityManager.addComponent(asteroid, ComponentType::Type);
+		// Asteroid Texture
+		RenderComponent astTexture;
+		astTexture.texture = &g_asteroid_big_texture;
+		entityManager.setComponentData<RenderComponent>(asteroid, astTexture);
+		// Asteroid Transform
 		FPair p = generateSingleAsteroidPos();
 		TransformComponent astTransform;
 		astTransform.position = p;
-		RenderComponent astTexture;
-		astTexture.texture = &g_asteroid_big_texture;
+		astTransform.rotDegrees =  atan((SCREEN_CENTER.x - p.x - astTexture.texture->getWidth() / 2) 
+			/ (SCREEN_CENTER.y - p.y - astTexture.texture->getHeight() / 2)) - .087 + (rand() % 175) / 174;
+		if (SCREEN_CENTER.y - p.y < 0) {
+			astTransform.rotDegrees += PI;
+		}
 		entityManager.setComponentData<TransformComponent>(asteroid, astTransform);
-		entityManager.setComponentData<RenderComponent>(asteroid, astTexture);
+		// Asteroid Physics
 		PhysicsComponent astPhys;
-		astPhys.velocity = FPair(10.0f, 50.0f);
+		astPhys.velocity = rand() % 100 + 50;
 		entityManager.setComponentData<PhysicsComponent>(asteroid, astPhys);
+		// Asteroid Stats
 		StatsComponent astStats;
 		astStats.speed = 10.0f;
 		astStats.maxSpeed = 100.0f;
 		entityManager.setComponentData<StatsComponent>(asteroid, astStats);
+		// Asteroid Collider
 		CollisionComponent astCollision;
 		astCollision.height = astTexture.texture->getHeight();
 		astCollision.width = astTexture.texture->getWidth();
 		entityManager.setComponentData<CollisionComponent>(asteroid, astCollision);
+		// Asteroid type
+		TypeComponent type = EntityType::Asteroid;
+		entityManager.setComponentData<TypeComponent>(asteroid, type);
 	}
 	std::cout << std::endl;
 }
@@ -322,13 +335,14 @@ void Game::restartScore() {
 	m_score = 0;
 }
 
-void Game::createShip(ShipType type) {
+void Game::createShip(ShipType shipType) {
 	uint32_t ship = entityManager.createEntity();
 	entityManager.addComponent(ship, ComponentType::Player);
 	entityManager.addComponent(ship, ComponentType::Physics);
 	entityManager.addComponent(ship, ComponentType::Render);
 	entityManager.addComponent(ship, ComponentType::Movement);
 	entityManager.addComponent(ship, ComponentType::Collision);
+	entityManager.addComponent(ship, ComponentType::Type);
 	 //Transform
 	TransformComponent shipTransform;
 	shipTransform.position.x = SCREEN_WIDTH / 2;
@@ -352,15 +366,19 @@ void Game::createShip(ShipType type) {
 	entityManager.setComponentData<PhysicsComponent>(ship, shipPhys);
 	// Player
 	PlayerComponent shipPlayer;
-	shipPlayer.type = type;
+	shipPlayer.type = shipType;
 	shipPlayer.abilities[ShipAbilities::LaserGun] = true;
+	shipPlayer.abilityLevels[ShipAbilities::LaserGun] = 5;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
 	// Movement
 	MovementComponent shipMovement;
 	entityManager.setComponentData<MovementComponent>(ship, shipMovement);
 	// Collision
-	CollisionComponent shipCollision;
-	shipCollision.height = shipTexture.texture->getHeight();
-	shipCollision.width = shipTexture.texture->getWidth();
-	entityManager.setComponentData<CollisionComponent>(ship, shipCollision);
+	CollisionComponent shipCollider;
+	shipCollider.height = shipTexture.texture->getHeight();
+	shipCollider.width = shipTexture.texture->getWidth();
+	entityManager.setComponentData<CollisionComponent>(ship, shipCollider);
+	// Type
+	TypeComponent type = EntityType::Player;
+	entityManager.setComponentData<TypeComponent>(ship, type);
 }

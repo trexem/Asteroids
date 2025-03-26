@@ -12,6 +12,11 @@ public:
         y += pair.y;
         return FPair(x, y);
     }
+    FPair operator+=(const float s) { 
+        x += s;
+        y += s;
+        return FPair(x, y);
+    }
     FPair operator*(const float s) {
         x *= s;
         y *= s;

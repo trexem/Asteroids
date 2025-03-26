@@ -16,7 +16,7 @@
 const int SCREEN_FPS = 60;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 const bool IS_FPS_VISIBLE = false;
-const uint32_t MAX_ENTITIES = 1000;
+const uint32_t MAX_ENTITIES = 5000;
 
 #include "renderer.hpp"
 #include "window.hpp"
@@ -31,6 +31,7 @@ const uint32_t MAX_ENTITIES = 1000;
 #include "PhysicsSystem.h"
 #include "MovementSystem.h"
 #include "CollisionSystem.h"
+#include "AbilitySystem.h"
 
 
 class Game {
@@ -69,7 +70,6 @@ public:
 	EntityManager entityManager;  // Only one instance of EntityManager
 
 private:
-	Ship* m_ship;
 	std::unique_ptr<KeyboardSystem> keySystem;
 	std::unique_ptr<RenderSystem> renderSystem;
 	std::unique_ptr<UISystem> uiSystem;
@@ -77,6 +77,7 @@ private:
 	std::unique_ptr<PhysicsSystem> physicsSystem;
 	std::unique_ptr<MovementSystem> movementSystem;
 	std::unique_ptr<CollisionSystem> collisionSystem;
+	std::unique_ptr<AbilitySystem> abilitySystem;
 	Window m_window;
 	Texture m_fps_text_texture, m_pause_text_texture, m_score_text_texture;
 	Texture g_particle_shimmer_texture;
@@ -86,7 +87,7 @@ private:
 	Uint32 last_tick = 0, tick = 0, m_score = 0;
 	SDL_Event e; //event to catch keypresses
 
-	void createShip(ShipType type);
+	void createShip(ShipType shipType);
 };
 
 

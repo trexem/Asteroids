@@ -30,6 +30,7 @@
 *.exe
 *.out
 *.app
+*.log
 release/*
 /.vscode/*
 /.vs/Asteroids

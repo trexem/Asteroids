@@ -56,6 +56,48 @@ public:
     }
 
     template <typename T>
+    const T& getComponentData(uint32_t entityID) {
+        const ComponentType type = getComponentType<T>();
+        if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
+            if (entityID < componentPools[static_cast<size_t>(type)].size()) {
+                if (componentPools[static_cast<size_t>(type)][entityID]) {
+                    auto& componentData = *static_cast<T*>(componentPools[static_cast<size_t>(type)][entityID].get());
+                    return componentData;
+                }
+            }
+        }
+        // Handle the case where the component data does not exist.
+        throw std::runtime_error("Component data does not exist for the specified entity.");
+    }
+
+    template <typename T>
+const T* getComponentDataPtr(uint32_t entityID) const {
+    const ComponentType type = getComponentType<T>();
+    if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
+        if (entityID < componentPools[static_cast<size_t>(type)].size()) {
+            if (componentPools[static_cast<size_t>(type)][entityID]) {
+                return static_cast<T*>(componentPools[static_cast<size_t>(type)][entityID].get());
+            }
+        }
+    }
+    return nullptr; // Return nullptr instead of throwing an exception
+}
+
+// Non-const overload for modification
+template <typename T>
+T* getComponentDataPtr(uint32_t entityID) {
+    const ComponentType type = getComponentType<T>();
+    if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
+        if (entityID < componentPools[static_cast<size_t>(type)].size()) {
+            if (componentPools[static_cast<size_t>(type)][entityID]) {
+                return static_cast<T*>(componentPools[static_cast<size_t>(type)][entityID].get());
+            }
+        }
+    }
+    return nullptr; // Return nullptr instead of throwing an exception
+}
+
+    template <typename T>
     bool hasComponent(uint32_t entityID) const {
         ComponentType type = getComponentType<T>();
         return entityComponentMasks[entityID][static_cast<size_t>(type)];
@@ -87,6 +129,8 @@ private:
             return ComponentType::Stats;
         } else if constexpr (std::is_same<T, MovementComponent>::value) {
             return ComponentType::Movement;
+        } else if constexpr (std::is_same<T, TypeComponent>::value) {
+            return ComponentType::Type;
         }
     }
 

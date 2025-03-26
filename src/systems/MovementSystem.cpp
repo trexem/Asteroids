@@ -10,9 +10,15 @@ void MovementSystem::update(EntityManager* eMgr, double dT) {
             updatePlayer(eMgr, dT, eID);
         } else {
             PhysicsComponent physComp = eMgr->getComponentData<PhysicsComponent>(eID);
-            StatsComponent statsComp = eMgr->getComponentData<StatsComponent>(eID);
             TransformComponent transComp = eMgr->getComponentData<TransformComponent>(eID);
-            transComp.position += physComp.velocity * dT;
+            double radians = transComp.rotDegrees * PI / 180;
+            transComp.position.x += physComp.velocity * dT * sin(radians);
+            transComp.position.y -= physComp.velocity * dT * cos(radians);
+            if (transComp.position.x > SCREEN_WIDTH + 200 || transComp.position.x < -200 
+                || transComp.position.y > SCREEN_HEIGHT + 200 || transComp.position.y < -200) {
+                    eMgr->destroyEntity(eID);
+                    continue;
+                }
             eMgr->setComponentData<TransformComponent>(eID, transComp);
         }
     }
@@ -25,8 +31,8 @@ void MovementSystem::updatePlayer(EntityManager* eMgr, double dT, uint32_t eID) 
     PlayerComponent playerComp = eMgr->getComponentData<PlayerComponent>(eID);
     if (playerComp.type == ShipType::TANK) {
         double radians = transComp.rotDegrees * PI / 180;
-        transComp.position.x += physComp.velocity.y * dT * sin(radians);
-        transComp.position.y -= physComp.velocity.y * dT * cos(radians);
+        transComp.position.x += physComp.velocity * dT * sin(radians);
+        transComp.position.y -= physComp.velocity * dT * cos(radians);
         transComp.rotDegrees += physComp.rotVelocity * dT;
         if (transComp.rotDegrees > 180) {
             transComp.rotDegrees -= 360;
@@ -36,11 +42,6 @@ void MovementSystem::updatePlayer(EntityManager* eMgr, double dT, uint32_t eID) 
     } else if (playerComp.type == ShipType::FREE_MOVE) {
         transComp.position += physComp.velocity * dT;
     }
-    // physComp.velocity.x *= 0.95;
-    if (std::abs(physComp.velocity.x) < 1) { //if the number is too small we round down to 0
-        physComp.velocity.x = 0;
-    }
-
     eMgr->setComponentData<TransformComponent>(eID, transComp);
     eMgr->setComponentData<PhysicsComponent>(eID, physComp);
 }

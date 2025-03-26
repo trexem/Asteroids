@@ -17,6 +17,7 @@ enum class ComponentType {
     Player,
     Stats,
     Movement,
+    Type,
 
     Count
 };
@@ -32,6 +33,13 @@ enum MoveState {
     MoveStateCount
 };
 
+enum class EntityType {
+    Player,
+    Asteroid,
+    Enemy,
+    Shot
+};
+
 enum ShipType {
     TANK,
     FREE_MOVE,
@@ -44,9 +52,9 @@ struct TransformComponent {
 };
 
 struct PhysicsComponent {
-    FPair velocity;
+    float velocity;
     float rotVelocity {0.0f};
-    FPair acceleration;
+    float acceleration;
     float mass {1.0f};
 };
 
@@ -82,10 +90,18 @@ struct StatsComponent {
     float rotationSpeed {1.0f};
     float maxRotationSpeed {1.0f};
     float maxHealth {1.0f};
+    float baseDamage {1.0f}; // Multiplier for base damage of abilities****
     float fireSpeed {0.0f}; // goes from 0 to .9999, higher is faster, represents percentage of base weapon cooldown
-    float projectileSpeed {1.0f};
+    float projectileSpeed {1.0f}; // Multiplier for projectile speed
+    int projectileCount {0}; // Extra projectiles
 };
 
 struct MovementComponent {
     std::bitset<static_cast<size_t>(MoveState::MoveStateCount)> moveState;
+};
+
+struct TypeComponent {
+    EntityType type;
+
+    TypeComponent(EntityType t) : type(t) {}
 };
