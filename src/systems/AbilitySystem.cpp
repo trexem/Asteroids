@@ -88,6 +88,7 @@ void AbilitySystem::spawnLaserGun(uint32_t eID) {
         eManager->setComponentData<RenderComponent>(laser, laserTexture);
         eManager->setComponentData<CollisionComponent>(laser, laserCollider);
         eManager->setComponentData<TransformComponent>(laser, laserTransform);
+        std::cout << "Ended setting data for entity: " << laser << std::endl;
     }
     
 }

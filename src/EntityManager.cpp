@@ -19,6 +19,12 @@ uint32_t EntityManager::createEntity() {
         entities.push_back(newEntityID);
         entityCount++;
         std::cout << "Entity created: " << newEntityID << std::endl;
+        for (size_t i = 0; i < static_cast<size_t>(ComponentType::Count); ++i) {
+            if (entityComponentMasks[newEntityID][i]) {
+                // If this prints something bad is happening. entityComponentMasks for this newEntity should be empty
+                std::cout << "Component " << i << " assigned to entity " << newEntityID << std::endl;
+            }
+        }
         return newEntityID;
     } else {
         return 0; // or error code
@@ -29,15 +35,14 @@ void EntityManager::destroyEntity(uint32_t entityID) {
     if (entityExists(entityID)) {
         entities.erase(std::remove(entities.begin(), entities.end(), entityID), entities.end());
         
+        std::cout << "Destroying Entity " << entityID << std::endl;
         entityComponentMasks[entityID].reset();
-
         for (size_t i = 0; i < componentPools.size(); i++) {
             if (entityID < componentPools[i].size()) {
                 componentPools[i][entityID].reset();  //Properly releases memory
             }
         }
         entityCount--;
-        std::cout << "Entity destroyed: " << entityID << std::endl;
     }
 }
 
@@ -96,7 +101,7 @@ void EntityManager::removeComponents(uint32_t entityID, const std::vector<Compon
 
 std::vector<uint32_t> EntityManager::getEntitiesWithComponent(ComponentType type) {
     std::vector<uint32_t> entitiesWithComponent;
-    for (uint32_t entityID = 0; entityID < entityCount; entityID++) {
+    for (uint32_t entityID : entities) {
         if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
             entitiesWithComponent.push_back(entityID);
         }
@@ -111,4 +116,16 @@ uint32_t EntityManager::findAvailableEntityID() {
         }
     }
     return 0;
+}
+
+void EntityManager::printComponentPool(uint32_t entityID) {
+    std::cout << "Component Pools for Entity " << entityID << ":\n";
+    for (size_t typeIdx = 0; typeIdx < static_cast<size_t>(ComponentType::Count); ++typeIdx) {
+        auto& pool = componentPools[typeIdx];
+        if (entityID < pool.size() && pool[entityID]) {
+            std::cout << "  Component Type " << typeIdx << " at address " << pool[entityID].get() << std::endl;
+        } else {
+            std::cout << "  Component Type " << typeIdx << " is empty for this entity.\n";
+        }
+    }
 }

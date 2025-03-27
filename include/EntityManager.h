@@ -109,6 +109,7 @@ T* getComponentDataPtr(uint32_t entityID) {
     std::vector<std::bitset<64>> entityComponentMasks;
 private:
     uint32_t findAvailableEntityID();
+    void printComponentPool(uint32_t entityID);
 
     template <typename T>
     ComponentType getComponentType() const {
