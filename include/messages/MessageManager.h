@@ -7,6 +7,7 @@
 #include <functional>
 #include <unordered_map>
 #include <iostream>
+#include <vector>
 
 #include "message.h"
 

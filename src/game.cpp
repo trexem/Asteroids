@@ -368,7 +368,7 @@ void Game::createShip(ShipType shipType) {
 	PlayerComponent shipPlayer;
 	shipPlayer.type = shipType;
 	shipPlayer.abilities[ShipAbilities::LaserGun] = true;
-	shipPlayer.abilityLevels[ShipAbilities::LaserGun] = 5;
+	shipPlayer.abilityLevels[ShipAbilities::LaserGun] = 9;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
 	// Movement
 	MovementComponent shipMovement;

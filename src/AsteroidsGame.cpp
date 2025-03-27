@@ -1,10 +1,5 @@
 #include "game.hpp"
 
-//gives me error for compiling with g++ for windows app, so i do this
-#ifdef main
-# undef main
-#endif /* main */
-
 int main(int argc, char const* argv[]) {
 	Game game;
 	bool is_initialized = game.initialize("Asteroids - by trexem",

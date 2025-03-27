@@ -8,6 +8,7 @@ RenderSystem::RenderSystem(SDL_Window* window, const char * name)
 SDL_Renderer* RenderSystem::getRenderer() {
 	return renderer->getRenderer();
 }
+
 void RenderSystem::render(EntityManager& eM) {
     renderer->clear();
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::Render)) {
@@ -16,5 +17,4 @@ void RenderSystem::render(EntityManager& eM) {
         rComp.texture->renderEx((int)trComp.position.x, (int)trComp.position.y, nullptr, (int)trComp.rotDegrees, nullptr, SDL_FLIP_NONE);
     }
     renderer->render();
-
 }

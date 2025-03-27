@@ -80,7 +80,7 @@ struct PlayerComponent {
     ShipType type;
     std::bitset<static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilities;
     std::unordered_map<ShipAbilities, double> abilityCooldowns;
-    std::unordered_map<ShipAbilities, uint> abilityLevels;
+    std::unordered_map<ShipAbilities, unsigned int> abilityLevels;
 };
 
 struct StatsComponent {
