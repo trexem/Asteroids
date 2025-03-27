@@ -34,7 +34,22 @@ add_subdirectory(vendored/sdl_image EXCLUDE_FROM_ALL)
 add_executable(${PROJECT_NAME} ${SOURCES})
  
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
-target_compile_options(${PROJECT_NAME} PRIVATE -g -O0)
+
+set(DATA_SOURCE_DIR "${PROJECT_SOURCE_DIR}/data")
+set(DATA_DEBUG_DIR "${CMAKE_BINARY_DIR}/Debug/data")
+set(DATA_RELEASE_DIR "${CMAKE_BINARY_DIR}/Release/data")
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${DATA_SOURCE_DIR}
+        ${DATA_RELEASE_DIR}
+)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${DATA_SOURCE_DIR}
+        ${DATA_DEBUG_DIR}
+)
 
 if (MSVC)
   target_compile_options(${PROJECT_NAME} PRIVATE /std:c++latest)
@@ -50,6 +65,7 @@ if (USE_MINGW)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(${PROJECT_NAME} PRIVATE -g -O0)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak")
 endif()

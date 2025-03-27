@@ -18,6 +18,7 @@ uint32_t EntityManager::createEntity() {
         uint32_t newEntityID = findAvailableEntityID();
         entities.push_back(newEntityID);
         entityCount++;
+        std::cout << "Entity created: " << newEntityID << std::endl;
         return newEntityID;
     } else {
         return 0; // or error code
@@ -35,8 +36,8 @@ void EntityManager::destroyEntity(uint32_t entityID) {
                 componentPools[i][entityID].reset();  //Properly releases memory
             }
         }
-        
         entityCount--;
+        std::cout << "Entity destroyed: " << entityID << std::endl;
     }
 }
 

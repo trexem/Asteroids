@@ -4,7 +4,7 @@
 
 #include <cstddef>
 
-enum ShipAbilities {
+enum class ShipAbilities : size_t{
     LaserGun,
     Rocket,
 

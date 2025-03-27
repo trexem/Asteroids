@@ -29,10 +29,12 @@ void AbilitySystem::spawnLaserGun(uint32_t eID) {
     TypeComponent type = EntityType::Shot;
     // Entity Physics
     PhysicsComponent laserPhysics;
-    laserPhysics.velocity = abilitiesProjectileSpeed[ability][player->abilityLevels[ability]] * stats->projectileSpeed;
+    laserPhysics.velocity = abilitiesProjectileSpeed[static_cast<size_t>(ability)][player->abilityLevels[static_cast<size_t>(ability)]]
+        * stats->projectileSpeed;
     // Entity Damage
     DamageComponent damage;
-    damage.damage = abilitiesDamage[ability][player->abilityLevels[ability]] * stats->baseDamage;
+    damage.damage = abilitiesDamage[static_cast<size_t>(ability)][player->abilityLevels[static_cast<size_t>(ability)]] 
+        * stats->baseDamage;
     // Entity Render
     RenderComponent laserTexture;
     laserTexture.texture = &g_shot_texture;
@@ -43,25 +45,30 @@ void AbilitySystem::spawnLaserGun(uint32_t eID) {
     
     // Transform
     double radians = transform->rotDegrees * PI / 180;
+    double sinRadians = sin(radians);
+    double cosRadians = cos(radians);
     int laserWidth = laserTexture.texture->getWidth();
     int laserWidthHalfed = laserTexture.texture->getWidth() / 2;
     int shipWidth = render->texture->getWidth() / 2;
     int shipHeight = render->texture->getHeight() / 2;
-    float sinShipHeight = sin(radians) * shipHeight;
-    float cosShipHeight = cos(radians) * shipHeight;
+    float sinShipHeight = sinRadians * shipHeight;
+    float cosShipHeight = cosRadians * shipHeight;
 
-    int shots = abilitiesProjectileCount[ability][player->abilityLevels[ability]] + stats->projectileCount;
-    int shotsWidthHalfed = ((shots - 1) * (3 + laserWidth)) / 2;
-    std::cout << "Ship Pos: " << transform->position.x << " " << transform->position.y << " Ship rotation: "  
+    int shots = abilitiesProjectileCount[static_cast<size_t>(ability)][player->abilityLevels[static_cast<size_t>(ability)]] 
+        + stats->projectileCount;
+    int shotsWidthHalved = ((shots - 1) * (3 + laserWidth)) / 2;
+    /*std::cout << "Ship Pos: " << transform->position.x << " " << transform->position.y << " Ship rotation: "  
         << transform->rotDegrees << " Ship width/height halfed: " << shipWidth << " " << shipHeight 
-        << " Shots: " << shots << " ShotsWidthHalfed: " << shotsWidthHalfed << std::endl;
+        << " Shots: " << shots << " shotsWidthHalved: " << shotsWidthHalved << std::endl;*/
     for (int i = 0; i < shots; i++) {
         // To shoot always from the center top of the ship.
         FPair position;
-        position.x = transform->position.x + sinShipHeight + shipWidth - laserWidthHalfed
-            - shotsWidthHalfed + i * ((3 + laserWidth));
-        position.y = transform->position.y + shipHeight - cosShipHeight;
-        std::cout << "i: " << i << " Position: " << position.x << " " << position.y << std::endl;
+        float offset = - laserWidthHalfed - shotsWidthHalved + i * ((3 + laserWidth));
+        float xOffset = offset * cosRadians;
+        float yOffset = offset * sinRadians;
+        position.x = transform->position.x + sinShipHeight + shipWidth + xOffset;
+        position.y = transform->position.y + shipHeight - cosShipHeight + yOffset;
+        //std::cout << "i: " << i << " Position: " << position.x << " " << position.y << std::endl;
         // Entity Transform
         TransformComponent laserTransform;
         laserTransform.position = position;

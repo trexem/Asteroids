@@ -33,8 +33,10 @@
 *.log
 release/*
 /.vscode/*
-/.vs/Asteroids
+/.vs/*
 /Asteroids/x64
+out/*
 /x64/Debug
 /Asteroids/Asteroids.vcxproj
 build/*
+CMakeSettings.json

@@ -93,15 +93,15 @@ void PlayerSystem::updateAbilities(uint32_t eID, double dT) {
         ShipAbilities ability = static_cast<ShipAbilities>(i);
 
         if (player.abilities.test(i)) {
-            int level = player.abilityLevels[ability];
+            int level = player.abilityLevels[static_cast<size_t>(ability)];
             if (level >= 0 && level < 10) {
                 double cooldown = abilitiesCooldowns[i][level];
                 cooldown *= (1 - stats.fireSpeed);
-                player.abilityCooldowns[ability] += dT;
-                if (player.abilityCooldowns[ability] > cooldown) {
+                player.abilityCooldowns[static_cast<size_t>(ability)] += dT;
+                if (player.abilityCooldowns[static_cast<size_t>(ability)] > cooldown) {
                     auto msg = std::make_shared<AbilityMessage>(eID, ability);
                     MessageManager::getInstance().sendMessage(msg);
-                    player.abilityCooldowns[ability] = 0;
+                    player.abilityCooldowns[static_cast<size_t>(ability)] = 0;
                 }
             }
         }
@@ -111,6 +111,6 @@ void PlayerSystem::updateAbilities(uint32_t eID, double dT) {
 
 void PlayerSystem::addAbility(uint32_t eID, ShipAbilities ability) {
     PlayerComponent player = eManager->getComponentData<PlayerComponent>(eID);
-    player.abilities[ability] = true;
+    player.abilities[static_cast<size_t>(ability)] = true;
     eManager->setComponentData<PlayerComponent>(eID, player);
 }

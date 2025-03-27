@@ -12,6 +12,7 @@ SDL_Renderer* RenderSystem::getRenderer() {
 void RenderSystem::render(EntityManager& eM) {
     renderer->clear();
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::Render)) {
+        std::cout << "Renddering entity: " << eID << std::endl;
         RenderComponent rComp = eM.getComponentData<RenderComponent>(eID);
         TransformComponent trComp = eM.getComponentData<TransformComponent>(eID);
         rComp.texture->renderEx((int)trComp.position.x, (int)trComp.position.y, nullptr, (int)trComp.rotDegrees, nullptr, SDL_FLIP_NONE);

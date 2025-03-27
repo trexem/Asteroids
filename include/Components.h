@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <array>
 #include <unordered_map>
 
 #include "abilities.h"
@@ -79,8 +79,8 @@ struct DamageComponent {
 struct PlayerComponent {
     ShipType type;
     std::bitset<static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilities;
-    std::unordered_map<ShipAbilities, double> abilityCooldowns;
-    std::unordered_map<ShipAbilities, unsigned int> abilityLevels;
+    std::array<double, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilityCooldowns{};
+    std::array<unsigned int, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilityLevels{};
 };
 
 struct StatsComponent {
