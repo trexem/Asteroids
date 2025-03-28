@@ -16,15 +16,15 @@
 
 const int SCREEN_FPS = 60;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
-const bool IS_FPS_VISIBLE = false;
+const bool IS_FPS_VISIBLE = true;
 const uint32_t MAX_ENTITIES = 5000;
+const int TOTAL_ASTEROIDS = 20;
 
 #include "renderer.hpp"
 #include "window.hpp"
 #include "timer.hpp"
 #include "EntityManager.h"
 #include "ship.hpp"
-#include "asteroid.hpp"
 #include "UISystem.h"
 #include "PlayerSystem.h"
 #include "KeyboardSystem.h"
@@ -57,8 +57,6 @@ public:
 	Renderer getRenderer(void);
 	Window getWindow(void);
 	void checkCollisions(void);
-	void deleteDeadAsteroids(void);
-	void deleteAsteroids(void);
 	void scoreUp(void);
 	void restartScore(void);
 
@@ -86,6 +84,8 @@ private:
 	TTF_Font* m_pause_ttf;
 	TTF_Font* m_score_ttf;
 	Uint32 last_tick = 0, tick = 0, m_score = 0;
+	uint32_t fpsEntity, scoreEntity, pauseEntity;
+	RenderComponent fpsTexture, scoreTexture, pauseTexture;
 	SDL_Event e; //event to catch keypresses
 
 	void createShip(ShipType shipType);

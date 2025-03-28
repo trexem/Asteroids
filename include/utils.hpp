@@ -16,6 +16,7 @@ struct Pos
 const int SCREEN_WIDTH = 1920;
 const int SCREEN_HEIGHT = 1080;
 const FPair SCREEN_CENTER = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+const FPair SCREEN_TOP_CENTER = { SCREEN_CENTER.x, 0 };
 const double PI = 3.14159264;
 extern Pos g_screen_center;
 

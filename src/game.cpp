@@ -14,11 +14,12 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	movementSystem = std::make_unique<MovementSystem>();
 	collisionSystem = std::make_unique<CollisionSystem>();
 	abilitySystem = std::make_unique<AbilitySystem>(&entityManager);
+	fpsTexture.texture = &m_fps_text_texture;
+	scoreTexture.texture = &m_score_text_texture;
+	pauseTexture.texture = &m_pause_text_texture;
 }
 
 Game::~Game() {
-	m_fps_text_texture.free();
-	m_pause_text_texture.free();
 	g_ship_texture.free();
 	g_particle_texture.free();
 	g_particle_shimmer_texture.free();
@@ -117,9 +118,25 @@ void Game::start() {
 	pause_text.str("");
 	pause_text << "PAUSE";
 	counted_frames = 0;
-	if (!m_pause_text_texture.loadFromRenderedText(pause_text.str().c_str(), white_color, m_pause_ttf)) {
+	fpsEntity = entityManager.createEntity();
+	entityManager.addComponent(fpsEntity, ComponentType::Render);
+	TransformComponent trComp;
+	entityManager.setComponentData<RenderComponent>(fpsEntity, fpsTexture);
+	trComp.position = FPair(0 , 0);
+	entityManager.setComponentData<TransformComponent>(fpsEntity, trComp);
+	scoreEntity = entityManager.createEntity();
+	entityManager.addComponent(scoreEntity, ComponentType::Render);
+	trComp.position = SCREEN_TOP_CENTER;
+	entityManager.setComponentData<RenderComponent>(scoreEntity, scoreTexture);
+	entityManager.setComponentData<TransformComponent>(scoreEntity, trComp);
+	pauseEntity = entityManager.createEntity();
+	entityManager.addComponent(pauseEntity, ComponentType::Render);
+	trComp.position = FPair(-200, -200);
+	entityManager.setComponentData<TransformComponent>(pauseEntity, trComp);
+	if (!pauseTexture.texture->loadFromRenderedText(pause_text.str().c_str(), white_color, m_pause_ttf)) {
 		std::cout << "Unable to render FPS texture!" << '\n';
 	}
+	entityManager.setComponentData<RenderComponent>(pauseEntity, pauseTexture);
 	generateAsteroids();
 	//start fps timer
 	fps_timer.start();
@@ -128,7 +145,6 @@ void Game::start() {
 }
 
 void Game::restart() {
-	deleteAsteroids();
 	generateAsteroids();
 	restartScore();
 }
@@ -149,73 +165,60 @@ void Game::gameLoop() {
 			}
 		}
 	}
-	    //The array current_key_states has the state of the pressed keys
-	const bool* current_key_states = SDL_GetKeyboardState(NULL);
+	//The array current_key_states has the state of the pressed keys
+	// const bool* current_key_states = SDL_GetKeyboardState(NULL);
 
-	    //calculate fps: how many frames divided by the time that has passed since the game started
+	//calculate fps: how many frames divided by the time that has passed since the game started
 	float avg_fps = counted_frames / (fps_timer.getTicks() / 1000.f);
 	if (avg_fps > 9999) {
 		avg_fps = 0;
 	}
-	    //Set text for the fps
+	//Set text for the fps
 	if (IS_FPS_VISIBLE) {
 		time_text.str("");
 		time_text << "Average FPS: " << avg_fps;
-		if (!m_fps_text_texture.loadFromRenderedText(time_text.str().c_str(), white_color, m_fps_ttf)) {
+		if (!fpsTexture.texture->loadFromRenderedText(time_text.str().c_str(), white_color, m_fps_ttf)) {
 			std::cout << "Unable to render FPS texture!" << '\n';
 		}
+		entityManager.setComponentData<RenderComponent>(fpsEntity, fpsTexture);
 	}
 	//Set Score text
 	score_text.str("");
 	score_text << "Score: " << m_score;
-	if (!m_score_text_texture.loadFromRenderedText(score_text.str().c_str(), white_color, m_score_ttf)) {
+	if (!scoreTexture.texture->loadFromRenderedText(score_text.str().c_str(), white_color, m_score_ttf)) {
 		std::cout << "Unable to render Score texture!" << '\n';
 	}
-	    //Calculate time between previous movement and now
+	entityManager.setComponentData<RenderComponent>(scoreEntity, scoreTexture);
+
+	//Calculate time between previous movement and now
 	time_step = step_timer.getTicks() / 1000.0;
-	    //while in pause, we don't take account of keys to move the spaceship
-	if (!pause) {
-		//m_ship->resume();
-		//m_ship->handleInput(current_key_states);
-	}
-	    //move spaceship
-		physicsSystem->update(&entityManager);
-		playerSystem->update(time_step);
-		movementSystem->update(&entityManager, time_step);
-	//m_ship->move(time_step);
-	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
-		//m_asteroids[i]->move(time_step);
-	}
-	//Check collisions
-	//checkCollisions();
-	collisionSystem->update(&entityManager);
-	    //restart step timer
-	step_timer.start();
 	
-	    //Clear renderer
-	    //Render
-	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
-		//m_asteroids[i]->render();
-	}
-	if (IS_FPS_VISIBLE) { m_fps_text_texture.render(0, 0); }
-	m_score_text_texture.render(0, 0);
+	//UpdateSystems
+	physicsSystem->update(&entityManager);
+	playerSystem->update(time_step);
+	movementSystem->update(&entityManager, time_step);
+	//Check collisions
+	collisionSystem->update(&entityManager);
+	//restart step 
+	step_timer.start();
 	    //Render PAUSE text while game is paused
 	if (pause) {
 		step_timer.pause();
-		//m_ship->pause();
-		m_pause_text_texture.render(
-			SCREEN_WIDTH / 2 - m_pause_text_texture.getWidth() / 2,
-			SCREEN_HEIGHT / 2 - m_pause_text_texture.getHeight() / 2
-			);
+		TransformComponent tr;
+		tr.position = SCREEN_CENTER;
+		entityManager.setComponentData<TransformComponent>(pauseEntity, tr);
+	} else {
+		TransformComponent tr;
+		tr.position = FPair(-200, -200);
+		entityManager.setComponentData<TransformComponent>(pauseEntity, tr);
 	}
-	    //display in window the render
-		renderSystem->render(entityManager);
+	//display in window the render
+	renderSystem->render(entityManager);
 	++counted_frames;
-	    //Wait time to cap FPS at 60
+	//Wait time to cap FPS at 60
 	int frame_ticks = cap_timer.getTicks();
-	if (frame_ticks < SCREEN_TICKS_PER_FRAME)
-	{
-		    //Wait remaining time
+	if (frame_ticks < SCREEN_TICKS_PER_FRAME) {
+		//Wait remaining time
 		SDL_Delay(SCREEN_TICKS_PER_FRAME - frame_ticks);
 	}
 }
@@ -237,8 +240,9 @@ void Game::generateAsteroids() {
 		FPair p = generateSingleAsteroidPos();
 		TransformComponent astTransform;
 		astTransform.position = p;
-		astTransform.rotDegrees =  atan((SCREEN_CENTER.x - p.x - astTexture.texture->getWidth() / 2) 
-			/ (SCREEN_CENTER.y - p.y - astTexture.texture->getHeight() / 2)) - .087 + (rand() % 175) / 174;
+		astTransform.rotDegrees =  (atan((SCREEN_CENTER.x - p.x - astTexture.texture->getWidth() / 2) 
+			/ (SCREEN_CENTER.y - p.y - astTexture.texture->getHeight() / 2)) - .087 + (rand() % 175) / 174)
+			* 180 / PI;
 		if (SCREEN_CENTER.y - p.y < 0) {
 			astTransform.rotDegrees += PI;
 		}
@@ -276,55 +280,6 @@ FPair Game::generateSingleAsteroidPos() {
 		: rand() % 1320 - 120;
 	
 	return FPair(x, y);
-}
-
-void Game::checkCollisions() {
-	// for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
-	// 	//Check collision between ship and asteroid
-	// 	if (checkCollision(m_ship->getCollider(), m_asteroids[i]->getCollider())) {
-	// 		//TODO: Stop game, show final score and options menu
-	// 		//for now let's restart
-	// 		restart();
-	// 	}
-	// 	//check collisions between each shot and each asteroid
-	// 	for (int j = 0; j < SHIP_MAX_SHOTS; ++j) {
-	// 		if (m_ship->m_shots[j] != nullptr) {
-	// 			if (checkCollision(m_ship->m_shots[j]->getCollider(), m_asteroids[i]->getCollider())) {
-	// 				//Destroy asteroid
-	// 				m_asteroids[i]->destroy();
-	// 				//Destroy shot
-	// 				m_ship->m_shots[j]->kill();
-	// 				//+1 to score
-	// 				scoreUp();
-	// 			}
-	// 		}
-	// 	}
-	// 	//check if asteroid is out of bounds
-	// 	if ( m_asteroids[i]->getX() > 2300 || m_asteroids[i]->getX() < -500 ||
-	// 		 m_asteroids[i]->getY() > 1500 || m_asteroids[i]->getY() < -500 ) {
-	// 		//Destroy asteroid
-	// 		m_asteroids[i]->destroy();
-	// 	}
-
-	// }
-	// deleteDeadAsteroids();
-}
-
-void Game::deleteDeadAsteroids() {
-	// for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
-	// 	if (m_asteroids[i]->isDead()) {
-	// 		delete m_asteroids[i];
-			
-	// 		FPair p = generateSingleAsteroidPos();
-	// 		m_asteroids[i] = new Asteroid(p, BIG_ASTEROID);
-	// 	}
-	// }
-}
-
-void Game::deleteAsteroids() {
-	// for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
-	// 	delete m_asteroids[i];
-	// }
 }
 
 void Game::scoreUp() {
