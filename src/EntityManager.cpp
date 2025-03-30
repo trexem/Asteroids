@@ -18,7 +18,7 @@ uint32_t EntityManager::createEntity() {
         uint32_t newEntityID = findAvailableEntityID();
         entities.push_back(newEntityID);
         entityCount++;
-        std::cout << "Entity created: " << newEntityID << std::endl;
+        // std::cout << "Entity created: " << newEntityID << std::endl;
         for (size_t i = 0; i < static_cast<size_t>(ComponentType::Count); ++i) {
             if (entityComponentMasks[newEntityID][i]) {
                 // If this prints something bad is happening. entityComponentMasks for this newEntity should be empty
@@ -35,7 +35,7 @@ void EntityManager::destroyEntity(uint32_t entityID) {
     if (entityExists(entityID)) {
         entities.erase(std::remove(entities.begin(), entities.end(), entityID), entities.end());
         
-        std::cout << "Destroying Entity " << entityID << std::endl;
+        // std::cout << "Destroying Entity " << entityID << std::endl;
         entityComponentMasks[entityID].reset();
         for (size_t i = 0; i < componentPools.size(); i++) {
             if (entityID < componentPools[i].size()) {
@@ -48,6 +48,17 @@ void EntityManager::destroyEntity(uint32_t entityID) {
 
 void EntityManager::addComponent(uint32_t entityID, ComponentType type) {
     assert(entityID < maxEntities);
+    // Add TypeComponent if it's not added with default type
+    if (!hasComponent<TypeComponent>(entityID)) {
+        entityComponentMasks[entityID][static_cast<size_t>(ComponentType::Type)] = true;
+        if (componentPools[static_cast<size_t>(ComponentType::Type)].size() <= entityID) {
+            componentPools[static_cast<size_t>(ComponentType::Type)].resize(entityID + 1);
+        }
+        componentPools[static_cast<size_t>(ComponentType::Type)][entityID] = nullptr;
+        TypeComponent type = EntityType::Default;
+        setComponentData<TypeComponent>(entityID, type);
+    }
+
     // Add TransformComponent if renderComponent is being added
     if (type == ComponentType::Render && !hasComponent<TransformComponent>(entityID)) {
         entityComponentMasks[entityID][static_cast<size_t>(ComponentType::Transform)] = true;

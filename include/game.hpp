@@ -23,8 +23,8 @@ const int TOTAL_ASTEROIDS = 20;
 #include "renderer.hpp"
 #include "window.hpp"
 #include "timer.hpp"
+#include "Camera.h"
 #include "EntityManager.h"
-#include "ship.hpp"
 #include "UISystem.h"
 #include "PlayerSystem.h"
 #include "KeyboardSystem.h"
@@ -77,6 +77,7 @@ private:
 	std::unique_ptr<MovementSystem> movementSystem;
 	std::unique_ptr<CollisionSystem> collisionSystem;
 	std::unique_ptr<AbilitySystem> abilitySystem;
+	Camera camera;
 	Window m_window;
 	Texture m_fps_text_texture, m_pause_text_texture, m_score_text_texture;
 	Texture g_particle_shimmer_texture;

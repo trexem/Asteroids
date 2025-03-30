@@ -11,7 +11,7 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	uiSystem = std::make_unique<UISystem>();
 	playerSystem = std::make_unique<PlayerSystem>(&entityManager);
 	physicsSystem = std::make_unique<PhysicsSystem>();
-	movementSystem = std::make_unique<MovementSystem>();
+	movementSystem = std::make_unique<MovementSystem>(&camera);
 	collisionSystem = std::make_unique<CollisionSystem>();
 	abilitySystem = std::make_unique<AbilitySystem>(&entityManager);
 	fpsTexture.texture = &m_fps_text_texture;
@@ -46,7 +46,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 			std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << '\n';
 			success = false;
 		} else {
-			renderSystem = std::make_unique<RenderSystem>(m_window.getWindow(), "");
+			renderSystem = std::make_unique<RenderSystem>(m_window.getWindow(), "", &camera);
 			if (!renderSystem->getRenderer()) {
 				std::cout << "Renderer could not be created! SDL Error: " << SDL_GetError() << '\n';
 				success = false;
@@ -119,20 +119,27 @@ void Game::start() {
 	pause_text << "PAUSE";
 	counted_frames = 0;
 	fpsEntity = entityManager.createEntity();
+	TypeComponent uexType = EntityType::UEX;
 	entityManager.addComponent(fpsEntity, ComponentType::Render);
+	entityManager.addComponent(fpsEntity, ComponentType::Type);
 	TransformComponent trComp;
 	entityManager.setComponentData<RenderComponent>(fpsEntity, fpsTexture);
 	trComp.position = FPair(0 , 0);
 	entityManager.setComponentData<TransformComponent>(fpsEntity, trComp);
+	entityManager.setComponentData<TypeComponent>(fpsEntity, uexType);
 	scoreEntity = entityManager.createEntity();
 	entityManager.addComponent(scoreEntity, ComponentType::Render);
+	entityManager.addComponent(scoreEntity, ComponentType::Type);
 	trComp.position = SCREEN_TOP_CENTER;
 	entityManager.setComponentData<RenderComponent>(scoreEntity, scoreTexture);
 	entityManager.setComponentData<TransformComponent>(scoreEntity, trComp);
+	entityManager.setComponentData<TypeComponent>(scoreEntity, uexType);
 	pauseEntity = entityManager.createEntity();
 	entityManager.addComponent(pauseEntity, ComponentType::Render);
+	entityManager.addComponent(pauseEntity, ComponentType::Type);
 	trComp.position = FPair(-200, -200);
 	entityManager.setComponentData<TransformComponent>(pauseEntity, trComp);
+	entityManager.setComponentData<TypeComponent>(pauseEntity, uexType);
 	if (!pauseTexture.texture->loadFromRenderedText(pause_text.str().c_str(), white_color, m_pause_ttf)) {
 		std::cout << "Unable to render FPS texture!" << '\n';
 	}

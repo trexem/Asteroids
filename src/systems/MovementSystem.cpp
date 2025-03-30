@@ -1,7 +1,8 @@
-#include "MovementSystem.h"
-#include "utils.hpp"
 #include <cmath>
 #include <iostream>
+
+#include "MovementSystem.h"
+#include "utils.hpp"
 
 void MovementSystem::update(EntityManager* eMgr, double dT) {
     for (uint32_t eID : eMgr->getEntitiesWithComponent(ComponentType::Physics)) {
@@ -42,6 +43,8 @@ void MovementSystem::updatePlayer(EntityManager* eMgr, double dT, uint32_t eID) 
     } else if (playerComp.type == ShipType::FREE_MOVE) {
         transComp.position += physComp.velocity * dT;
     }
+    camera->position.x = transComp.position.x - SCREEN_CENTER.x;
+    camera->position.y = transComp.position.y - SCREEN_CENTER.y;
     eMgr->setComponentData<TransformComponent>(eID, transComp);
     eMgr->setComponentData<PhysicsComponent>(eID, physComp);
 }

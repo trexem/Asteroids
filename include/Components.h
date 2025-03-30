@@ -37,7 +37,10 @@ enum class EntityType {
     Player,
     Asteroid,
     Enemy,
-    Shot
+    Shot,
+    UEX,
+
+    Default
 };
 
 enum ShipType {

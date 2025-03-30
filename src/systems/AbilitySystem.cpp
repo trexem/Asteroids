@@ -57,18 +57,20 @@ void AbilitySystem::spawnLaserGun(uint32_t eID) {
     int shots = abilitiesProjectileCount[static_cast<size_t>(ability)][player->abilityLevels[static_cast<size_t>(ability)]] 
         + stats->projectileCount;
     int shotsWidthHalved = ((shots - 1) * (3 + laserWidth)) / 2;
-    /*std::cout << "Ship Pos: " << transform->position.x << " " << transform->position.y << " Ship rotation: "  
-        << transform->rotDegrees << " Ship width/height halfed: " << shipWidth << " " << shipHeight 
-        << " Shots: " << shots << " shotsWidthHalved: " << shotsWidthHalved << std::endl;*/
+    // std::cout << "Ship Pos: " << transform->position.x << " " << transform->position.y << " Ship rotation: "  
+    //     << transform->rotDegrees << " Ship width/height halfed: " << shipWidth << " " << shipHeight 
+    //     << " Shots: " << shots << " shotsWidthHalved: " << shotsWidthHalved << std::endl;
     for (int i = 0; i < shots; i++) {
         // To shoot always from the center top of the ship.
         FPair position;
-        float offset = - laserWidthHalfed - shotsWidthHalved + i * ((3 + laserWidth));
-        float xOffset = offset * cosRadians;
-        float yOffset = offset * sinRadians;
-        position.x = transform->position.x + sinShipHeight + shipWidth + xOffset;
+        float xOffset = - laserWidthHalfed - shotsWidthHalved + i * ((3 + laserWidth));
+        xOffset *= cosRadians;
+        float yOffset = - laserWidthHalfed - shotsWidthHalved + i * ((3 + laserWidth));
+        yOffset *= sinRadians;
+        yOffset += abs(2 * laserWidth * sinRadians) * (-1);
+        position.x = transform->position.x + shipWidth  + sinShipHeight + xOffset;
         position.y = transform->position.y + shipHeight - cosShipHeight + yOffset;
-        //std::cout << "i: " << i << " Position: " << position.x << " " << position.y << std::endl;
+        // std::cout << "i: " << i << " Position: " << position.x << " " << position.y << std::endl;
         // Entity Transform
         TransformComponent laserTransform;
         laserTransform.position = position;
@@ -88,7 +90,6 @@ void AbilitySystem::spawnLaserGun(uint32_t eID) {
         eManager->setComponentData<RenderComponent>(laser, laserTexture);
         eManager->setComponentData<CollisionComponent>(laser, laserCollider);
         eManager->setComponentData<TransformComponent>(laser, laserTransform);
-        std::cout << "Ended setting data for entity: " << laser << std::endl;
     }
     
 }

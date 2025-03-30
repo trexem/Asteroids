@@ -1,7 +1,7 @@
 #include "RenderSystem.h"
 
-RenderSystem::RenderSystem(SDL_Window* window, const char * name)
-    : renderer(std::make_unique<Renderer>(window, name)) {
+RenderSystem::RenderSystem(SDL_Window* window, const char * name, Camera* camera)
+    : renderer(std::make_unique<Renderer>(window, name)), camera(camera) {
     renderer->changeColor(0x00, 0x00, 0x00, 0xFF);
 }
 
@@ -15,8 +15,17 @@ void RenderSystem::render(EntityManager& eM) {
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::Render)) {
         RenderComponent rComp = eM.getComponentData<RenderComponent>(eID);
         TransformComponent trComp = eM.getComponentData<TransformComponent>(eID);
-        rComp.texture->renderEx(static_cast<int>(trComp.position.x),
-            static_cast<int>(trComp.position.y),
+        TypeComponent type = eM.getComponentData<TypeComponent>(eID);
+        FPair position;
+        if (type.type == EntityType::UEX) {
+            position = trComp.position;
+        } else {
+            position.x = trComp.position.x - camera->position.x;
+            position.y = trComp.position.y - camera->position.y;
+        }
+        rComp.texture->renderEx(
+            static_cast<int>(position.x),
+            static_cast<int>(position.y),
             nullptr,
             static_cast<int>(trComp.rotDegrees),
             nullptr,
@@ -26,6 +35,7 @@ void RenderSystem::render(EntityManager& eM) {
     std::cout << std::endl;
     renderer->render();
     frame++;
+    // saveRendererToImage();
 }
 
 
