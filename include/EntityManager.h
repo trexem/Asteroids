@@ -44,6 +44,8 @@ public:
     template <typename T>
     const T& getComponentData(uint32_t entityID) const {
         const ComponentType type = getComponentType<T>();
+        std::cout << "Getting component data for component: " << typeid(T).name() 
+        << " for entity: " << entityID << std::endl;
         if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
             if (entityID < componentPools[static_cast<size_t>(type)].size()) {
                 if (componentPools[static_cast<size_t>(type)][entityID]) {
@@ -59,6 +61,8 @@ public:
     template <typename T>
     const T& getComponentData(uint32_t entityID) {
         const ComponentType type = getComponentType<T>();
+        // std::cout << "Getting component data for component: " << typeid(T).name() 
+        // << " for entity: " << entityID << std::endl;
         if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
             if (entityID < componentPools[static_cast<size_t>(type)].size()) {
                 if (componentPools[static_cast<size_t>(type)][entityID]) {

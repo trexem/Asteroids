@@ -14,6 +14,7 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	movementSystem = std::make_unique<MovementSystem>(&camera);
 	collisionSystem = std::make_unique<CollisionSystem>();
 	abilitySystem = std::make_unique<AbilitySystem>(&entityManager);
+	damageSystem = std::make_unique<DamageSystem>(&entityManager);
 	fpsTexture.texture = &m_fps_text_texture;
 	scoreTexture.texture = &m_score_text_texture;
 	pauseTexture.texture = &m_pause_text_texture;
@@ -140,6 +141,9 @@ void Game::start() {
 	trComp.position = FPair(-200, -200);
 	entityManager.setComponentData<TransformComponent>(pauseEntity, trComp);
 	entityManager.setComponentData<TypeComponent>(pauseEntity, uexType);
+	std::cout << "fps eID: " << fpsEntity << std::endl;
+	std::cout << "score eID: " << scoreEntity << std::endl;
+	std::cout << "pause eID: " << pauseEntity << std::endl;
 	if (!pauseTexture.texture->loadFromRenderedText(pause_text.str().c_str(), white_color, m_pause_ttf)) {
 		std::cout << "Unable to render FPS texture!" << '\n';
 	}
@@ -235,10 +239,12 @@ void Game::generateAsteroids() {
 	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
 		std::cout << i << " ";
 		uint32_t asteroid = entityManager.createEntity();
+		std::cout <<" with eID: " << asteroid << std::endl;
 		entityManager.addComponent(asteroid, ComponentType::Render);
 		entityManager.addComponent(asteroid, ComponentType::Physics);
 		entityManager.addComponent(asteroid, ComponentType::Collision);
 		entityManager.addComponent(asteroid, ComponentType::Type);
+		entityManager.addComponent(asteroid, ComponentType::Health);
 		// Asteroid Texture
 		RenderComponent astTexture;
 		astTexture.texture = &g_asteroid_big_texture;
@@ -271,6 +277,11 @@ void Game::generateAsteroids() {
 		// Asteroid type
 		TypeComponent type = EntityType::Asteroid;
 		entityManager.setComponentData<TypeComponent>(asteroid, type);
+		//Health
+		HealthComponent health;
+		health.health = 100.0f;
+		health.maxHealth = 100.0f;
+		entityManager.setComponentData<HealthComponent>(asteroid, health);
 	}
 	std::cout << std::endl;
 }
@@ -299,12 +310,14 @@ void Game::restartScore() {
 
 void Game::createShip(ShipType shipType) {
 	uint32_t ship = entityManager.createEntity();
+	std::cout << "Ship eID: " << ship << std::endl;
 	entityManager.addComponent(ship, ComponentType::Player);
 	entityManager.addComponent(ship, ComponentType::Physics);
 	entityManager.addComponent(ship, ComponentType::Render);
 	entityManager.addComponent(ship, ComponentType::Movement);
 	entityManager.addComponent(ship, ComponentType::Collision);
 	entityManager.addComponent(ship, ComponentType::Type);
+	entityManager.addComponent(ship, ComponentType::Health);
 	 //Transform
 	TransformComponent shipTransform;
 	shipTransform.position.x = SCREEN_WIDTH / 2;
@@ -330,7 +343,7 @@ void Game::createShip(ShipType shipType) {
 	PlayerComponent shipPlayer;
 	shipPlayer.type = shipType;
 	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::LaserGun)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 9;
+	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 0;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
 	// Movement
 	MovementComponent shipMovement;
@@ -343,4 +356,9 @@ void Game::createShip(ShipType shipType) {
 	// Type
 	TypeComponent type = EntityType::Player;
 	entityManager.setComponentData<TypeComponent>(ship, type);
+	//Health
+	HealthComponent health;
+	health.health = 100.0f;
+	health.maxHealth = 100.0f;
+	entityManager.setComponentData<HealthComponent>(ship, health);
 }

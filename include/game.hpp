@@ -33,6 +33,7 @@ const int TOTAL_ASTEROIDS = 20;
 #include "MovementSystem.h"
 #include "CollisionSystem.h"
 #include "AbilitySystem.h"
+#include "DamageSystem.h"
 
 
 class Game {
@@ -77,6 +78,7 @@ private:
 	std::unique_ptr<MovementSystem> movementSystem;
 	std::unique_ptr<CollisionSystem> collisionSystem;
 	std::unique_ptr<AbilitySystem> abilitySystem;
+	std::unique_ptr<DamageSystem> damageSystem;
 	Camera camera;
 	Window m_window;
 	Texture m_fps_text_texture, m_pause_text_texture, m_score_text_texture;
@@ -91,7 +93,5 @@ private:
 
 	void createShip(ShipType shipType);
 };
-
-
 
 #endif

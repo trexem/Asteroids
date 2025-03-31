@@ -3,6 +3,8 @@
 #define __COLLISION_MESSAGE_H_
 
 #include "message.h"
+#include <vector>
+#include <cstdint>
 
 class CollisionMessage : public Message {
 public:
