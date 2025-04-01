@@ -15,6 +15,7 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	collisionSystem = std::make_unique<CollisionSystem>();
 	abilitySystem = std::make_unique<AbilitySystem>(&entityManager);
 	damageSystem = std::make_unique<DamageSystem>(&entityManager);
+	animationSystem = std::make_unique<AnimationSystem>(&entityManager);
 	fpsTexture.texture = &m_fps_text_texture;
 	scoreTexture.texture = &m_score_text_texture;
 	pauseTexture.texture = &m_pause_text_texture;
@@ -55,14 +56,9 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 				m_fps_text_texture.m_renderer = renderSystem->getRenderer();
 				m_pause_text_texture.m_renderer = renderSystem->getRenderer();
 				m_score_text_texture.m_renderer = renderSystem->getRenderer();
-				g_ship_texture.m_renderer = renderSystem->getRenderer();
 				g_shot_texture.m_renderer = renderSystem->getRenderer();
-				g_particle_texture.m_renderer = renderSystem->getRenderer();
-				g_particle_shimmer_texture.m_renderer = renderSystem->getRenderer();
-				g_asteroid_big_texture.m_renderer = renderSystem->getRenderer();
-				    //init SDL_ttf
-				if (!TTF_Init())
-				{
+				//init SDL_ttf
+				if (!TTF_Init()) {
 					std::cout << "SDL_ttf could not initialize! SDL_ttf Error: " << SDL_GetError() << '\n';
 					success = false;
 				}
@@ -90,7 +86,7 @@ bool Game::loadMedia() {
 		std::cout << "Failed to load consola font! SDL_ttf Error:" << SDL_GetError() << '\n';
 		success = false;
 	}
-	if (!g_ship_texture.loadFromFile("data/img/spaceship.bmp")) {
+	if (!g_ship_surface.loadFromFile("data/img/spaceship.bmp")) {
 		printf("Failed to load ship texture");
 		success = false;
 	}
@@ -98,15 +94,15 @@ bool Game::loadMedia() {
 		printf("Failed to load shot texture");
 		success = false;
 	}
-	if (!g_particle_texture.loadFromFile("data/img/ship_particle.bmp")) {
+	if (!g_particle_surface.loadFromFile("data/img/ship_particle.bmp")) {
 		printf("Failed to load ship particle texture");
 		success = false;
 	}
-	if (!g_particle_shimmer_texture.loadFromFile("data/img/ship_particle_shimmer.bmp")) {
+	if (!g_particle_shimmer_surface.loadFromFile("data/img/ship_particle_shimmer.bmp")) {
 		printf("Failed to load ship shimmer particle texture");
 		success = false;
 	}
-	if (!g_asteroid_big_texture.loadFromFile("data/img/asteroid1.bmp")) {
+	if (!g_asteroid_big_surface.loadFromFile("data/img/asteroid1.bmp")) {
 		printf("Failed to load asteroid big 1 texture");
 		success = false;
 	}
@@ -120,7 +116,7 @@ void Game::start() {
 	pause_text << "PAUSE";
 	counted_frames = 0;
 	fpsEntity = entityManager.createEntity();
-	TypeComponent uexType = EntityType::UEX;
+	TypeComponent uexType = EntityType::GUI;
 	entityManager.addComponent(fpsEntity, ComponentType::Render);
 	entityManager.addComponent(fpsEntity, ComponentType::Type);
 	TransformComponent trComp;
@@ -210,6 +206,7 @@ void Game::gameLoop() {
 	movementSystem->update(&entityManager, time_step);
 	//Check collisions
 	collisionSystem->update(&entityManager);
+	animationSystem->update(time_step);
 	//restart step 
 	step_timer.start();
 	    //Render PAUSE text while game is paused
@@ -245,9 +242,9 @@ void Game::generateAsteroids() {
 		entityManager.addComponent(asteroid, ComponentType::Collision);
 		entityManager.addComponent(asteroid, ComponentType::Type);
 		entityManager.addComponent(asteroid, ComponentType::Health);
+		entityManager.addComponent(asteroid, ComponentType::Animation);
 		// Asteroid Texture
-		RenderComponent astTexture;
-		astTexture.texture = &g_asteroid_big_texture;
+		RenderComponent astTexture = RenderComponent(renderSystem->getRenderer(), g_asteroid_big_surface);
 		entityManager.setComponentData<RenderComponent>(asteroid, astTexture);
 		// Asteroid Transform
 		FPair p = generateSingleAsteroidPos();
@@ -264,11 +261,6 @@ void Game::generateAsteroids() {
 		PhysicsComponent astPhys;
 		astPhys.velocity = rand() % 100 + 50;
 		entityManager.setComponentData<PhysicsComponent>(asteroid, astPhys);
-		// Asteroid Stats
-		StatsComponent astStats;
-		astStats.speed = 10.0f;
-		astStats.maxSpeed = 100.0f;
-		entityManager.setComponentData<StatsComponent>(asteroid, astStats);
 		// Asteroid Collider
 		CollisionComponent astCollision;
 		astCollision.height = astTexture.texture->getHeight();
@@ -282,6 +274,9 @@ void Game::generateAsteroids() {
 		health.health = 100.0f;
 		health.maxHealth = 100.0f;
 		entityManager.setComponentData<HealthComponent>(asteroid, health);
+		//Animation
+		AnimationComponent anim;
+		entityManager.setComponentData<AnimationComponent>(asteroid, anim);
 	}
 	std::cout << std::endl;
 }
@@ -313,19 +308,20 @@ void Game::createShip(ShipType shipType) {
 	std::cout << "Ship eID: " << ship << std::endl;
 	entityManager.addComponent(ship, ComponentType::Player);
 	entityManager.addComponent(ship, ComponentType::Physics);
+	entityManager.addComponent(ship, ComponentType::Stats);
 	entityManager.addComponent(ship, ComponentType::Render);
 	entityManager.addComponent(ship, ComponentType::Movement);
 	entityManager.addComponent(ship, ComponentType::Collision);
 	entityManager.addComponent(ship, ComponentType::Type);
 	entityManager.addComponent(ship, ComponentType::Health);
+	entityManager.addComponent(ship, ComponentType::Animation);
 	 //Transform
 	TransformComponent shipTransform;
 	shipTransform.position.x = SCREEN_WIDTH / 2;
 	shipTransform.position.y = SCREEN_HEIGHT / 2;
 	entityManager.setComponentData<TransformComponent>(ship, shipTransform);
 	//Render
-	RenderComponent shipTexture;
-	shipTexture.texture = &g_ship_texture;
+	RenderComponent shipTexture =  RenderComponent(renderSystem->getRenderer(), g_ship_surface);
 	entityManager.setComponentData<RenderComponent>(ship, shipTexture);
 	// Stats
 	StatsComponent shipStats;
@@ -335,6 +331,7 @@ void Game::createShip(ShipType shipType) {
 	shipStats.speed = SHIP_SPEED;
 	shipStats.rotationSpeed = SHIP_ROT_SPEED;
 	shipStats.fireSpeed = SHIP_SHOT_DELAY;
+	shipStats.collectionRadius = SHIP_BASE_RADIUS;
 	entityManager.setComponentData<StatsComponent>(ship, shipStats);
 	// Physics
 	PhysicsComponent shipPhys;
@@ -361,4 +358,7 @@ void Game::createShip(ShipType shipType) {
 	health.health = 100.0f;
 	health.maxHealth = 100.0f;
 	entityManager.setComponentData<HealthComponent>(ship, health);
+	//Animation
+	AnimationComponent anim;
+	entityManager.setComponentData<AnimationComponent>(ship, anim);
 }

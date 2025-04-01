@@ -34,6 +34,7 @@ const int TOTAL_ASTEROIDS = 20;
 #include "CollisionSystem.h"
 #include "AbilitySystem.h"
 #include "DamageSystem.h"
+#include "AnimationSystem.h"
 
 
 class Game {
@@ -44,6 +45,7 @@ public:
 	const int SHIP_SPEED = 15; //acceleration, instead of speed
 	const int SHIP_ROT_SPEED = 10; //acceleration, instead of speed
 	const float SHIP_SHOT_DELAY = .25; //How fast will the ship shoot?
+	const float SHIP_BASE_RADIUS = 100;
 
 	Game();
 	~Game();
@@ -79,6 +81,7 @@ private:
 	std::unique_ptr<CollisionSystem> collisionSystem;
 	std::unique_ptr<AbilitySystem> abilitySystem;
 	std::unique_ptr<DamageSystem> damageSystem;
+	std::unique_ptr<AnimationSystem> animationSystem;
 	Camera camera;
 	Window m_window;
 	Texture m_fps_text_texture, m_pause_text_texture, m_score_text_texture;

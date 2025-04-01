@@ -137,6 +137,8 @@ private:
             return ComponentType::Movement;
         } else if constexpr (std::is_same<T, TypeComponent>::value) {
             return ComponentType::Type;
+        } else if constexpr (std::is_same<T, AnimationComponent>::value) {
+            return ComponentType::Animation;
         }
     }
 

@@ -18,10 +18,16 @@ void DamageSystem::handleCollisionMessage(std::shared_ptr<CollisionMessage> msg)
 
     TypeComponent typeA = eManager->getComponentData<TypeComponent>(entityA);
     TypeComponent typeB = eManager->getComponentData<TypeComponent>(entityB);
-    if (typeA.type == EntityType::Shot && typeB.type == EntityType::Asteroid) {
-        handleAsteroidShotCollision(entityA, entityB);
-    } else if (typeB.type == EntityType::Shot && typeA.type == EntityType::Asteroid) {
-        handleAsteroidShotCollision(entityB, entityA);
+    std::cout << "Collision types: " << static_cast<int>(typeA.type) << " & " << static_cast<int>(typeB.type) << std::endl;
+    std::unordered_set<EntityType> entitiesSet = {typeA.type, typeB.type};
+    if (entitiesSet == SHOT_ASTEROID) {
+        uint32_t shot = (typeA.type == EntityType::Shot) ? entityA : entityB;
+        uint32_t asteroid = (shot == entityA) ? entityB : entityA;
+        handleAsteroidShotCollision(shot, asteroid);
+    } else if (entitiesSet == PLAYER_ASTEROID) {
+        uint32_t player = (typeA.type == EntityType::Player) ? entityA : entityB;
+        uint32_t asteroid = (player == entityA) ? entityB : entityA;
+        handleAsteroidShipCollision(player, asteroid);
     }
 }
 
@@ -35,6 +41,7 @@ void DamageSystem::handleAsteroidShotCollision(uint32_t shot, uint32_t asteroid)
         eManager->destroyEntity(shot);
         asteroidHealth.health = lifeRemaining;
         eManager->setComponentData<HealthComponent>(asteroid, asteroidHealth);
+        MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(asteroid, Animation::Damage));
     } else if (lifeRemaining < 0) {
         std::cout << "Destroying " << asteroid << std::endl;
         eManager->destroyEntity(asteroid);
@@ -46,4 +53,9 @@ void DamageSystem::handleAsteroidShotCollision(uint32_t shot, uint32_t asteroid)
         eManager->destroyEntity(asteroid);
     }
     
+}
+
+void DamageSystem::handleAsteroidShipCollision(uint32_t ship, uint32_t asteroid) {
+    std::cout << "Handling Asteroid&Ship Collision" << std::endl;
+    MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(ship, Animation::Damage));
 }

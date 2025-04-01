@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include "abilities.h"
+#include "Animation.h"
 #include "FPair.h"
 #include "texture.hpp"
 
@@ -18,6 +19,7 @@ enum class ComponentType {
     Stats,
     Movement,
     Type,
+    Animation,
 
     Count
 };
@@ -38,7 +40,7 @@ enum class EntityType {
     Asteroid,
     Enemy,
     Shot,
-    UEX,
+    GUI,
 
     Default
 };
@@ -68,6 +70,11 @@ struct CollisionComponent {
 
 struct RenderComponent {
     Texture* texture;
+
+    RenderComponent() = default;
+    RenderComponent(SDL_Renderer* renderer, const Surface& surface) {
+        texture = new Texture(renderer, surface);
+    }
 };
 
 struct HealthComponent {
@@ -81,6 +88,7 @@ struct DamageComponent {
 
 struct PlayerComponent {
     ShipType type;
+    int lvl {1};
     std::bitset<static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilities;
     std::array<double, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilityCooldowns{};
     std::array<unsigned int, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilityLevels{};
@@ -97,6 +105,7 @@ struct StatsComponent {
     float fireSpeed {0.0f}; // goes from 0 to .9999, higher is faster, represents percentage of base weapon cooldown
     float projectileSpeed {1.0f}; // Multiplier for projectile speed
     int projectileCount {0}; // Extra projectiles
+    float collectionRadius {1.0f};
 };
 
 struct MovementComponent {
@@ -107,4 +116,17 @@ struct TypeComponent {
     EntityType type;
 
     TypeComponent(EntityType t) : type(t) {}
+};
+
+struct ExperienceComponent {
+    float xp {1.0f};
+};
+
+struct AnimationComponent {
+    std::bitset<static_cast<size_t>(Animation::AnimationCount)> playingAnimation;
+    std::array<Texture*, AnimationCount> frames;
+    double frameTime;
+    double elapsedTime;
+    int currentFrame;
+    bool visible = true;
 };

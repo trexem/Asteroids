@@ -20,6 +20,13 @@ Texture::Texture(SDL_Renderer* g_renderer) {
 	m_height = 0;
 }
 
+Texture::Texture(SDL_Renderer* renderer, Surface surface) {
+	m_renderer = renderer;
+	m_texture = SDL_CreateTextureFromSurface(m_renderer, surface.getSurface());
+	m_width = surface.getWidth();
+	m_height = surface.getHeight();
+}
+
 Texture::~Texture() {
 	free();
 }
@@ -86,4 +93,8 @@ int Texture::getWidth() {
 
 int Texture::getHeight() {
 	return m_height;
+}
+
+void Texture::setAlphaMod(int alpha) {
+	SDL_SetTextureAlphaMod(m_texture, alpha);
 }

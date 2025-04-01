@@ -17,7 +17,7 @@ void RenderSystem::render(EntityManager& eM) {
         TransformComponent trComp = eM.getComponentData<TransformComponent>(eID);
         TypeComponent type = eM.getComponentData<TypeComponent>(eID);
         FPair position;
-        if (type.type == EntityType::UEX) {
+        if (type.type == EntityType::GUI) {
             position = trComp.position;
         } else {
             position.x = trComp.position.x - camera->position.x;

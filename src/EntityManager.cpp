@@ -68,15 +68,6 @@ void EntityManager::addComponent(uint32_t entityID, ComponentType type) {
         componentPools[static_cast<size_t>(ComponentType::Transform)][entityID] = nullptr;
     }
 
-    // Add statsComponent if physicsComponent is being added
-    if (type == ComponentType::Physics && !hasComponent<StatsComponent>(entityID)) {
-        entityComponentMasks[entityID][static_cast<size_t>(ComponentType::Stats)] = true;
-        if (componentPools[static_cast<size_t>(ComponentType::Stats)].size() <= entityID) {
-            componentPools[static_cast<size_t>(ComponentType::Stats)].resize(entityID + 1);
-        }
-        componentPools[static_cast<size_t>(ComponentType::Stats)][entityID] = nullptr;
-    }
-
     entityComponentMasks[entityID][static_cast<size_t>(type)] = true;
     if (componentPools[static_cast<size_t>(type)].size() <= entityID) {
         componentPools[static_cast<size_t>(type)].resize(entityID + 1);

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _TEXTURE_H_
-#define _TEXTURE_H_
+#ifndef __TEXTURE_HPP_
+#define __TEXTURE_HPP_
 
 #include <stdio.h>
 #include <iostream>
@@ -9,6 +9,8 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
+
+#include "surface.hpp"
 
 struct SDL_Surface_Deleter {
 	void operator()(SDL_Surface* surface) {
@@ -20,6 +22,7 @@ class Texture {
 public:
 	Texture(void);
 	Texture(SDL_Renderer* g_renderer);
+	Texture(SDL_Renderer* renderer, Surface surface);
 	~Texture(void);
 
 	bool loadFromFile(std::string t_path);
@@ -27,6 +30,7 @@ public:
 	void free(void);
 	void render(int t_x, int t_y);
 	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, SDL_FlipMode t_flip);
+	void setAlphaMod(int alpha);
 
 	int getWidth();
 	int getHeight();
