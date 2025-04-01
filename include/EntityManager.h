@@ -114,7 +114,7 @@ T* getComponentDataPtr(uint32_t entityID) {
 private:
     uint32_t findAvailableEntityID();
     void printComponentPool(uint32_t entityID);
-
+    void freeTexturePtr(uint32_t eID);
     template <typename T>
     ComponentType getComponentType() const {
         if constexpr (std::is_same<T, TransformComponent>::value) {

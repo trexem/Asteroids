@@ -15,8 +15,8 @@ void MovementSystem::update(EntityManager* eMgr, double dT) {
             double radians = transComp.rotDegrees * PI / 180;
             transComp.position.x += physComp.velocity * dT * sin(radians);
             transComp.position.y -= physComp.velocity * dT * cos(radians);
-            if (transComp.position.x > SCREEN_WIDTH + 200 || transComp.position.x < -200 
-                || transComp.position.y > SCREEN_HEIGHT + 200 || transComp.position.y < -200) {
+            if (transComp.position.x > SCREEN_WIDTH + 500 || transComp.position.x < -500 
+                || transComp.position.y > SCREEN_HEIGHT + 500 || transComp.position.y < -500) {
                     eMgr->destroyEntity(eID);
                     continue;
                 }

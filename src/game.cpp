@@ -244,7 +244,7 @@ void Game::generateAsteroids() {
 		entityManager.addComponent(asteroid, ComponentType::Health);
 		entityManager.addComponent(asteroid, ComponentType::Animation);
 		// Asteroid Texture
-		RenderComponent astTexture = RenderComponent(renderSystem->getRenderer(), g_asteroid_big_surface);
+		RenderComponent astTexture(renderSystem->getRenderer(), g_asteroid_big_surface);
 		entityManager.setComponentData<RenderComponent>(asteroid, astTexture);
 		// Asteroid Transform
 		FPair p = generateSingleAsteroidPos();

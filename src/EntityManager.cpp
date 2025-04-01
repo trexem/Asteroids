@@ -7,6 +7,9 @@ EntityManager::EntityManager(size_t t_maxEntities) : maxEntities{t_maxEntities} 
 }
 
 EntityManager::~EntityManager() {
+    for (uint32_t eID : entities) {
+        freeTexturePtr(eID);
+    }
     // Release the memory associated with component pools
     for (auto& componentPool : componentPools) {
         componentPool.clear(); // This will release the unique_ptr and its associated memory
@@ -33,6 +36,7 @@ uint32_t EntityManager::createEntity() {
 
 void EntityManager::destroyEntity(uint32_t entityID) {
     if (entityExists(entityID)) {
+        freeTexturePtr(entityID);
         entities.erase(std::remove(entities.begin(), entities.end(), entityID), entities.end());
         
         // std::cout << "Destroying Entity " << entityID << std::endl;
@@ -128,6 +132,15 @@ void EntityManager::printComponentPool(uint32_t entityID) {
             std::cout << "  Component Type " << typeIdx << " at address " << pool[entityID].get() << std::endl;
         } else {
             std::cout << "  Component Type " << typeIdx << " is empty for this entity.\n";
+        }
+    }
+}
+
+void EntityManager::freeTexturePtr(uint32_t eID) {
+    if(hasComponent<RenderComponent>(eID)) {
+        RenderComponent render = getComponentData<RenderComponent>(eID);
+        if (render.free) {
+            delete render.texture;
         }
     }
 }

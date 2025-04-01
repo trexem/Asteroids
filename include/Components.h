@@ -70,10 +70,12 @@ struct CollisionComponent {
 
 struct RenderComponent {
     Texture* texture;
+    bool free {false};
 
     RenderComponent() = default;
     RenderComponent(SDL_Renderer* renderer, const Surface& surface) {
         texture = new Texture(renderer, surface);
+        free = true;
     }
 };
 
