@@ -18,7 +18,6 @@ const int SCREEN_FPS = 60;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 const bool IS_FPS_VISIBLE = true;
 const uint32_t MAX_ENTITIES = 5000;
-const int TOTAL_ASTEROIDS = 20;
 
 #include "renderer.hpp"
 #include "window.hpp"
@@ -35,6 +34,7 @@ const int TOTAL_ASTEROIDS = 20;
 #include "AbilitySystem.h"
 #include "DamageSystem.h"
 #include "AnimationSystem.h"
+#include "AsteroidSystem.h"
 
 
 class Game {
@@ -55,8 +55,6 @@ public:
 	void start(void);
 	void restart(void);
 	void gameLoop(void);
-	void generateAsteroids(void);
-	FPair generateSingleAsteroidPos(void);
 	Renderer getRenderer(void);
 	Window getWindow(void);
 	void checkCollisions(void);
@@ -82,6 +80,7 @@ private:
 	std::unique_ptr<AbilitySystem> abilitySystem;
 	std::unique_ptr<DamageSystem> damageSystem;
 	std::unique_ptr<AnimationSystem> animationSystem;
+	std::unique_ptr<AsteroidSystem> asteroidSystem;
 	Camera camera;
 	Window m_window;
 	Texture m_fps_text_texture, m_pause_text_texture, m_score_text_texture;

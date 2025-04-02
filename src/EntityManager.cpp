@@ -52,7 +52,7 @@ void EntityManager::destroyEntity(uint32_t entityID) {
 
 void EntityManager::addComponent(uint32_t entityID, ComponentType type) {
     assert(entityID < maxEntities);
-    // Add TypeComponent if it's not added with default type
+    // Add TypeComponent, if it's not there already, with default type
     if (!hasComponent<TypeComponent>(entityID)) {
         entityComponentMasks[entityID][static_cast<size_t>(ComponentType::Type)] = true;
         if (componentPools[static_cast<size_t>(ComponentType::Type)].size() <= entityID) {

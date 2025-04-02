@@ -144,7 +144,8 @@ void Game::start() {
 		std::cout << "Unable to render FPS texture!" << '\n';
 	}
 	entityManager.setComponentData<RenderComponent>(pauseEntity, pauseTexture);
-	generateAsteroids();
+	asteroidSystem = std::make_unique<AsteroidSystem>(renderSystem->getRenderer());
+	asteroidSystem->generateAsteroids(&entityManager, 0.0);
 	//start fps timer
 	fps_timer.start();
 	//Initialize srand with time so it-s always different
@@ -152,7 +153,8 @@ void Game::start() {
 }
 
 void Game::restart() {
-	generateAsteroids();
+	createShip(ShipType::TANK);
+	asteroidSystem->generateAsteroids(&entityManager, 0.0);
 	restartScore();
 }
 
@@ -206,7 +208,10 @@ void Game::gameLoop() {
 	movementSystem->update(&entityManager, time_step);
 	//Check collisions
 	collisionSystem->update(&entityManager);
+	//animations
 	animationSystem->update(time_step);
+	//update asteroids
+	asteroidSystem->update(&entityManager, time_step);
 	//restart step 
 	step_timer.start();
 	    //Render PAUSE text while game is paused
@@ -229,70 +234,6 @@ void Game::gameLoop() {
 		//Wait remaining time
 		SDL_Delay(SCREEN_TICKS_PER_FRAME - frame_ticks);
 	}
-}
-
-void Game::generateAsteroids() {
-	std::cout << "Generating Asteroids: ";
-	for (int i = 0; i < TOTAL_ASTEROIDS; ++i) {
-		std::cout << i << " ";
-		uint32_t asteroid = entityManager.createEntity();
-		std::cout <<" with eID: " << asteroid << std::endl;
-		entityManager.addComponent(asteroid, ComponentType::Render);
-		entityManager.addComponent(asteroid, ComponentType::Physics);
-		entityManager.addComponent(asteroid, ComponentType::Collision);
-		entityManager.addComponent(asteroid, ComponentType::Type);
-		entityManager.addComponent(asteroid, ComponentType::Health);
-		entityManager.addComponent(asteroid, ComponentType::Animation);
-		// Asteroid Texture
-		RenderComponent astTexture(renderSystem->getRenderer(), g_asteroid_big_surface);
-		entityManager.setComponentData<RenderComponent>(asteroid, astTexture);
-		// Asteroid Transform
-		FPair p = generateSingleAsteroidPos();
-		TransformComponent astTransform;
-		astTransform.position = p;
-		astTransform.rotDegrees =  (atan((SCREEN_CENTER.x - p.x - astTexture.texture->getWidth() / 2) 
-			/ (SCREEN_CENTER.y - p.y - astTexture.texture->getHeight() / 2)) - .087 + (rand() % 175) / 174)
-			* 180 / PI;
-		if (SCREEN_CENTER.y - p.y < 0) {
-			astTransform.rotDegrees += PI;
-		}
-		entityManager.setComponentData<TransformComponent>(asteroid, astTransform);
-		// Asteroid Physics
-		PhysicsComponent astPhys;
-		astPhys.velocity = rand() % 100 + 50;
-		entityManager.setComponentData<PhysicsComponent>(asteroid, astPhys);
-		// Asteroid Collider
-		CollisionComponent astCollision;
-		astCollision.height = astTexture.texture->getHeight();
-		astCollision.width = astTexture.texture->getWidth();
-		entityManager.setComponentData<CollisionComponent>(asteroid, astCollision);
-		// Asteroid type
-		TypeComponent type = EntityType::Asteroid;
-		entityManager.setComponentData<TypeComponent>(asteroid, type);
-		//Health
-		HealthComponent health;
-		health.health = 100.0f;
-		health.maxHealth = 100.0f;
-		entityManager.setComponentData<HealthComponent>(asteroid, health);
-		//Animation
-		AnimationComponent anim;
-		entityManager.setComponentData<AnimationComponent>(asteroid, anim);
-	}
-	std::cout << std::endl;
-}
-
-FPair Game::generateSingleAsteroidPos() {
-	int x_x = rand() % 2;
-	int y_y = rand() % 2;
-	float x = x_x > 0
-		? rand() % 2160 - 120
-		: (rand() % 240 - 360) + y_y * (SCREEN_WIDTH + 360);
-
-	float y = x_x > 0
-		? (rand() % 240 - 360) + y_y * (SCREEN_HEIGHT + 360)
-		: rand() % 1320 - 120;
-	
-	return FPair(x, y);
 }
 
 void Game::scoreUp() {

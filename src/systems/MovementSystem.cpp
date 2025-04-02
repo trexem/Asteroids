@@ -5,18 +5,22 @@
 #include "utils.hpp"
 
 void MovementSystem::update(EntityManager* eMgr, double dT) {
+    TransformComponent* playerTransform;
     for (uint32_t eID : eMgr->getEntitiesWithComponent(ComponentType::Physics)) {
         //std::cout << "Updating movement of component: " << eID << std::endl;
         if (eMgr->hasComponent<PlayerComponent>(eID)) {
             updatePlayer(eMgr, dT, eID);
+            playerTransform = eMgr->getComponentDataPtr<TransformComponent>(eID);
         } else {
             PhysicsComponent physComp = eMgr->getComponentData<PhysicsComponent>(eID);
             TransformComponent transComp = eMgr->getComponentData<TransformComponent>(eID);
             double radians = transComp.rotDegrees * PI / 180;
             transComp.position.x += physComp.velocity * dT * sin(radians);
             transComp.position.y -= physComp.velocity * dT * cos(radians);
-            if (transComp.position.x > SCREEN_WIDTH + 500 || transComp.position.x < -500 
-                || transComp.position.y > SCREEN_HEIGHT + 500 || transComp.position.y < -500) {
+            if (transComp.position.x > (playerTransform->position.x + SCREEN_WIDTH * 3)
+                || transComp.position.x < playerTransform->position.x - SCREEN_WIDTH * 2
+                || transComp.position.y > playerTransform->position.y + SCREEN_HEIGHT * 3 
+                || transComp.position.y < playerTransform->position.y - SCREEN_HEIGHT * 2) {
                     eMgr->destroyEntity(eID);
                     continue;
                 }

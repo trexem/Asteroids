@@ -19,7 +19,7 @@ void AnimationSystem::update(double dT) {
         AnimationComponent anim = eManager->getComponentData<AnimationComponent>(eID);
         RenderComponent texture = eManager->getComponentData<RenderComponent>(eID);
         if (anim.playingAnimation[static_cast<size_t>(Animation::Damage)]) {
-            std::cout << "Animating eID: " << eID;
+            // std::cout << "Animating eID: " << eID;
             anim.frameTime += dT;
             anim.elapsedTime += dT;
 
