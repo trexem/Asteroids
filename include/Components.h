@@ -70,6 +70,7 @@ struct CollisionComponent {
 
 struct RenderComponent {
     Texture* texture;
+    int visibility{255};
     bool free {false};
 
     RenderComponent() = default;
@@ -131,4 +132,9 @@ struct AnimationComponent {
     double elapsedTime;
     int currentFrame;
     bool visible = true;
+};
+
+struct GUIComponent {
+    bool clickable {false};
+    bool hoverable {false};   
 };

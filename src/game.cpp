@@ -7,7 +7,7 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	pause = false;
 	last_tick = 0;
 	tick = 0;
-	keySystem = std::make_unique<KeyboardSystem>();
+	inputSystem = std::make_unique<InputSystem>();
 	uiSystem = std::make_unique<UISystem>();
 	playerSystem = std::make_unique<PlayerSystem>(&entityManager);
 	physicsSystem = std::make_unique<PhysicsSystem>();
@@ -159,80 +159,68 @@ void Game::restart() {
 }
 
 void Game::gameLoop() {
-	cap_timer.start(); //start cap timer at the beggining of the "frame"
-	while (SDL_PollEvent(&e)) {
-		keySystem->handleEvent(e);
-		    //Quit if the X button is pressed
-		if (e.type == SDL_EVENT_QUIT) {
-			quit = true;
-		} else if (e.type == SDL_EVENT_KEY_DOWN) {
-			if (e.key.key == SDLK_P) {//P for pause
-				pause = !pause;
-			}
-			if (e.key.key == SDLK_R) {//R for restart. Will change in the future for an option in the pause menu
-				restart();
-			}
-		}
-	}
-	//The array current_key_states has the state of the pressed keys
-	// const bool* current_key_states = SDL_GetKeyboardState(NULL);
+	while(GameStateManager::getInstance().getState() != GameState::Quit) {
+		cap_timer.start(); //start cap timer at the beggining of the "frame"
+		//Inputs
+		inputSystem->update();
 
-	//calculate fps: how many frames divided by the time that has passed since the game started
-	float avg_fps = counted_frames / (fps_timer.getTicks() / 1000.f);
-	if (avg_fps > 9999) {
-		avg_fps = 0;
-	}
-	//Set text for the fps
-	if (IS_FPS_VISIBLE) {
-		time_text.str("");
-		time_text << "Average FPS: " << avg_fps;
-		if (!fpsTexture.texture->loadFromRenderedText(time_text.str().c_str(), white_color, m_fps_ttf)) {
-			std::cout << "Unable to render FPS texture!" << '\n';
+		//calculate fps: how many frames divided by the time that has passed since the game started
+		float avg_fps = counted_frames / (fps_timer.getTicks() / 1000.f);
+		if (avg_fps > 9999) {
+			avg_fps = 0;
 		}
-		entityManager.setComponentData<RenderComponent>(fpsEntity, fpsTexture);
-	}
-	//Set Score text
-	score_text.str("");
-	score_text << "Score: " << m_score;
-	if (!scoreTexture.texture->loadFromRenderedText(score_text.str().c_str(), white_color, m_score_ttf)) {
-		std::cout << "Unable to render Score texture!" << '\n';
-	}
-	entityManager.setComponentData<RenderComponent>(scoreEntity, scoreTexture);
+		//Set text for the fps
+		if (IS_FPS_VISIBLE) {
+			time_text.str("");
+			time_text << "Average FPS: " << avg_fps;
+			if (!fpsTexture.texture->loadFromRenderedText(time_text.str().c_str(), white_color, m_fps_ttf)) {
+				std::cout << "Unable to render FPS texture!" << '\n';
+			}
+			entityManager.setComponentData<RenderComponent>(fpsEntity, fpsTexture);
+		}
+		//Set Score text
+		score_text.str("");
+		score_text << "Score: " << m_score;
+		if (!scoreTexture.texture->loadFromRenderedText(score_text.str().c_str(), white_color, m_score_ttf)) {
+			std::cout << "Unable to render Score texture!" << '\n';
+		}
+		entityManager.setComponentData<RenderComponent>(scoreEntity, scoreTexture);
 
-	//Calculate time between previous movement and now
-	time_step = step_timer.getTicks() / 1000.0;
-	
-	//UpdateSystems
-	physicsSystem->update(&entityManager);
-	playerSystem->update(time_step);
-	movementSystem->update(&entityManager, time_step);
-	//Check collisions
-	collisionSystem->update(&entityManager);
-	//animations
-	animationSystem->update(time_step);
-	//update asteroids
-	asteroidSystem->update(&entityManager, time_step);
-	//restart step 
-	step_timer.start();
-	    //Render PAUSE text while game is paused
-	if (pause) {
-		step_timer.pause();
-		TransformComponent tr;
-		tr.position = SCREEN_CENTER;
-		entityManager.setComponentData<TransformComponent>(pauseEntity, tr);
-	} else {
-		TransformComponent tr;
-		tr.position = FPair(-200, -200);
-		entityManager.setComponentData<TransformComponent>(pauseEntity, tr);
-	}
-	//display in window the render
-	renderSystem->render(entityManager);
-	++counted_frames;
-	//Wait time to cap FPS at 60
-	int frame_ticks = cap_timer.getTicks();
-	if (frame_ticks < SCREEN_TICKS_PER_FRAME) {
-		//Wait remaining time
-		SDL_Delay(SCREEN_TICKS_PER_FRAME - frame_ticks);
+		//Calculate time between previous movement and now
+		time_step = step_timer.getTicks() / 1000.0;
+		
+		//UpdateSystems
+		physicsSystem->update(&entityManager);
+		playerSystem->update(time_step);
+		movementSystem->update(&entityManager, time_step);
+		//Check collisions
+		collisionSystem->update(&entityManager);
+		//animations
+		animationSystem->update(time_step);
+		//update asteroids
+		asteroidSystem->update(&entityManager, time_step);
+		//restart step 
+		step_timer.start();
+			//Render PAUSE text while game is paused
+		if (pause) {
+			step_timer.pause();
+			TransformComponent tr;
+			tr.position = SCREEN_CENTER;
+			entityManager.setComponentData<TransformComponent>(pauseEntity, tr);
+		} else {
+			TransformComponent tr;
+			tr.position = FPair(-200, -200);
+			entityManager.setComponentData<TransformComponent>(pauseEntity, tr);
+		}
+		//display in window the render
+		renderSystem->render(entityManager);
+		++counted_frames;
+		//Wait time to cap FPS at 60
+		int frame_ticks = cap_timer.getTicks();
+		if (frame_ticks < SCREEN_TICKS_PER_FRAME) {
+			//Wait remaining time
+			SDL_Delay(SCREEN_TICKS_PER_FRAME - frame_ticks);
+		}
 	}
 }
 

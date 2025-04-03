@@ -7,23 +7,34 @@
 #include "System.h"
 #include "MessageManager.h"
 #include "KeyboardMessage.h"
+#include "MouseMotionMessage.h"
+#include "ClickMessage.h"
 
 class UISystem : public System {
 public:
     UISystem() {
         std::cout << "UISystem subscribing to: " << typeid(KeyboardMessage).name() 
           << " (" << typeid(KeyboardMessage).hash_code() << ")" << std::endl;
-        // Subscribe to KeyboardMessages
-        MessageManager::getInstance().subscribe<KeyboardMessage>(
-            [this](std::shared_ptr<KeyboardMessage> msg) { handleKeyboardInput(msg); }
+        // Subscribe to MouseMotionMessages
+        MessageManager::getInstance().subscribe<MouseMotionMessage>(
+            [this](std::shared_ptr<MouseMotionMessage> msg) { handleMouseHover(msg); }
+        );
+        // Subscribe to ClickMessages
+        MessageManager::getInstance().subscribe<ClickMessage>(
+            [this](std::shared_ptr<ClickMessage> msg) { handleMouseClick(msg); }
         );
     }
 
 private:
-    void handleKeyboardInput(std::shared_ptr<KeyboardMessage> msg) {
-        if (msg->pressed) {
-            // std::cout << "UI system Key pressed: " << SDL_GetKeyName(msg->key) << std::endl;
-        }
+    void handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) {
+        std::cout << "Mouse position: " << msg->mousePos.x << ", " 
+            << msg->mousePos.x << std::endl;
+    }
+
+    void handleMouseClick(std::shared_ptr<ClickMessage> msg) {
+        std::cout << "Mouse click: " << msg->mousePos.x << ", " 
+            << msg->mousePos.x << " with button: " <<  int(msg->button)
+            << " and clicks: " << int(msg->clicks) << std::endl;
     }
 };
 

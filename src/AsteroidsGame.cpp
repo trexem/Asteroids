@@ -19,11 +19,7 @@ int main(int argc, char const* argv[]) {
 		}
 		else {
 			game.start();
-			while (!game.quit) {
-				game.gameLoop();
-
-			}//main loop
-
+			game.gameLoop();//main loop
 		}
 	}
 

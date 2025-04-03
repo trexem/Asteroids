@@ -26,7 +26,7 @@ const uint32_t MAX_ENTITIES = 5000;
 #include "EntityManager.h"
 #include "UISystem.h"
 #include "PlayerSystem.h"
-#include "KeyboardSystem.h"
+#include "InputSystem.h"
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
 #include "MovementSystem.h"
@@ -70,7 +70,7 @@ public:
 	EntityManager entityManager;  // Only one instance of EntityManager
 
 private:
-	std::unique_ptr<KeyboardSystem> keySystem;
+	std::unique_ptr<InputSystem> inputSystem;
 	std::unique_ptr<RenderSystem> renderSystem;
 	std::unique_ptr<UISystem> uiSystem;
 	std::unique_ptr<PlayerSystem> playerSystem;

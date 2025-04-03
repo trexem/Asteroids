@@ -11,7 +11,7 @@ SDL_Renderer* RenderSystem::getRenderer() {
 
 void RenderSystem::render(EntityManager& eM) {
     renderer->clear();
-    std::cout << "Rendering frame: " << frame << std::endl;
+    // std::cout << "Rendering frame: " << frame << std::endl;
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::Render)) {
         RenderComponent rComp = eM.getComponentData<RenderComponent>(eID);
         TransformComponent trComp = eM.getComponentData<TransformComponent>(eID);
