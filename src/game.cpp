@@ -8,7 +8,6 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	last_tick = 0;
 	tick = 0;
 	inputSystem = std::make_unique<InputSystem>();
-	uiSystem = std::make_unique<UISystem>();
 	playerSystem = std::make_unique<PlayerSystem>(&entityManager);
 	physicsSystem = std::make_unique<PhysicsSystem>();
 	movementSystem = std::make_unique<MovementSystem>(&camera);
@@ -53,6 +52,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 				std::cout << "Renderer could not be created! SDL Error: " << SDL_GetError() << '\n';
 				success = false;
 			} else {
+				guiSystem = std::make_unique<GUISystem>(&entityManager, renderSystem->getRenderer());
 				m_fps_text_texture.m_renderer = renderSystem->getRenderer();
 				m_pause_text_texture.m_renderer = renderSystem->getRenderer();
 				m_score_text_texture.m_renderer = renderSystem->getRenderer();

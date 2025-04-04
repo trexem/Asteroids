@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __MESSAGE_MANAGER_H_
-#define __MESSAGE_MANAGER_H_
 
 #include <queue>
 #include <memory>
@@ -49,4 +47,3 @@ private:
 
     std::unordered_map<size_t, std::vector<std::function<void(std::shared_ptr<Message>)>>> listeners;
 };
-#endif // !__MESSAGE_MANAGER_H_

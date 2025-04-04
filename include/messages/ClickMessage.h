@@ -5,6 +5,8 @@
 #include "message.h"
 #include "FPair.h"
 
+#include <cstdint>
+
 class ClickMessage : public Message {
 public:
     FPair mousePos;

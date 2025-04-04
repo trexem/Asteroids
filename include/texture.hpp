@@ -42,6 +42,17 @@ private:
 	int m_height{0};
 };
 
+class TextRenderer {
+public:
+	static SDL_Texture* renderText(const std::string& text, TTF_Font* font, 
+			SDL_Color color, SDL_Renderer* renderer) {
+		SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), 0, color);
+		SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+		SDL_DestroySurface(surface);
+		return texture;
+	}
+};
+
 extern Texture g_ship_texture;
 extern Texture g_shot_texture;
 extern Texture g_particle_texture;

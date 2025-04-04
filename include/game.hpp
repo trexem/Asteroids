@@ -24,7 +24,7 @@ const uint32_t MAX_ENTITIES = 5000;
 #include "timer.hpp"
 #include "Camera.h"
 #include "EntityManager.h"
-#include "UISystem.h"
+#include "GUISystem.h"
 #include "PlayerSystem.h"
 #include "InputSystem.h"
 #include "RenderSystem.h"
@@ -72,7 +72,7 @@ public:
 private:
 	std::unique_ptr<InputSystem> inputSystem;
 	std::unique_ptr<RenderSystem> renderSystem;
-	std::unique_ptr<UISystem> uiSystem;
+	std::unique_ptr<GUISystem> guiSystem;
 	std::unique_ptr<PlayerSystem> playerSystem;
 	std::unique_ptr<PhysicsSystem> physicsSystem;
 	std::unique_ptr<MovementSystem> movementSystem;
