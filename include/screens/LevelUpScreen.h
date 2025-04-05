@@ -3,7 +3,7 @@
 #include "Screen.h"
 #include "texture.hpp"
 
-class PlayingScreen : public Screen {
+class LevelUpScreen : public Screen {
     SDL_Texture* playTexture = nullptr;
     SDL_Texture* settingsTexture = nullptr;
     SDL_Texture* quitTexture = nullptr;
@@ -12,7 +12,7 @@ class PlayingScreen : public Screen {
     void handleMouseClick(std::shared_ptr<ClickMessage> msg);
 
 public:
-    PlayingScreen(EntityManager* eManager) : Screen(eManager) {}
+    LevelUpScreen(EntityManager* eManager) : Screen(eManager) {}
     void create(EntityManager* eManager, SDL_Renderer* renderer);
     void destroy(EntityManager* eManager);
 };

@@ -26,10 +26,10 @@ public:
 	~Texture(void);
 
 	bool loadFromFile(std::string t_path);
-	bool loadFromRenderedText(std::string t_texture_text, SDL_Color t_text_color, TTF_Font* g_font);
+	bool loadFromText(std::string t_texture_text, SDL_Color t_text_color, TTF_Font* g_font);
 	void free(void);
-	void render(int t_x, int t_y);
-	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, SDL_FlipMode t_flip);
+	void render(int t_x, int t_y, float t_scale = 1.0f);
+	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, SDL_FlipMode t_flip, float t_scale = 1.0f);
 	void setAlphaMod(int alpha);
 
 	int getWidth();
@@ -40,17 +40,6 @@ private:
 	SDL_Texture* m_texture{nullptr};
 	int m_width{0};
 	int m_height{0};
-};
-
-class TextRenderer {
-public:
-	static SDL_Texture* renderText(const std::string& text, TTF_Font* font, 
-			SDL_Color color, SDL_Renderer* renderer) {
-		SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), 0, color);
-		SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-		SDL_DestroySurface(surface);
-		return texture;
-	}
 };
 
 extern Texture g_ship_texture;

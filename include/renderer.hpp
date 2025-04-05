@@ -8,6 +8,7 @@
 
 struct SDL_Renderer_Deleter {
 	void operator()(SDL_Renderer* renderer) {
+		std::cout << "Destroying renderer\n";
 		SDL_DestroyRenderer(renderer);
 	}
 };

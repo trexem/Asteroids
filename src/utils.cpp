@@ -38,3 +38,7 @@ float getSquaredDistanceBetweenCenters(const SDL_FRect& rect1, const SDL_FRect& 
 
     return dx * dx + dy * dy;
 }
+
+float calculateCenteredX(int w) {
+    return SCREEN_CENTER.x - w / 2;
+}

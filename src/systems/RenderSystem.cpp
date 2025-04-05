@@ -29,7 +29,8 @@ void RenderSystem::render(EntityManager& eM) {
             nullptr,
             static_cast<int>(trComp.rotDegrees),
             nullptr,
-            SDL_FLIP_NONE
+            SDL_FLIP_NONE,
+            rComp.size
         );
     }
     std::cout << std::endl;

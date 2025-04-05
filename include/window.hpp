@@ -8,6 +8,7 @@
 
 struct SDL_Window_Deleter {
 	void operator()(SDL_Window* window) {
+		std::cout << "Destroying Window\n";
 		SDL_DestroyWindow(window);
 	}
 };

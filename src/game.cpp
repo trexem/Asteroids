@@ -21,24 +21,25 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 }
 
 Game::~Game() {
+	std::cout << "Destroying Game...\n";
+    guiSystem.reset();
+    std::cout << "GUI System destroyed\n";
+    renderSystem.reset();
+    std::cout << "Render System destroyed\n";
 	g_ship_texture.free();
 	g_particle_texture.free();
 	g_particle_shimmer_texture.free();
 	g_shot_texture.free();
 	g_asteroid_big_texture.free();
-	TTF_CloseFont(m_fps_ttf);
-	TTF_CloseFont(m_pause_ttf);
-	TTF_CloseFont(m_score_ttf);
-	m_fps_ttf = nullptr;
-	m_pause_ttf = nullptr;
-	m_score_ttf = nullptr;
+
+	Fonts::cleanFonts();
 	TTF_Quit();
 	SDL_Quit();
 }
 
 bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_height, Uint32 flags) {
 	bool success = true;
-	if (!SDL_Init(SDL_INIT_VIDEO)) {
+	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS)) {
 		std::cout << "SDL could not initialize! SDL_ERROR: " << SDL_GetError() << '\n';
 		success = false;
 	} else {
@@ -71,21 +72,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 bool Game::loadMedia() {
 	bool success = true;
 
-	m_fps_ttf = TTF_OpenFont("data/fonts/consola.ttf", 14);
-	if (m_fps_ttf == NULL) {
-		std::cout << "Failed to load consola font! SDL_ttf Error:" << SDL_GetError() << '\n';
-		success = false;
-	}
-	m_pause_ttf = TTF_OpenFont("data/fonts/consola.ttf", 58);
-	if (m_pause_ttf == NULL) {
-		std::cout << "Failed to load consola font! SDL_ttf Error:" << SDL_GetError() << '\n';
-		success = false;
-	}
-	m_score_ttf = TTF_OpenFont("data/fonts/consola.ttf", 18);
-	if (m_score_ttf == NULL) {
-		std::cout << "Failed to load consola font! SDL_ttf Error:" << SDL_GetError() << '\n';
-		success = false;
-	}
+	Fonts::loadFonts();
 	if (!g_ship_surface.loadFromFile("data/img/spaceship.bmp")) {
 		printf("Failed to load ship texture");
 		success = false;
@@ -140,7 +127,7 @@ void Game::start() {
 	std::cout << "fps eID: " << fpsEntity << std::endl;
 	std::cout << "score eID: " << scoreEntity << std::endl;
 	std::cout << "pause eID: " << pauseEntity << std::endl;
-	if (!pauseTexture.texture->loadFromRenderedText(pause_text.str().c_str(), white_color, m_pause_ttf)) {
+	if (!pauseTexture.texture->loadFromText(pause_text.str().c_str(), Colors::White, Fonts::Title)) {
 		std::cout << "Unable to render FPS texture!" << '\n';
 	}
 	entityManager.setComponentData<RenderComponent>(pauseEntity, pauseTexture);
@@ -163,6 +150,8 @@ void Game::gameLoop() {
 		cap_timer.start(); //start cap timer at the beggining of the "frame"
 		//Inputs
 		inputSystem->update();
+		//GUI
+		guiSystem->update();
 
 		//calculate fps: how many frames divided by the time that has passed since the game started
 		float avg_fps = counted_frames / (fps_timer.getTicks() / 1000.f);
@@ -173,7 +162,7 @@ void Game::gameLoop() {
 		if (IS_FPS_VISIBLE) {
 			time_text.str("");
 			time_text << "Average FPS: " << avg_fps;
-			if (!fpsTexture.texture->loadFromRenderedText(time_text.str().c_str(), white_color, m_fps_ttf)) {
+			if (!fpsTexture.texture->loadFromText(time_text.str().c_str(), Colors::White, Fonts::Body)) {
 				std::cout << "Unable to render FPS texture!" << '\n';
 			}
 			entityManager.setComponentData<RenderComponent>(fpsEntity, fpsTexture);
@@ -181,7 +170,7 @@ void Game::gameLoop() {
 		//Set Score text
 		score_text.str("");
 		score_text << "Score: " << m_score;
-		if (!scoreTexture.texture->loadFromRenderedText(score_text.str().c_str(), white_color, m_score_ttf)) {
+		if (!scoreTexture.texture->loadFromText(score_text.str().c_str(), Colors::White, Fonts::Body)) {
 			std::cout << "Unable to render Score texture!" << '\n';
 		}
 		entityManager.setComponentData<RenderComponent>(scoreEntity, scoreTexture);

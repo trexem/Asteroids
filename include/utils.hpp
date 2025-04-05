@@ -22,5 +22,6 @@ extern Pos g_screen_center;
 
 bool checkCollision(SDL_FRect a, SDL_FRect b);
 float getSquaredDistanceBetweenCenters(const SDL_FRect& rect1, const SDL_FRect& rect2);
+float calculateCenteredX(int w);
 
 #endif // !_UTILS_H_

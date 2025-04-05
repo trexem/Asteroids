@@ -3,6 +3,7 @@
 enum class GameState {
     MainMenu,
     Playing,
+    LevelUp,
     Paused,
     Settings,
     GameOver,

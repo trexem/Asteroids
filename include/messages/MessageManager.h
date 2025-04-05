@@ -14,13 +14,28 @@ public:
     static MessageManager& getInstance();
 
     template<typename T>
-    void subscribe(std::function<void(std::shared_ptr<T>)> callback) {
+    std::function<void()> subscribe(std::function<void(std::shared_ptr<T>)> callback) {
         size_t type = typeid(T).hash_code();
-        std::cout << "Subscribed to: " << type << std::endl;
         auto& subscribers = listeners[type];
+        
+        // Add the callback
         subscribers.push_back([callback](std::shared_ptr<Message> msg) {
             callback(std::static_pointer_cast<T>(msg));
         });
+        
+        // Return an unsubscriber
+        return [this, type, &subscribers, callback]() {
+            subscribers.erase(
+                std::remove_if(
+                    subscribers.begin(),
+                    subscribers.end(),
+                    [&callback](const auto& stored) {
+                        return stored.target_type() == callback.target_type();
+                    }
+                ),
+                subscribers.end()
+            );
+        };
     }
 
     template<typename T>

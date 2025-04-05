@@ -12,7 +12,6 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
-#include <SDL3_ttf/SDL_ttf.h>
 
 const int SCREEN_FPS = 60;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
@@ -23,7 +22,10 @@ const uint32_t MAX_ENTITIES = 5000;
 #include "window.hpp"
 #include "timer.hpp"
 #include "Camera.h"
+#include "Colors.h"
 #include "EntityManager.h"
+#include "Fonts.h"
+#include "GameStateManager.h"
 #include "GUISystem.h"
 #include "PlayerSystem.h"
 #include "InputSystem.h"
@@ -65,13 +67,12 @@ public:
 	std::stringstream time_text, pause_text, score_text; //strings to print: fps, PAUSE and score
 	bool quit = false, pause = false;
 	double time_step;
-	SDL_Color white_color = {255, 255, 255, 255};
 	int counted_frames = 0;
 	EntityManager entityManager;  // Only one instance of EntityManager
 
 private:
+	Window m_window;
 	std::unique_ptr<InputSystem> inputSystem;
-	std::unique_ptr<RenderSystem> renderSystem;
 	std::unique_ptr<GUISystem> guiSystem;
 	std::unique_ptr<PlayerSystem> playerSystem;
 	std::unique_ptr<PhysicsSystem> physicsSystem;
@@ -81,13 +82,10 @@ private:
 	std::unique_ptr<DamageSystem> damageSystem;
 	std::unique_ptr<AnimationSystem> animationSystem;
 	std::unique_ptr<AsteroidSystem> asteroidSystem;
+	std::unique_ptr<RenderSystem> renderSystem;
 	Camera camera;
-	Window m_window;
 	Texture m_fps_text_texture, m_pause_text_texture, m_score_text_texture;
 	Texture g_particle_shimmer_texture;
-	TTF_Font* m_fps_ttf;
-	TTF_Font* m_pause_ttf;
-	TTF_Font* m_score_ttf;
 	Uint32 last_tick = 0, tick = 0, m_score = 0;
 	uint32_t fpsEntity, scoreEntity, pauseEntity;
 	RenderComponent fpsTexture, scoreTexture, pauseTexture;

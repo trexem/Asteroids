@@ -64,12 +64,14 @@ struct PhysicsComponent {
 };
 
 struct CollisionComponent {
+    FPair position {0.0f, 0.0f};
     float height {1.0f};
     float width {1.0f};
 };
 
 struct RenderComponent {
     Texture* texture;
+    float size{1.0f};
     int visibility{255};
     bool free {false};
 

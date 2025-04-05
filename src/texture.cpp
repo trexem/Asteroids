@@ -51,7 +51,7 @@ bool Texture::loadFromFile(std::string t_path) {
 	return m_texture != nullptr;
 }
 
-bool Texture::loadFromRenderedText(std::string t_texture_text, SDL_Color t_text_color, TTF_Font* g_font) {
+bool Texture::loadFromText(std::string t_texture_text, SDL_Color t_text_color, TTF_Font* g_font) {
 	free();
 	auto text_surface = std::unique_ptr<SDL_Surface, SDL_Surface_Deleter>(TTF_RenderText_Solid(g_font, t_texture_text.c_str(), 0, t_text_color));
 	if (text_surface) {
@@ -77,13 +77,24 @@ void Texture::free() {
 	}
 }
 
-void Texture::render(int t_x, int t_y) {
-	SDL_FRect render_quad = {t_x, t_y, m_width, m_height};
+void Texture::render(int t_x, int t_y, float t_scale) {
+	SDL_FRect render_quad = {
+        static_cast<float>(t_x),
+        static_cast<float>(t_y),
+        m_width * t_scale,
+        m_height * t_scale
+    };
 	SDL_RenderTexture(m_renderer, m_texture, NULL, &render_quad);
 }
 
-void Texture::renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, SDL_FlipMode t_flip) {
-	SDL_FRect render_quad = {t_x, t_y, m_width, m_height};
+void Texture::renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle
+	, SDL_FPoint* t_center, SDL_FlipMode t_flip, float t_scale) {
+	SDL_FRect render_quad = {
+        static_cast<float>(t_x),
+        static_cast<float>(t_y),
+        m_width * t_scale,
+        m_height * t_scale
+    };
 	SDL_RenderTextureRotated(m_renderer, m_texture, t_clip, &render_quad, t_angle, t_center, t_flip);
 }
 
