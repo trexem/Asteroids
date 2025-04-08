@@ -15,6 +15,7 @@ class EntityManager {
 public:
     EntityManager(size_t t_maxEntities);
     ~EntityManager();
+    void clear();
     uint32_t createEntity();
     void destroyEntity(uint32_t entityID);
     const bool entityExists(uint32_t entityID) const {

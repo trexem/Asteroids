@@ -57,7 +57,7 @@ struct TransformComponent {
 };
 
 struct PhysicsComponent {
-    float velocity;
+    float velocity{0.0f};
     float rotVelocity {0.0f};
     float acceleration;
     float mass {1.0f};
@@ -70,7 +70,7 @@ struct CollisionComponent {
 };
 
 struct RenderComponent {
-    Texture* texture;
+    Texture* texture{nullptr};
     float size{1.0f};
     int visibility{255};
     bool free {false};
@@ -130,9 +130,9 @@ struct ExperienceComponent {
 struct AnimationComponent {
     std::bitset<static_cast<size_t>(Animation::AnimationCount)> playingAnimation;
     std::array<Texture*, AnimationCount> frames;
-    double frameTime;
-    double elapsedTime;
-    int currentFrame;
+    double frameTime{0.0f};
+    double elapsedTime{0.0f};
+    int currentFrame{0};
     bool visible = true;
 };
 

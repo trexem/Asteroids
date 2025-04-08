@@ -22,15 +22,49 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 
 Game::~Game() {
 	std::cout << "Destroying Game...\n";
-    guiSystem.reset();
-    std::cout << "GUI System destroyed\n";
-    renderSystem.reset();
-    std::cout << "Render System destroyed\n";
+
 	g_ship_texture.free();
 	g_particle_texture.free();
 	g_particle_shimmer_texture.free();
 	g_shot_texture.free();
 	g_asteroid_big_texture.free();
+	m_fps_text_texture.free();
+	m_pause_text_texture.free();
+	m_score_text_texture.free();
+	// g_ship_surface.free();
+	// g_shot_surface.free();
+	// g_particle_surface;
+ 	// g_particle_shimmer_surface;
+	// g_asteroid_big_surface;
+
+	MessageManager::getInstance().cleanup();
+	
+	guiSystem.reset();
+    std::cout << "GUI System destroyed\n";
+	playerSystem.reset();
+	std::cout << "Player System destroyed\n";
+	physicsSystem.reset();
+	std::cout << "Physics System destroyed\n";
+	movementSystem.reset();
+	std::cout << "Movement System destroyed\n";
+	collisionSystem.reset();
+	std::cout << "Collision System destroyed\n";
+	abilitySystem.reset();
+	std::cout << "Ability System destroyed\n";
+	damageSystem.reset();
+	std::cout << "Damage System destroyed\n";
+	animationSystem.reset();
+	std::cout << "Animation System destroyed\n";
+	asteroidSystem.reset();
+	std::cout << "asteroidSystem destroyed\n";
+
+	std::cout << "Before EntityManager clear\n";
+	entityManager.clear();
+	std::cout << "EntityManager cleared\n";
+
+	std::cout << "Before render reset";
+    renderSystem.reset();
+    std::cout << "Render System destroyed\n";
 
 	Fonts::cleanFonts();
 	TTF_Quit();
@@ -43,6 +77,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 		std::cout << "SDL could not initialize! SDL_ERROR: " << SDL_GetError() << '\n';
 		success = false;
 	} else {
+		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "software");
 		m_window = Window(t_title, t_x, t_y, t_width, t_height, flags);
 		if (!m_window.getWindow()) {
 			std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << '\n';
@@ -150,8 +185,10 @@ void Game::gameLoop() {
 		cap_timer.start(); //start cap timer at the beggining of the "frame"
 		//Inputs
 		inputSystem->update();
+		if (GameStateManager::getInstance().getState() == GameState::Quit) break;
 		//GUI
 		guiSystem->update();
+		if (GameStateManager::getInstance().getState() == GameState::Quit) break;
 
 		//calculate fps: how many frames divided by the time that has passed since the game started
 		float avg_fps = counted_frames / (fps_timer.getTicks() / 1000.f);

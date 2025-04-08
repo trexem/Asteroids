@@ -71,6 +71,9 @@ public:
 	EntityManager entityManager;  // Only one instance of EntityManager
 
 private:
+	Texture g_particle_shimmer_texture;
+	Texture m_fps_text_texture, m_pause_text_texture, m_score_text_texture;
+	RenderComponent fpsTexture, scoreTexture, pauseTexture;
 	Window m_window;
 	std::unique_ptr<InputSystem> inputSystem;
 	std::unique_ptr<GUISystem> guiSystem;
@@ -84,11 +87,8 @@ private:
 	std::unique_ptr<AsteroidSystem> asteroidSystem;
 	std::unique_ptr<RenderSystem> renderSystem;
 	Camera camera;
-	Texture m_fps_text_texture, m_pause_text_texture, m_score_text_texture;
-	Texture g_particle_shimmer_texture;
 	Uint32 last_tick = 0, tick = 0, m_score = 0;
 	uint32_t fpsEntity, scoreEntity, pauseEntity;
-	RenderComponent fpsTexture, scoreTexture, pauseTexture;
 	SDL_Event e; //event to catch keypresses
 
 	void createShip(ShipType shipType);

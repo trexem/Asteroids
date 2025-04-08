@@ -53,6 +53,11 @@ public:
             //std::cout << "No listener found for type " << type << std::endl;
         }
     }
+
+    void cleanup() {
+        std::cout << "Cleaning up MessageManager\n";
+        listeners.clear();
+    }
 private:
     MessageManager() = default;
     ~MessageManager() = default;

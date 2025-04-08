@@ -23,6 +23,7 @@ Texture::Texture(SDL_Renderer* g_renderer) {
 Texture::Texture(SDL_Renderer* renderer, Surface surface) {
 	m_renderer = renderer;
 	m_texture = SDL_CreateTextureFromSurface(m_renderer, surface.getSurface());
+	// std::cout << "[LOAD] Created texture @ " << (void*)m_texture << "\n";
 	m_width = surface.getWidth();
 	m_height = surface.getHeight();
 }
@@ -47,6 +48,7 @@ bool Texture::loadFromFile(std::string t_path) {
 			m_height = loaded_surface->h;
 		}
 	}
+	// std::cout << "[LOAD] Created texture @ " << (void*)m_texture << "\n";
 	m_texture = new_texture;
 	return m_texture != nullptr;
 }
@@ -65,11 +67,13 @@ bool Texture::loadFromText(std::string t_texture_text, SDL_Color t_text_color, T
 	} else {
 		std::cout << "Unable to render text surface! SDL_ttf Error:" << SDL_GetError() << '\n';
 	}
+	// std::cout << "[LOAD] Created texture @ " << (void*)m_texture << "\n";
 	return m_texture != NULL;
 }
 
 void Texture::free() {
 	if (m_texture != nullptr) {
+		// std::cout << "[FREE] Freeing texture @ " << (void*)m_texture << "\n";
 		SDL_DestroyTexture(m_texture);
 		m_texture = nullptr;
 		m_width = 0;

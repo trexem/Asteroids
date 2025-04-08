@@ -14,7 +14,7 @@ void AsteroidSystem::generateAsteroids(EntityManager* eManager, double timePasse
 }
 
 void AsteroidSystem::generateSingleAsteroid(EntityManager* eManager, int lvl) {
-    std::cout << "Generating Asteroids: ";
+    // std::cout << "Generating Asteroids: ";
 	for (int i = asteroidCount; i < MAX_ASTEROIDS; ++i) {
 		std::cout << i << " ";
 		uint32_t asteroid = eManager->createEntity();
@@ -55,7 +55,6 @@ void AsteroidSystem::generateSingleAsteroid(EntityManager* eManager, int lvl) {
 		eManager->setComponentData<AnimationComponent>(asteroid, anim);
         asteroidCount++;
 	}
-	std::cout << std::endl;
 }
 
 FPair AsteroidSystem::generatePosition(EntityManager* eManager) {

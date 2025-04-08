@@ -33,7 +33,6 @@ void RenderSystem::render(EntityManager& eM) {
             rComp.size
         );
     }
-    std::cout << std::endl;
     renderer->render();
     frame++;
     // saveRendererToImage();
