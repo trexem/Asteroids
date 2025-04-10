@@ -20,6 +20,7 @@ enum class ComponentType {
     Movement,
     Type,
     Animation,
+    GUI,
 
     Count
 };
@@ -93,7 +94,9 @@ struct DamageComponent {
 
 struct PlayerComponent {
     ShipType type;
-    int lvl {1};
+    int level {1};
+    int xpToNextLevel{100};
+    int currentXp{30};
     std::bitset<static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilities;
     std::array<double, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilityCooldowns{};
     std::array<unsigned int, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilityLevels{};

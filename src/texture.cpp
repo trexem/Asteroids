@@ -113,3 +113,17 @@ int Texture::getHeight() {
 void Texture::setAlphaMod(int alpha) {
 	SDL_SetTextureAlphaMod(m_texture, alpha);
 }
+
+void Texture::createEmptyTexture(int w, int h) {
+	free();
+	m_texture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, w, h);
+	m_width = w;
+	m_height = h;
+	if (!m_texture) {
+        std::cerr << "Unable to create texture! SDL_Error: " << SDL_GetError() << std::endl;
+    }
+}
+
+SDL_Texture* Texture::getTexture() {
+	return m_texture;
+}

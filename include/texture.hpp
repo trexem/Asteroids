@@ -27,6 +27,7 @@ public:
 
 	bool loadFromFile(std::string t_path);
 	bool loadFromText(std::string t_texture_text, SDL_Color t_text_color, TTF_Font* g_font);
+	void createEmptyTexture(int w, int h);
 	void free(void);
 	void render(int t_x, int t_y, float t_scale = 1.0f);
 	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, SDL_FlipMode t_flip, float t_scale = 1.0f);
@@ -34,6 +35,7 @@ public:
 
 	int getWidth();
 	int getHeight();
+	SDL_Texture* getTexture();
 
 	SDL_Renderer* m_renderer{nullptr};
 private:

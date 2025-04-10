@@ -42,3 +42,14 @@ float getSquaredDistanceBetweenCenters(const SDL_FRect& rect1, const SDL_FRect& 
 float calculateCenteredX(int w) {
     return SCREEN_CENTER.x - w / 2;
 }
+
+std::string formatTimeMMSS(Uint32 seconds) {
+    Uint32 minutes = seconds / 60;
+    Uint32 s = seconds % 60;
+
+    std::ostringstream oss;
+    oss << std::setw(2) << std::setfill('0') << minutes << ":"
+        << std::setw(2) << std::setfill('0') << s;
+
+    return oss.str();
+}

@@ -25,6 +25,7 @@ public:
     virtual void destroy(EntityManager* eManager) = 0;
     virtual void handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) = 0;
     virtual void handleMouseClick(std::shared_ptr<ClickMessage> msg) = 0;
+    virtual void update(EntityManager* eManager, SDL_Renderer* renderer) = 0;
     void handleHover(uint32_t eID, FPair pos, std::function<void()> callback);
     void handleClick(uint32_t eID, FPair pos, std::function<void()> callback);
 

@@ -15,3 +15,7 @@ void SettingsScreen::handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) {
 void SettingsScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
 
 }
+
+void SettingsScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
+    
+}

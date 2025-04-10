@@ -20,6 +20,7 @@ public:
 
 private:
     void changeScreen(GameState newState);
+    void updateState();
     EntityManager* eManager;
     SDL_Renderer* renderer;
     GameState currentGameState{GameState::Quit};

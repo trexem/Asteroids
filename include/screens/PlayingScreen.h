@@ -1,18 +1,34 @@
 #pragma once
 
+#include "Colors.h"
+#include "Fonts.h"
 #include "Screen.h"
 #include "texture.hpp"
+#include "utils.hpp"
 
 class PlayingScreen : public Screen {
-    SDL_Texture* playTexture = nullptr;
-    SDL_Texture* settingsTexture = nullptr;
-    SDL_Texture* quitTexture = nullptr;
+    Texture xpContainerTexture;
+    Texture currentXpTexture;
+    Texture abilitiesContainersTexture;
+    Texture timeTexture;
+    Texture levelTexture;
+    Texture pauseTexture;
+    uint32_t xpContainerID, currentXpID, abilitiesContainersID;
+    uint32_t timeID, levelID, pauseID;
 
     void handleMouseHover(std::shared_ptr<MouseMotionMessage> msg);
     void handleMouseClick(std::shared_ptr<ClickMessage> msg);
+    void onPauseClick();
+    void drawAbilityContainers(SDL_Renderer* renderer);
+    void drawXpContainer(SDL_Renderer* renderer);
+    void drawCurrentXp(SDL_Renderer* renderer, int currentXp, int xpToNextLevel);
 
 public:
-    PlayingScreen(EntityManager* eManager) : Screen(eManager) {}
+    PlayingScreen(EntityManager* eManager) : Screen(eManager) {
+        std::cout << "Creating PlayingScreen\n";
+    }
+    ~PlayingScreen();
     void create(EntityManager* eManager, SDL_Renderer* renderer);
     void destroy(EntityManager* eManager);
+    void update(EntityManager* eManager, SDL_Renderer* renderer);
 };

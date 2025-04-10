@@ -4,7 +4,10 @@
 
 #include "FPair.h"
 
+#include <iomanip>
 #include <SDL3/SDL.h>
+#include <sstream>
+#include <string>
 #include <cmath>
 
 struct Pos
@@ -23,5 +26,6 @@ extern Pos g_screen_center;
 bool checkCollision(SDL_FRect a, SDL_FRect b);
 float getSquaredDistanceBetweenCenters(const SDL_FRect& rect1, const SDL_FRect& rect2);
 float calculateCenteredX(int w);
+std::string formatTimeMMSS(Uint32 seconds);
 
 #endif // !_UTILS_H_

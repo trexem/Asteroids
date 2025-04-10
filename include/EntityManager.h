@@ -140,6 +140,8 @@ private:
             return ComponentType::Type;
         } else if constexpr (std::is_same<T, AnimationComponent>::value) {
             return ComponentType::Animation;
+        } else if constexpr (std::is_same<T, GUIComponent>::value) {
+            return ComponentType::GUI;
         }
     }
 

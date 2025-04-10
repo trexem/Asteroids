@@ -1,10 +1,10 @@
 #include "MainMenuScreen.h"
 
 MainMenuScreen::~MainMenuScreen() {
-    std::cout << "Destroying MainMenuScreen textures\n";
-    playTexture.free();
-    settingsTexture.free();
-    quitTexture.free();
+    // std::cout << "Destroying MainMenuScreen textures\n";
+    // playTexture.free();
+    // settingsTexture.free();
+    // quitTexture.free();
 }
 
 void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
@@ -72,9 +72,9 @@ void MainMenuScreen::destroy(EntityManager* eManager) {
     eManager->destroyEntity(settingsID);
     eManager->destroyEntity(quitID);
     std::cout << "Freeing textures...\n";
-    playTexture.free();
-    settingsTexture.free();
-    quitTexture.free();
+    // playTexture.free();
+    // settingsTexture.free();
+    // quitTexture.free();
 }
 
 void MainMenuScreen::handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) {
@@ -91,4 +91,8 @@ void MainMenuScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
 
 void MainMenuScreen::onPlayClick() {
     GameStateManager::getInstance().setState(GameState::Playing);
+}
+
+void MainMenuScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
+
 }

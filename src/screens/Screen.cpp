@@ -35,6 +35,7 @@ void Screen::clearSubscriptions() {
 }
 
 Screen::~Screen() {
+    std::cout << "Screen destroyed\n";
 }
 
 void Screen::handleHover(uint32_t eID, FPair pos, std::function<void()> callback) {

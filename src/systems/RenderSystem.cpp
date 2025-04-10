@@ -13,19 +13,29 @@ void RenderSystem::render(EntityManager& eM) {
     renderer->clear();
     // std::cout << "Rendering frame: " << frame << std::endl;
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::Render)) {
-        RenderComponent rComp = eM.getComponentData<RenderComponent>(eID);
-        TransformComponent trComp = eM.getComponentData<TransformComponent>(eID);
-        TypeComponent type = eM.getComponentData<TypeComponent>(eID);
-        FPair position;
-        if (type.type == EntityType::GUI) {
-            position = trComp.position;
-        } else {
+        if (! eM.hasComponent<GUIComponent>(eID)) {
+            RenderComponent rComp = eM.getComponentData<RenderComponent>(eID);
+            TransformComponent trComp = eM.getComponentData<TransformComponent>(eID);
+            FPair position;
             position.x = trComp.position.x - camera->position.x;
             position.y = trComp.position.y - camera->position.y;
+            rComp.texture->renderEx(
+                static_cast<int>(position.x),
+                static_cast<int>(position.y),
+                nullptr,
+                static_cast<int>(trComp.rotDegrees),
+                nullptr,
+                SDL_FLIP_NONE,
+                rComp.size
+            );
         }
+    }
+    for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::GUI)) {
+        RenderComponent rComp = eM.getComponentData<RenderComponent>(eID);
+        TransformComponent trComp = eM.getComponentData<TransformComponent>(eID);
         rComp.texture->renderEx(
-            static_cast<int>(position.x),
-            static_cast<int>(position.y),
+            static_cast<int>(trComp.position.x),
+            static_cast<int>(trComp.position.y),
             nullptr,
             static_cast<int>(trComp.rotDegrees),
             nullptr,
