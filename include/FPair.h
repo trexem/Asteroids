@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __FPAIR_H_
-#define __FPAIR_H_
+
+#include <cmath>
 
 class FPair {
 public:
@@ -28,6 +28,9 @@ public:
         return FPair(x, y);
     }
     ~FPair() = default;
+    float angleTowards(FPair p) {
+        return atan2(p.x - x, y - p.y);
+    }
+
     float x, y;
 };
-#endif // !__FPAIR_H_

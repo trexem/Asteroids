@@ -1,14 +1,13 @@
 #pragma once
-#ifndef _UTILS_H_
-#define _UTILS_H_
 
 #include "FPair.h"
 
+#include <cmath>
 #include <iomanip>
 #include <SDL3/SDL.h>
 #include <sstream>
 #include <string>
-#include <cmath>
+#include <unordered_set>
 
 struct Pos
 {
@@ -27,5 +26,3 @@ bool checkCollision(SDL_FRect a, SDL_FRect b);
 float getSquaredDistanceBetweenCenters(const SDL_FRect& rect1, const SDL_FRect& rect2);
 float calculateCenteredX(int w);
 std::string formatTimeMMSS(Uint32 seconds);
-
-#endif // !_UTILS_H_

@@ -37,6 +37,7 @@ const uint32_t MAX_ENTITIES = 5000;
 #include "DamageSystem.h"
 #include "AnimationSystem.h"
 #include "AsteroidSystem.h"
+#include "ExperienceSystem.h"
 
 
 class Game {
@@ -86,6 +87,7 @@ private:
 	std::unique_ptr<AnimationSystem> animationSystem;
 	std::unique_ptr<AsteroidSystem> asteroidSystem;
 	std::unique_ptr<RenderSystem> renderSystem;
+	std::unique_ptr<ExperienceSystem> xpSystem;
 	Camera camera;
 	Uint32 last_tick = 0, tick = 0, m_score = 0;
 	uint32_t fpsEntity, scoreEntity, pauseEntity;

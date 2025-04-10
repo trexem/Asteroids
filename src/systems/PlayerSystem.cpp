@@ -6,6 +6,9 @@ PlayerSystem::PlayerSystem(EntityManager* eManager) : eManager(eManager) {
     MessageManager::getInstance().subscribe<KeyboardMessage>(
         [this](std::shared_ptr<KeyboardMessage> msg) { handleKeyboardInput(msg); }
     );
+    MessageManager::getInstance().subscribe<ExperiencePickupMessage>(
+        [this](std::shared_ptr<ExperiencePickupMessage> msg) { handleExperiencePickupMessage(msg); }
+    );
 }
 
 void PlayerSystem::update(double dT) {
@@ -113,4 +116,17 @@ void PlayerSystem::addAbility(uint32_t eID, ShipAbilities ability) {
     PlayerComponent player = eManager->getComponentData<PlayerComponent>(eID);
     player.abilities[static_cast<size_t>(ability)] = true;
     eManager->setComponentData<PlayerComponent>(eID, player);
+}
+
+void PlayerSystem::handleExperiencePickupMessage(std::shared_ptr<ExperiencePickupMessage> msg) {
+    PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(msg->playerID);
+    playerComp.currentXp += msg->amount;
+    if (playerComp.currentXp >= playerComp.xpToNextLevel) {
+        playerComp.level++;
+        playerComp.currentXp -= playerComp.xpToNextLevel;
+        playerComp.xpToNextLevel = 100 + playerComp.level * 50;
+        GameStateManager::getInstance().setState(GameState::LevelUp);
+    }
+    eManager->setComponentData<PlayerComponent>(msg->playerID, playerComp);
+    
 }

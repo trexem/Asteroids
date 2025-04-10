@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __ABILITY_MESSAGE_H_
-#define __ABILITY_MESSAGE_H_
 
 #include <cstdint>
 
@@ -13,5 +11,3 @@ public:
     ShipAbilities ability;
     AbilityMessage(uint32_t eID, ShipAbilities ability) : eID(eID), ability(ability) {}
 };
-
-#endif // !__ABILITY_MESSAGE_H_

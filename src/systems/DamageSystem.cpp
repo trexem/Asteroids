@@ -20,11 +20,11 @@ void DamageSystem::handleCollisionMessage(std::shared_ptr<CollisionMessage> msg)
     TypeComponent typeB = eManager->getComponentData<TypeComponent>(entityB);
     // std::cout << "Collision types: " << static_cast<int>(typeA.type) << " & " << static_cast<int>(typeB.type) << std::endl;
     std::unordered_set<EntityType> entitiesSet = {typeA.type, typeB.type};
-    if (entitiesSet == SHOT_ASTEROID) {
+    if (entitiesSet == TypesSet::SHOT_ASTEROID) {
         uint32_t shot = (typeA.type == EntityType::Shot) ? entityA : entityB;
         uint32_t asteroid = (shot == entityA) ? entityB : entityA;
         handleAsteroidShotCollision(shot, asteroid);
-    } else if (entitiesSet == PLAYER_ASTEROID) {
+    } else if (entitiesSet == TypesSet::PLAYER_ASTEROID) {
         uint32_t player = (typeA.type == EntityType::Player) ? entityA : entityB;
         uint32_t asteroid = (player == entityA) ? entityB : entityA;
         handleAsteroidShipCollision(player, asteroid);
@@ -44,13 +44,13 @@ void DamageSystem::handleAsteroidShotCollision(uint32_t shot, uint32_t asteroid)
         MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(asteroid, Animation::Damage));
     } else if (lifeRemaining < 0) {
         // std::cout << "Destroying " << asteroid << std::endl;
-        eManager->destroyEntity(asteroid);
+        destroyAsteroid(asteroid);
         shotDamage.damage = -lifeRemaining;
         eManager->setComponentData<DamageComponent>(shot, shotDamage);
     } else {
         // std::cout << "Destroying " << asteroid << " & " << shot << std::endl;
         eManager->destroyEntity(shot);
-        eManager->destroyEntity(asteroid);
+        destroyAsteroid(asteroid);
     }
     
 }
@@ -58,4 +58,13 @@ void DamageSystem::handleAsteroidShotCollision(uint32_t shot, uint32_t asteroid)
 void DamageSystem::handleAsteroidShipCollision(uint32_t ship, uint32_t asteroid) {
     // std::cout << "Handling Asteroid&Ship Collision" << std::endl;
     MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(ship, Animation::Damage));
+}
+
+void DamageSystem::destroyAsteroid(uint32_t asteroid) {
+    RenderComponent* renderComp = eManager->getComponentDataPtr<RenderComponent>(asteroid);
+    TransformComponent* trComp = eManager->getComponentDataPtr<TransformComponent>(asteroid);
+    FPair center = { trComp->position.x + renderComp->texture->getWidth() / 2,
+        trComp->position.y + renderComp->texture->getHeight() / 2 };
+    MessageManager::getInstance().sendMessage(std::make_shared<ExperienceSpawnMessage>(center, 1));
+    eManager->destroyEntity(asteroid);
 }

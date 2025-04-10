@@ -5,6 +5,8 @@ PlayingScreen::~PlayingScreen() {
 }
 
 void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
+    GameStateManager::getInstance().startTimer();
+    
     xpContainerTexture.m_renderer = renderer;
     currentXpTexture.m_renderer = renderer;
     abilitiesContainersTexture.m_renderer = renderer;

@@ -17,14 +17,22 @@ void CollisionSystem::update(EntityManager* eManager) {
                 auto entityB = physicsEntities.at(j);
                 if (eManager->hasComponent<CollisionComponent>(entityB)) {
                     const auto typeB = eManager->getComponentData<TypeComponent>(entityB);
-                    if ((typeA.type == EntityType::Shot && typeB.type == EntityType::Shot) ||
-                        typeA.type == EntityType::Player && typeB.type == EntityType::Shot) {
+                    std::unordered_set<EntityType> entitiesSet = {typeA.type, typeB.type};
+                    if (entitiesSet == TypesSet::SHOT_SHOT || entitiesSet == TypesSet::PLAYER_SHOT) {
                         continue;
                     }
                     const auto collisionB = eManager->getComponentData<CollisionComponent>(entityB);
                     const auto transB = eManager->getComponentData<TransformComponent>(entityB);
                     SDL_FRect b = {transB.position.x, transB.position.y, collisionB.width, collisionB.height};
                     if (checkCollision(a, b)) {
+                        if (entitiesSet == TypesSet::PLAYER_EXPERIENCE) {
+                            ExperienceComponent* xp = eManager->getComponentDataPtr<ExperienceComponent>(entityB);
+                            auto msg = std::make_shared<ExperiencePickupMessage>(entityA, xp->xp);
+                            eManager->destroyEntity(entityB);
+                            MessageManager::getInstance().sendMessage(msg);
+
+                            continue;
+                        }
                         std::vector<uint32_t> ids;
                         ids.push_back(entityA);
                         ids.push_back(entityB);

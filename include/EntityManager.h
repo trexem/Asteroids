@@ -142,6 +142,8 @@ private:
             return ComponentType::Animation;
         } else if constexpr (std::is_same<T, GUIComponent>::value) {
             return ComponentType::GUI;
+        } else if constexpr (std::is_same<T, ExperienceComponent>::value) {
+            return ComponentType::Experience;
         }
     }
 

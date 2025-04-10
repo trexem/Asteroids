@@ -89,6 +89,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 				success = false;
 			} else {
 				guiSystem = std::make_unique<GUISystem>(&entityManager, renderSystem->getRenderer());
+				xpSystem = std::make_unique<ExperienceSystem>(&entityManager, renderSystem->getRenderer());
 				m_fps_text_texture.m_renderer = renderSystem->getRenderer();
 				m_pause_text_texture.m_renderer = renderSystem->getRenderer();
 				m_score_text_texture.m_renderer = renderSystem->getRenderer();
@@ -134,38 +135,7 @@ bool Game::loadMedia() {
 
 void Game::start() {
 	createShip(ShipType::TANK);
-	pause_text.str("");
-	pause_text << "PAUSE";
 	counted_frames = 0;
-	// fpsEntity = entityManager.createEntity();
-	TypeComponent uexType = EntityType::GUI;
-	// entityManager.addComponent(fpsEntity, ComponentType::Render);
-	// entityManager.addComponent(fpsEntity, ComponentType::Type);
-	TransformComponent trComp;
-	// entityManager.setComponentData<RenderComponent>(fpsEntity, fpsTexture);
-	trComp.position = FPair(0 , 0);
-	// entityManager.setComponentData<TransformComponent>(fpsEntity, trComp);
-	// entityManager.setComponentData<TypeComponent>(fpsEntity, uexType);
-	// scoreEntity = entityManager.createEntity();
-	// entityManager.addComponent(scoreEntity, ComponentType::Render);
-	// entityManager.addComponent(scoreEntity, ComponentType::Type);
-	trComp.position = SCREEN_TOP_CENTER;
-	// entityManager.setComponentData<RenderComponent>(scoreEntity, scoreTexture);
-	// entityManager.setComponentData<TransformComponent>(scoreEntity, trComp);
-	// entityManager.setComponentData<TypeComponent>(scoreEntity, uexType);
-	pauseEntity = entityManager.createEntity();
-	entityManager.addComponent(pauseEntity, ComponentType::Render);
-	entityManager.addComponent(pauseEntity, ComponentType::Type);
-	trComp.position = FPair(-200, -200);
-	entityManager.setComponentData<TransformComponent>(pauseEntity, trComp);
-	entityManager.setComponentData<TypeComponent>(pauseEntity, uexType);
-	std::cout << "fps eID: " << fpsEntity << std::endl;
-	std::cout << "score eID: " << scoreEntity << std::endl;
-	std::cout << "pause eID: " << pauseEntity << std::endl;
-	if (!pauseTexture.texture->loadFromText(pause_text.str().c_str(), Colors::White, Fonts::Title)) {
-		std::cout << "Unable to render FPS texture!" << '\n';
-	}
-	entityManager.setComponentData<RenderComponent>(pauseEntity, pauseTexture);
 	asteroidSystem = std::make_unique<AsteroidSystem>(renderSystem->getRenderer());
 	asteroidSystem->generateAsteroids(&entityManager, 0.0);
 	//start fps timer
@@ -173,7 +143,6 @@ void Game::start() {
 	//Initialize srand with time so it-s always different
 	srand(time(NULL));
 	GameStateManager::getInstance().setState(GameState::MainMenu);
-	GameStateManager::getInstance().startTimer();
 }
 
 void Game::restart() {
@@ -223,21 +192,16 @@ void Game::gameLoop() {
 		animationSystem->update(time_step);
 		//update asteroids
 		asteroidSystem->update(&entityManager, time_step);
+		//Update Experience
+		xpSystem->update();
 		//GUI
 		guiSystem->update();
 		if (GameStateManager::getInstance().getState() == GameState::Quit) break;
 		//restart step 
 		step_timer.start();
-			//Render PAUSE text while game is paused
-		if (pause) {
+		//Render PAUSE text while game is paused
+		if (GameStateManager::getInstance().getState() == GameState::Paused) {
 			step_timer.pause();
-			TransformComponent tr;
-			tr.position = SCREEN_CENTER;
-			entityManager.setComponentData<TransformComponent>(pauseEntity, tr);
-		} else {
-			TransformComponent tr;
-			tr.position = FPair(-200, -200);
-			entityManager.setComponentData<TransformComponent>(pauseEntity, tr);
 		}
 		//display in window the render
 		renderSystem->render(entityManager);

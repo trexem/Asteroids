@@ -23,7 +23,7 @@ void MovementSystem::update(EntityManager* eMgr, double dT) {
                 || transComp.position.y < playerTransform->position.y - SCREEN_HEIGHT * 2) {
                     eMgr->destroyEntity(eID);
                     continue;
-                }
+            }
             eMgr->setComponentData<TransformComponent>(eID, transComp);
         }
     }

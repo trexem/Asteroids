@@ -5,6 +5,7 @@
 
 #include "abilities.h"
 #include "Animation.h"
+#include "EntityType.h"
 #include "FPair.h"
 #include "texture.hpp"
 
@@ -21,6 +22,7 @@ enum class ComponentType {
     Type,
     Animation,
     GUI,
+    Experience,
 
     Count
 };
@@ -34,16 +36,6 @@ enum MoveState {
     TURN_RIGHT,
 
     MoveStateCount
-};
-
-enum class EntityType {
-    Player,
-    Asteroid,
-    Enemy,
-    Shot,
-    GUI,
-
-    Default
 };
 
 enum ShipType {
@@ -96,7 +88,7 @@ struct PlayerComponent {
     ShipType type;
     int level {1};
     int xpToNextLevel{100};
-    int currentXp{30};
+    int currentXp{0};
     std::bitset<static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilities;
     std::array<double, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilityCooldowns{};
     std::array<unsigned int, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilityLevels{};
@@ -113,7 +105,7 @@ struct StatsComponent {
     float fireSpeed {0.0f}; // goes from 0 to .9999, higher is faster, represents percentage of base weapon cooldown
     float projectileSpeed {1.0f}; // Multiplier for projectile speed
     int projectileCount {0}; // Extra projectiles
-    float collectionRadius {1.0f};
+    float collectionRadius {500.0f};
 };
 
 struct MovementComponent {
@@ -127,7 +119,7 @@ struct TypeComponent {
 };
 
 struct ExperienceComponent {
-    float xp {1.0f};
+    float xp {10.0f};
 };
 
 struct AnimationComponent {
