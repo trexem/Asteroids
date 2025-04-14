@@ -15,9 +15,6 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	abilitySystem = std::make_unique<AbilitySystem>(&entityManager);
 	damageSystem = std::make_unique<DamageSystem>(&entityManager);
 	animationSystem = std::make_unique<AnimationSystem>(&entityManager);
-	fpsTexture.texture = &m_fps_text_texture;
-	scoreTexture.texture = &m_score_text_texture;
-	pauseTexture.texture = &m_pause_text_texture;
 }
 
 Game::~Game() {
@@ -28,9 +25,6 @@ Game::~Game() {
 	g_particle_shimmer_texture.free();
 	g_shot_texture.free();
 	g_asteroid_big_texture.free();
-	m_fps_text_texture.free();
-	m_pause_text_texture.free();
-	m_score_text_texture.free();
 	// g_ship_surface.free();
 	// g_shot_surface.free();
 	// g_particle_surface;
@@ -90,9 +84,6 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 			} else {
 				guiSystem = std::make_unique<GUISystem>(&entityManager, renderSystem->getRenderer());
 				xpSystem = std::make_unique<ExperienceSystem>(&entityManager, renderSystem->getRenderer());
-				m_fps_text_texture.m_renderer = renderSystem->getRenderer();
-				m_pause_text_texture.m_renderer = renderSystem->getRenderer();
-				m_score_text_texture.m_renderer = renderSystem->getRenderer();
 				g_shot_texture.m_renderer = renderSystem->getRenderer();
 				//init SDL_ttf
 				if (!TTF_Init()) {
@@ -148,7 +139,6 @@ void Game::start() {
 void Game::restart() {
 	createShip(ShipType::TANK);
 	asteroidSystem->generateAsteroids(&entityManager, 0.0);
-	restartScore();
 }
 
 void Game::gameLoop() {
@@ -224,14 +214,6 @@ void Game::gameLoop() {
 		auto loopTimeEnd = std::chrono::high_resolution_clock::now();
 		std::cout << "LOOP time: " << std::chrono::duration_cast<std::chrono::microseconds>(loopTimeEnd - loopTimeStart).count() << " us\n";
 	}
-}
-
-void Game::scoreUp() {
-	m_score++;
-}
-
-void Game::restartScore() {
-	m_score = 0;
 }
 
 void Game::createShip(ShipType shipType) {

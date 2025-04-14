@@ -48,7 +48,7 @@ public:
 	const int SHIP_SPEED = 15; //acceleration, instead of speed
 	const int SHIP_ROT_SPEED = 10; //acceleration, instead of speed
 	const float SHIP_SHOT_DELAY = .25; //How fast will the ship shoot?
-	const float SHIP_BASE_RADIUS = 100;
+	const float SHIP_BASE_RADIUS = 50;
 
 	Game();
 	~Game();
@@ -58,11 +58,6 @@ public:
 	void start(void);
 	void restart(void);
 	void gameLoop(void);
-	Renderer getRenderer(void);
-	Window getWindow(void);
-	void checkCollisions(void);
-	void scoreUp(void);
-	void restartScore(void);
 
 	Timer fps_timer, cap_timer, step_timer;
 	std::stringstream time_text, pause_text, score_text; //strings to print: fps, PAUSE and score
@@ -73,8 +68,6 @@ public:
 
 private:
 	Texture g_particle_shimmer_texture;
-	Texture m_fps_text_texture, m_pause_text_texture, m_score_text_texture;
-	RenderComponent fpsTexture, scoreTexture, pauseTexture;
 	Window m_window;
 	std::unique_ptr<InputSystem> inputSystem;
 	std::unique_ptr<GUISystem> guiSystem;
@@ -89,8 +82,7 @@ private:
 	std::unique_ptr<RenderSystem> renderSystem;
 	std::unique_ptr<ExperienceSystem> xpSystem;
 	Camera camera;
-	Uint32 last_tick = 0, tick = 0, m_score = 0;
-	uint32_t fpsEntity, scoreEntity, pauseEntity;
+	Uint32 last_tick = 0, tick = 0;
 	SDL_Event e; //event to catch keypresses
 
 	void createShip(ShipType shipType);

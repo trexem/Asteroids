@@ -42,6 +42,7 @@ void ExperienceSystem::update() {
         TransformComponent* playerTr = eManager->getComponentDataPtr<TransformComponent>(player);
         StatsComponent* stats = eManager->getComponentDataPtr<StatsComponent>(player);
         RenderComponent* playerRend = eManager->getComponentDataPtr<RenderComponent>(player);
+        const float attractionRadius = stats->collectionRadius;
         SDL_FRect playerRect = {playerTr->position.x, playerTr->position.y, 
             playerRend->texture->getWidth(), playerRend->texture->getHeight() };
         for (uint32_t xp : experiences) {
@@ -49,15 +50,16 @@ void ExperienceSystem::update() {
             PhysicsComponent xpPhys = eManager->getComponentData<PhysicsComponent>(xp);
             SDL_FRect xpRect = {xpTr.position.x, xpTr.position.y,
                 experienceTexture.getWidth(), experienceTexture.getHeight() };
-            float dist = getSquaredDistanceBetweenCenters(playerRect, xpRect);
-            dist -= stats->collectionRadius * stats->collectionRadius;
+            float distSq = getSquaredDistanceBetweenCenters(playerRect, xpRect);
             // std::cout << "Calculating for xpID: " << xp << std::endl;
             // std::cout << "Distance and collectionRadius is: " << dist << ", " << stats->collectionRadius << std::endl;
-            if (dist <= 0) {
+            if (distSq <= attractionRadius * attractionRadius) {
+                const float dist = sqrtf(distSq);
                 xpTr.rotDegrees = xpTr.position.angleTowards(playerTr->position) * 180 / PI;
+                const float normalizedDist = 1.0f - (dist / attractionRadius);
                 // std::cout << "Ship Position: " << playerTr->position.x << ", " << playerTr->position.y << std::endl;
                 // std::cout << "XP Position: " << xpTr.position.x << ", " << xpTr.position.y << std::endl;
-                xpPhys.velocity = 10.0 - (dist) * 0.5;
+                xpPhys.velocity = 10.0 + (dist) * 50.0;
                 // std::cout << "xp rotation and velocity is: " << xpTr.rotDegrees << ", " << xpPhys.velocity << std::endl;
                 eManager->setComponentData<PhysicsComponent>(xp, xpPhys);
                 eManager->setComponentData<TransformComponent>(xp, xpTr);

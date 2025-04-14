@@ -106,7 +106,7 @@ struct StatsComponent {
     float fireSpeed {0.0f}; // goes from 0 to .9999, higher is faster, represents percentage of base weapon cooldown
     float projectileSpeed {1.0f}; // Multiplier for projectile speed
     int projectileCount {0}; // Extra projectiles
-    float collectionRadius {1000.0f};
+    float collectionRadius {1.0f};
 };
 
 struct MovementComponent {

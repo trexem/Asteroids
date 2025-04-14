@@ -38,29 +38,47 @@ Open `Visual Studio 2022` and clone the repo through the initial options. It sho
 After it finishes downloading and `cmake` stops working you will have to choose `asteroids.exe` solution (besides the "Play" button). Then just press the "Play" button.
 
 ## TODO
+### Audio
+ - [ ] Implement it
 ### Components
  - [X] TransformComponent 
- - [X] VelocityComponent (dx, dy, speed)
- - [X] MovementComponent (behaviorType: PLAYER, ENEMY, ASTEROID)
+ - [X] PhysicsComponent (dx, dy, speed)
+ - [X] CollisionComponent (hitbox, isTrigger)
  - [X] RenderComponent (texture, size)
  - [X] HealthComponent (hp, maxHp)
  - [X] DamageComponent (damageAmount)
- - [X] CollisionComponent (hitbox, isTrigger)
- - [X] StatsComponent (fireRate, projectileType)
- - [ ] ExpirationComponent (for projectiles/lifespan)
- - [ ] ScoreComponent (points on destruction)
- - [ ] AIComponent (for enemies with patterns)
  - [X] PlayerComponent (input tracking)
- - [ ] PowerUpComponent (modifies stats)
+ - [X] StatsComponent (fireRate, projectileType)
+ - [X] MovementComponent (behaviorType: PLAYER, ENEMY, ASTEROID)
+ - [X] TypeComponent (EntityType)
+ - [X] ExperienceComponent (how much xp will give)
+ - [X] AnimationComponent (render different textures for one entity)
+ - [X] GUIComponent (for GUI/HUD components)
+ - [ ] ExpirationComponent (for projectiles/lifespan)
+ - [ ] ExperienceComponent (points on destruction)
+ - [ ] AIComponent (for enemies with patterns)
  - [ ] SpawnerComponent (controls enemy/asteroid waves)
  ### Systems
- - [X] InputSystem (handles player input)
+ - [X] AbilitySystem (spawns bullets)
+ - [X] AnimationSystem
+ - [X] AsteroidSystem (might modify to SpawnSystem or handle that here)
+ - [X] CollisionSystem (detects & sends collision messages)
+ - [X] DamageSystem (resolves collision messages)
+ - [X] ExperienceSystem (handles experience entities)
+ - [X] GUISystem (handles screen creations and overlays)
+ - [X] InputSystem (handles all inputs and sends iput messages)
  - [X] MovementSystem (updates position based on behavior)
+ - [X] PlayerSystem (handles inputs and abilities for players)
  - [X] RenderSystem (renders all objects)
- - [ ] CollisionSystem (detects & resolves collisions)
- - [ ] HealthSystem (handles damage & destruction)
- - [ ] AbilitySystem (spawns bullets)
  - [ ] EnemyAISystem (moves enemies based on AIComponent)
  - [ ] SpawnSystem (handles waves of enemies & asteroids)
  - [ ] PowerUpSystem (applies power-ups)
  - [ ] ScoreSystem (tracks player score)
+### Abilities
+ - [X] LaserGun
+ - [ ] RocketLauncher
+ - [ ] Laser
+ - [ ] Explosives
+ - [ ] GravitySaws
+ - [ ] PickupRadius
+ - [ ] ideas on more abilities
