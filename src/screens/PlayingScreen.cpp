@@ -13,11 +13,8 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     timeTexture.m_renderer = renderer;
     levelTexture.m_renderer = renderer;
     pauseTexture.m_renderer = renderer;
-    std::cout << "Drawing abilityContainers" << std::endl;
     drawAbilityContainers(renderer);
-    std::cout << "Drawing xpContainer" << std::endl;
     drawXpContainer(renderer);
-    std::cout << "Creating currentXpConatiner" << std::endl;
     currentXpTexture.createEmptyTexture(xpContainerTexture.getWidth() - 4, xpContainerTexture.getHeight() - 2);
     timeTexture.loadFromText("00:00", Colors::White, Fonts::Subtitle);
     levelTexture.loadFromText("lvl: 1" , Colors::White, Fonts::Body);
@@ -104,18 +101,12 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
 }
 
 void PlayingScreen::destroy(EntityManager* eManager) {
-    eManager->destroyEntity(xpContainerID);
-    eManager->destroyEntity(currentXpID);
-    eManager->destroyEntity(timeID);
-    eManager->destroyEntity(abilitiesContainersID);
-    eManager->destroyEntity(levelID);
-    eManager->destroyEntity(pauseID);
-    // xpContainerTexture.free();
-    // currentXpTexture.free();
-    // abilitiesContainersTexture.free();
-    // timeTexture.free();
-    // levelTexture.free();
-    // pauseTexture.free();
+    eManager->destroyEntityLater(xpContainerID);
+    eManager->destroyEntityLater(currentXpID);
+    eManager->destroyEntityLater(timeID);
+    eManager->destroyEntityLater(abilitiesContainersID);
+    eManager->destroyEntityLater(levelID);
+    eManager->destroyEntityLater(pauseID);
 }
 
 void PlayingScreen::handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) {
@@ -130,14 +121,22 @@ void PlayingScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
 
 void PlayingScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
     //Time
-    Uint32 currentSeconds = GameStateManager::getInstance().getGameTimeSeconds();
-    std::string timeText = formatTimeMMSS(currentSeconds);
-    timeTexture.loadFromText(timeText, Colors::White, Fonts::Subtitle);
+    if (GameStateManager::getInstance().getState() == GameState::Playing) {
+        Uint32 currentSeconds = GameStateManager::getInstance().getGameTimeSeconds();
+        std::string timeText = formatTimeMMSS(currentSeconds);
+        timeTexture.loadFromText(timeText, Colors::White, Fonts::Subtitle);
+    }
     //Experience
+    std::ostringstream lvlText;
     auto players = eManager->getEntitiesWithComponent(ComponentType::Player);
     for (uint32_t player : players) {
         PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(player);
         drawCurrentXp(renderer, playerComp.currentXp, playerComp.xpToNextLevel);
+        if (previousLvl != playerComp.level) {
+            lvlText << "lvl:" << playerComp.level;
+            levelTexture.loadFromText(lvlText.str(), Colors::White, Fonts::Body);
+            previousLvl = playerComp.level;
+        }
     }
 }
 
@@ -162,16 +161,24 @@ void PlayingScreen::drawXpContainer(SDL_Renderer* renderer) {
 }
 
 void PlayingScreen::drawCurrentXp(SDL_Renderer* renderer, int currentXp, int xpToNextLevel) {
-    int maxWidth = SCREEN_WIDTH - 8;
-    float currentWidth = float(currentXp) / float(xpToNextLevel) * maxWidth;
-    if (currentWidth > 0) {
+    if (previousXp != currentXp) {
+        int maxWidth = SCREEN_WIDTH - 8;
+        float currentWidth = float(currentXp) / float(xpToNextLevel) * maxWidth;
         SDL_SetRenderTarget(renderer, currentXpTexture.getTexture());
-        SDL_SetRenderDrawColor(renderer, 
-            Colors::Experience.r, Colors::Experience.g, Colors::Experience.b, 255);
-        SDL_FRect rect = {0, 0, currentWidth, 38};
-        SDL_RenderFillRect(renderer, &rect);
+        if (currentXp < previousXp) {
+            SDL_FRect rect = {0, 0, maxWidth, 38};
+            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+            SDL_RenderFillRect(renderer, &rect);
+        }
+        if (currentWidth > 0) {
+            SDL_SetRenderDrawColor(renderer, 
+                Colors::Experience.r, Colors::Experience.g, Colors::Experience.b, 255);
+            SDL_FRect rect = {0, 0, currentWidth, 38};
+            SDL_RenderFillRect(renderer, &rect);
+        }
         SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
         SDL_SetRenderTarget(renderer, NULL);
+        previousXp = currentXp;
     }
 }
 

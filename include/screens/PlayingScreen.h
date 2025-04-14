@@ -15,6 +15,7 @@ class PlayingScreen : public Screen {
     Texture pauseTexture;
     uint32_t xpContainerID, currentXpID, abilitiesContainersID;
     uint32_t timeID, levelID, pauseID;
+    int previousXp, previousLvl;
 
     void handleMouseHover(std::shared_ptr<MouseMotionMessage> msg);
     void handleMouseClick(std::shared_ptr<ClickMessage> msg);
@@ -25,7 +26,7 @@ class PlayingScreen : public Screen {
 
 public:
     PlayingScreen(EntityManager* eManager) : Screen(eManager) {
-        std::cout << "Creating PlayingScreen\n";
+        // std::cout << "Creating PlayingScreen\n";
     }
     ~PlayingScreen();
     void create(EntityManager* eManager, SDL_Renderer* renderer);

@@ -1,9 +1,10 @@
 #pragma once
 
 #include <array>
+#include <bitset>
 #include <unordered_map>
 
-#include "abilities.h"
+#include "abilitiesText.h"
 #include "Animation.h"
 #include "EntityType.h"
 #include "FPair.h"
@@ -105,7 +106,7 @@ struct StatsComponent {
     float fireSpeed {0.0f}; // goes from 0 to .9999, higher is faster, represents percentage of base weapon cooldown
     float projectileSpeed {1.0f}; // Multiplier for projectile speed
     int projectileCount {0}; // Extra projectiles
-    float collectionRadius {500.0f};
+    float collectionRadius {1000.0f};
 };
 
 struct MovementComponent {
@@ -135,3 +136,6 @@ struct GUIComponent {
     bool clickable {false};
     bool hoverable {false};   
 };
+
+std::vector<ShipAbilities> getRandomAbilityChoices(const PlayerComponent& player);
+std::string getNextUpgradeText(const PlayerComponent& player, ShipAbilities ability);

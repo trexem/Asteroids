@@ -12,16 +12,16 @@ void MovementSystem::update(EntityManager* eMgr, double dT) {
             updatePlayer(eMgr, dT, eID);
             playerTransform = eMgr->getComponentDataPtr<TransformComponent>(eID);
         } else {
-            PhysicsComponent physComp = eMgr->getComponentData<PhysicsComponent>(eID);
+            PhysicsComponent* physComp = eMgr->getComponentDataPtr<PhysicsComponent>(eID);
             TransformComponent transComp = eMgr->getComponentData<TransformComponent>(eID);
             double radians = transComp.rotDegrees * PI / 180;
-            transComp.position.x += physComp.velocity * dT * sin(radians);
-            transComp.position.y -= physComp.velocity * dT * cos(radians);
+            transComp.position.x += physComp->velocity * dT * sin(radians);
+            transComp.position.y -= physComp->velocity * dT * cos(radians);
             if (transComp.position.x > (playerTransform->position.x + SCREEN_WIDTH * 3)
                 || transComp.position.x < playerTransform->position.x - SCREEN_WIDTH * 2
                 || transComp.position.y > playerTransform->position.y + SCREEN_HEIGHT * 3 
                 || transComp.position.y < playerTransform->position.y - SCREEN_HEIGHT * 2) {
-                    eMgr->destroyEntity(eID);
+                    eMgr->destroyEntityLater(eID);
                     continue;
             }
             eMgr->setComponentData<TransformComponent>(eID, transComp);

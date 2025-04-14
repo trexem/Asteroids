@@ -17,6 +17,9 @@ public:
         y += s;
         return FPair(x, y);
     }
+    FPair operator-(const float s) { 
+        return FPair(x - s, y - s);
+    }
     FPair operator*(const float s) {
         x *= s;
         y *= s;

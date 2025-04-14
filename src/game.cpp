@@ -153,6 +153,7 @@ void Game::restart() {
 
 void Game::gameLoop() {
 	while(GameStateManager::getInstance().getState() != GameState::Quit) {
+		auto loopTimeStart = std::chrono::high_resolution_clock::now();
 		cap_timer.start(); //start cap timer at the beggining of the "frame"
 		//Inputs
 		inputSystem->update();
@@ -162,47 +163,55 @@ void Game::gameLoop() {
 		if (avg_fps > 9999) {
 			avg_fps = 0;
 		}
-		//Set text for the fps
-		if (IS_FPS_VISIBLE) {
-			time_text.str("");
-			time_text << "Average FPS: " << avg_fps;
-			if (!fpsTexture.texture->loadFromText(time_text.str().c_str(), Colors::White, Fonts::Body)) {
-				std::cout << "Unable to render FPS texture!" << '\n';
-			}
-			// entityManager.setComponentData<RenderComponent>(fpsEntity, fpsTexture);
-		}
-		//Set Score text
-		score_text.str("");
-		score_text << "Score: " << m_score;
-		if (!scoreTexture.texture->loadFromText(score_text.str().c_str(), Colors::White, Fonts::Body)) {
-			std::cout << "Unable to render Score texture!" << '\n';
-		}
-		// entityManager.setComponentData<RenderComponent>(scoreEntity, scoreTexture);
-
 		//Calculate time between previous movement and now
 		time_step = step_timer.getTicks() / 1000.0;
-		
+		auto start = std::chrono::high_resolution_clock::now();
+		auto end = std::chrono::high_resolution_clock::now();
 		//UpdateSystems
-		physicsSystem->update(&entityManager);
-		playerSystem->update(time_step);
-		movementSystem->update(&entityManager, time_step);
-		//Check collisions
-		collisionSystem->update(&entityManager);
+		if (GameStateManager::getInstance().getState() == GameState::Playing) {
+			start = std::chrono::high_resolution_clock::now();
+			playerSystem->update(time_step);
+			end = std::chrono::high_resolution_clock::now();
+			std::cout << "playerSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			start = std::chrono::high_resolution_clock::now();
+			movementSystem->update(&entityManager, time_step);
+			end = std::chrono::high_resolution_clock::now();
+			std::cout << "movementSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			//Check collisions
+			start = std::chrono::high_resolution_clock::now();
+			collisionSystem->update(&entityManager);
+			end = std::chrono::high_resolution_clock::now();
+			std::cout << "collisionSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			//update asteroids
+			start = std::chrono::high_resolution_clock::now();
+			asteroidSystem->update(&entityManager, time_step);
+			end = std::chrono::high_resolution_clock::now();
+			std::cout << "asteroidSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			//Update Experience
+			start = std::chrono::high_resolution_clock::now();
+			xpSystem->update();
+			end = std::chrono::high_resolution_clock::now();
+			std::cout << "xpSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+		}
 		//animations
+		start = std::chrono::high_resolution_clock::now();
 		animationSystem->update(time_step);
-		//update asteroids
-		asteroidSystem->update(&entityManager, time_step);
-		//Update Experience
-		xpSystem->update();
+		end = std::chrono::high_resolution_clock::now();
+		std::cout << "animationSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 		//GUI
+		start = std::chrono::high_resolution_clock::now();
 		guiSystem->update();
+		end = std::chrono::high_resolution_clock::now();
+		std::cout << "guiSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 		if (GameStateManager::getInstance().getState() == GameState::Quit) break;
 		//restart step 
 		step_timer.start();
 		//Render PAUSE text while game is paused
-		if (GameStateManager::getInstance().getState() == GameState::Paused) {
+		if (GameStateManager::getInstance().getState() != GameState::Playing) {
 			step_timer.pause();
 		}
+		//Destroy entities
+		entityManager.applyPendindDestructions();
 		//display in window the render
 		renderSystem->render(entityManager);
 		++counted_frames;
@@ -212,6 +221,8 @@ void Game::gameLoop() {
 			//Wait remaining time
 			SDL_Delay(SCREEN_TICKS_PER_FRAME - frame_ticks);
 		}
+		auto loopTimeEnd = std::chrono::high_resolution_clock::now();
+		std::cout << "LOOP time: " << std::chrono::duration_cast<std::chrono::microseconds>(loopTimeEnd - loopTimeStart).count() << " us\n";
 	}
 }
 
@@ -260,7 +271,7 @@ void Game::createShip(ShipType shipType) {
 	PlayerComponent shipPlayer;
 	shipPlayer.type = shipType;
 	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::LaserGun)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 0;
+	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 9;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
 	// Movement
 	MovementComponent shipMovement;

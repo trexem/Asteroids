@@ -51,14 +51,14 @@ void ExperienceSystem::update() {
                 experienceTexture.getWidth(), experienceTexture.getHeight() };
             float dist = getSquaredDistanceBetweenCenters(playerRect, xpRect);
             dist -= stats->collectionRadius * stats->collectionRadius;
-            std::cout << "Calculating for xpID: " << xp << std::endl;
-            std::cout << "Distance and collectionRadius is: " << dist << ", " << stats->collectionRadius << std::endl;
+            // std::cout << "Calculating for xpID: " << xp << std::endl;
+            // std::cout << "Distance and collectionRadius is: " << dist << ", " << stats->collectionRadius << std::endl;
             if (dist <= 0) {
                 xpTr.rotDegrees = xpTr.position.angleTowards(playerTr->position) * 180 / PI;
-                std::cout << "Ship Position: " << playerTr->position.x << ", " << playerTr->position.y << std::endl;
-                std::cout << "XP Position: " << xpTr.position.x << ", " << xpTr.position.y << std::endl;
+                // std::cout << "Ship Position: " << playerTr->position.x << ", " << playerTr->position.y << std::endl;
+                // std::cout << "XP Position: " << xpTr.position.x << ", " << xpTr.position.y << std::endl;
                 xpPhys.velocity = 10.0 - (dist) * 0.5;
-                std::cout << "xp rotation and velocity is: " << xpTr.rotDegrees << ", " << xpPhys.velocity << std::endl;
+                // std::cout << "xp rotation and velocity is: " << xpTr.rotDegrees << ", " << xpPhys.velocity << std::endl;
                 eManager->setComponentData<PhysicsComponent>(xp, xpPhys);
                 eManager->setComponentData<TransformComponent>(xp, xpTr);
             }

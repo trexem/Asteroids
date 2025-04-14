@@ -8,6 +8,8 @@
 #include <sstream>
 #include <string>
 #include <unordered_set>
+#include <unordered_map>
+#include <vector>
 
 struct Pos
 {
@@ -26,3 +28,12 @@ bool checkCollision(SDL_FRect a, SDL_FRect b);
 float getSquaredDistanceBetweenCenters(const SDL_FRect& rect1, const SDL_FRect& rect2);
 float calculateCenteredX(int w);
 std::string formatTimeMMSS(Uint32 seconds);
+
+struct pair_hash {
+    template <class T1, class T2>
+    size_t operator()(const std::pair<T1, T2>& p) const {
+        auto h1 = std::hash<T1>{}(p.first);   // Hash the first element (cellX)
+        auto h2 = std::hash<T2>{}(p.second);  // Hash the second element (cellY)
+        return h1 ^ h2; // Combine them (XOR works fine for most things)
+    }
+};

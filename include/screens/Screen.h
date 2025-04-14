@@ -13,9 +13,10 @@
 #include <unordered_set>
 
 class Screen : public std::enable_shared_from_this<Screen> {
-    EntityManager* eManager;
     std::unordered_set<uint32_t> hoveredEntities;
     std::vector<std::function<void()>> unsubscribers;
+protected:
+    EntityManager* eManager;
 public:
     Screen(EntityManager* eM);
     ~Screen();

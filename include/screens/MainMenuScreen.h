@@ -18,7 +18,7 @@ class MainMenuScreen : public Screen {
 
 public:
     MainMenuScreen(EntityManager* eManager) : Screen(eManager) {
-        std::cout << "Creating MainMenuScreen\n";
+        // std::cout << "Creating MainMenuScreen\n";
     }
     ~MainMenuScreen();
     void create(EntityManager* eManager, SDL_Renderer* renderer);

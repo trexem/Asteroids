@@ -19,6 +19,9 @@ EntityManager::~EntityManager() {
 uint32_t EntityManager::createEntity() {
     if (entityCount < maxEntities) {
         uint32_t newEntityID = findAvailableEntityID();
+        if (destroyedEntities.count(newEntityID) > 0) {
+            destroyedEntities.erase(newEntityID);
+        }
         entities.push_back(newEntityID);
         entityCount++;
         // std::cout << "Entity created: " << newEntityID << std::endl;
@@ -46,6 +49,7 @@ void EntityManager::destroyEntity(uint32_t entityID) {
                 componentPools[i][entityID].reset();  //Properly releases memory
             }
         }
+        destroyedEntities.insert(entityID);
         entityCount--;
         // std::cout << "Entity destroyed: " << entityID << std::endl;
     }
@@ -153,4 +157,26 @@ void EntityManager::clear() {
     for (uint32_t eID : toDestroy) {
         destroyEntity(eID);
     }
+}
+
+bool EntityManager::isDestroyed(uint32_t id) const {
+    return destroyedEntities.count(id) > 0;
+}
+
+bool EntityManager::isMarkedForDestruction(uint32_t id) {
+    std::lock_guard<std::mutex> lock(toDestroyMutex);
+    return toDestroy.count(id) > 0;
+}
+
+void EntityManager::destroyEntityLater(uint32_t id) {
+    std::lock_guard<std::mutex> lock(toDestroyMutex);
+    toDestroy.insert(id);
+}
+
+void EntityManager::applyPendindDestructions() {
+    std::lock_guard<std::mutex> lock(toDestroyMutex);
+    for (uint32_t id: toDestroy) {
+        destroyEntity(id);
+    }
+    toDestroy.clear();
 }

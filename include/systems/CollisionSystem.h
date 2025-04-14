@@ -8,6 +8,7 @@
 #include <unordered_set>
 
 class CollisionSystem : public System {
+    const int CELL_SIZE = 100;
 public:
     void update(EntityManager* eManager);
 };

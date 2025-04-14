@@ -10,6 +10,8 @@ void GameStateManager::setState(GameState newState) {
         state = newState;
         if (state != GameState::Playing) {
             timer.pause();
+        } else {
+            timer.unpause();
         }
         auto msg = std::make_shared<GameStateMessage>(state);
         MessageManager::getInstance().sendMessage(msg);

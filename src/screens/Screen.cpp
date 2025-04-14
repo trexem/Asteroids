@@ -27,7 +27,7 @@ void Screen::initSubscriptions() {
 }
 
 void Screen::clearSubscriptions() {
-    std::cout << "Clearing " << unsubscribers.size() << " subscriptions\n";
+    // std::cout << "Clearing " << unsubscribers.size() << " subscriptions\n";
     for (auto& unsub : unsubscribers) {
         unsub();
     }
@@ -49,6 +49,7 @@ void Screen::handleHover(uint32_t eID, FPair pos, std::function<void()> callback
     auto search = hoveredEntities.find(eID);
     bool contained = search != hoveredEntities.end();
     if (isHovered) {
+        // std::cout << "HandleHover for: " << eID << std::endl;
         if (!contained) {
             trComp.position = colComp.position;
             render.size = colComp.width / render.texture->getWidth();

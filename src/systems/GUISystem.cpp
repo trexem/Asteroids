@@ -11,66 +11,92 @@ GUISystem::GUISystem(EntityManager* eM, SDL_Renderer* renderer)
 }
 
 GUISystem::~GUISystem() {
-    for (auto& screen : screens) {
-        screen->clearSubscriptions();
-        screen->destroy(eManager);
+    if (overlayScreen) {
+        overlayScreen->clearSubscriptions();
+        overlayScreen->destroy(eManager);
     }
-    screens.clear();
+    screen->clearSubscriptions();
+    screen->destroy(eManager);
+    overlayScreen = nullptr;
+    screen = nullptr;
 }
 
 void GUISystem::update() {
     updateState();
-    for (auto& screen : screens) {
-        screen->update(eManager, renderer);
+    if (overlayScreen) {
+        overlayScreen->update(eManager, renderer);
     }
+    screen->update(eManager, renderer);    
 }
 
 void GUISystem::updateState() {
     GameState state = GameStateManager::getInstance().getState();
-    std::cout << "received state: " << int(state) << std::endl;
-    std::cout << "Current state: " << int(currentGameState) << std::endl;
+    // std::cout << "received state: " << int(state) << std::endl;
+    // std::cout << "Current state: " << int(currentGameState) << std::endl;
     // If state has changed, update UI
-    if (state != currentGameState) {
-        currentGameState = state;
+    if (state != currentGameState) {    
         changeScreen(state);
     }
 }
 
 void GUISystem::changeScreen(GameState newState) {
-    // Clear all screens before adding the new one (unless it's an overlay)
-    if (newState != GameState::LevelUp) { // LevelUp is an overlay
-        for (auto& screen : screens) {
-            screen->clearSubscriptions();
-            std::cout << "Type before destroy: " << typeid(*screen).name() << "\n";
-            screen->destroy(eManager);
-            std::cout << "Reference count after clear: " << screen.use_count() << "\n";
+    if ((newState == GameState::LevelUp || newState == GameState::Paused)) {
+        // Only add overlay
+        if (!overlayScreen || newState != currentOverlayState) {
+                if (overlayScreen) {
+                overlayScreen->clearSubscriptions();
+                overlayScreen->destroy(eManager);
+            }
+            switch (newState) {
+            case GameState::LevelUp:
+                overlayScreen = std::make_shared<LevelUpScreen>(eManager);
+                break;
+            case GameState::Paused:
+                overlayScreen = std::make_shared<PauseScreen>(eManager);
+            default:
+                break;
+            }
+            overlayScreen->initSubscriptions();
+            overlayScreen->create(eManager, renderer);
+            currentOverlayState = newState;
         }
-        screens.clear();
-    }
+    } else {
+        // Destroy overlay if it exists
+        if (overlayScreen) {
+            overlayScreen->clearSubscriptions();
+            overlayScreen->destroy(eManager);
+            overlayScreen = nullptr;
+        }
+        // Only recreate base screen if different
+        if (!screen || newState != currentMainState) {
+            if (screen) {
+                screen->clearSubscriptions();
+                screen->destroy(eManager);
+            }
+            switch (newState) {
+                case GameState::MainMenu:
+                    screen = std::make_shared<MainMenuScreen>(eManager);
+                    break;
+                case GameState::Settings:
+                    screen = std::make_shared<SettingsScreen>(eManager);
+                    break;
+                case GameState::Playing:
+                    screen = std::make_shared<PlayingScreen>(eManager);
+                    break;
+                case GameState::GameOver:
+                    screen = std::make_shared<GameOverScreen>(eManager);
+                    break;
+                default:
+                    break;
+            }
 
-    switch (newState) {
-        case GameState::MainMenu:
-            screens.push_back(std::make_shared<MainMenuScreen>(eManager));
-            break;
-        case GameState::Settings:
-            screens.push_back(std::make_shared<SettingsScreen>(eManager));
-            break;
-        case GameState::Playing:
-            screens.push_back(std::make_shared<PlayingScreen>(eManager));
-            break;
-        case GameState::GameOver:
-            screens.push_back(std::make_shared<GameOverScreen>(eManager));
-            break;
-        case GameState::LevelUp: // Overlay case
-            screens.push_back(std::make_shared<LevelUpScreen>(eManager));
-            break;
-        default:
-            break;
+            // Initialize all screens
+            if (screen) {
+                screen->initSubscriptions();
+                screen->create(eManager, renderer);
+            }
+            currentMainState = newState;
+        }
     }
-
-    // Initialize all screens
-    for (auto& screen : screens) {
-        screen->initSubscriptions();
-        screen->create(eManager, renderer);
-    }
+    currentGameState = newState;
 }

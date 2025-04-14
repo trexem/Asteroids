@@ -19,7 +19,7 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     TransformComponent trComp;
     CollisionComponent colComp;
     RenderComponent textureComp;
-    GUIComponent guicomp;
+    GUIComponent guiComp;
     // Play button
     playID = eManager->createEntity();
     eManager->addComponent(playID, ComponentType::Render);
@@ -36,7 +36,7 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eManager->setComponentData<TypeComponent>(playID, type);
     eManager->setComponentData<CollisionComponent>(playID, colComp);
     eManager->setComponentData<RenderComponent>(playID, textureComp);
-    eManager->setComponentData<GUIComponent>(playID, guicomp);
+    eManager->setComponentData<GUIComponent>(playID, guiComp);
     //Settings
     settingsID = eManager->createEntity();
     eManager->addComponent(settingsID, ComponentType::Render);
@@ -53,7 +53,7 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eManager->setComponentData<TypeComponent>(settingsID, type);
     eManager->setComponentData<CollisionComponent>(settingsID, colComp);
     eManager->setComponentData<RenderComponent>(settingsID, textureComp);
-    eManager->setComponentData<GUIComponent>(settingsID, guicomp);
+    eManager->setComponentData<GUIComponent>(settingsID, guiComp);
     //Quit
     quitID = eManager->createEntity();
     eManager->addComponent(quitID, ComponentType::Render);
@@ -70,18 +70,14 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eManager->setComponentData<TypeComponent>(quitID, type);
     eManager->setComponentData<CollisionComponent>(quitID, colComp);
     eManager->setComponentData<RenderComponent>(quitID, textureComp);
-    eManager->setComponentData<GUIComponent>(quitID, guicomp);
+    eManager->setComponentData<GUIComponent>(quitID, guiComp);
 }
 
 void MainMenuScreen::destroy(EntityManager* eManager) {
     std::cout << "Destroying MainMenuScreen resources...\n";
-    eManager->destroyEntity(playID);
-    eManager->destroyEntity(settingsID);
-    eManager->destroyEntity(quitID);
-    std::cout << "Freeing textures...\n";
-    // playTexture.free();
-    // settingsTexture.free();
-    // quitTexture.free();
+    eManager->destroyEntityLater(playID);
+    eManager->destroyEntityLater(settingsID);
+    eManager->destroyEntityLater(quitID);
 }
 
 void MainMenuScreen::handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) {

@@ -6,6 +6,7 @@
 #include <bitset>
 #include <cassert>
 #include <memory>
+#include <mutex>
 #include <stdexcept>
 #include <vector>
 
@@ -17,7 +18,6 @@ public:
     ~EntityManager();
     void clear();
     uint32_t createEntity();
-    void destroyEntity(uint32_t entityID);
     const bool entityExists(uint32_t entityID) const {
         return entityID < maxEntities && entityComponentMasks[entityID].any();
     }
@@ -45,8 +45,8 @@ public:
     template <typename T>
     const T& getComponentData(uint32_t entityID) const {
         const ComponentType type = getComponentType<T>();
-        std::cout << "Getting component data for component: " << typeid(T).name() 
-        << " for entity: " << entityID << std::endl;
+        // std::cout << "Getting component data for component: " << typeid(T).name() 
+        // << " for entity: " << entityID << std::endl;
         if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
             if (entityID < componentPools[static_cast<size_t>(type)].size()) {
                 if (componentPools[static_cast<size_t>(type)][entityID]) {
@@ -77,31 +77,31 @@ public:
     }
 
     template <typename T>
-const T* getComponentDataPtr(uint32_t entityID) const {
-    const ComponentType type = getComponentType<T>();
-    if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
-        if (entityID < componentPools[static_cast<size_t>(type)].size()) {
-            if (componentPools[static_cast<size_t>(type)][entityID]) {
-                return static_cast<T*>(componentPools[static_cast<size_t>(type)][entityID].get());
+    const T* getComponentDataPtr(uint32_t entityID) const {
+        const ComponentType type = getComponentType<T>();
+        if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
+            if (entityID < componentPools[static_cast<size_t>(type)].size()) {
+                if (componentPools[static_cast<size_t>(type)][entityID]) {
+                    return static_cast<T*>(componentPools[static_cast<size_t>(type)][entityID].get());
+                }
             }
         }
+        return nullptr; // Return nullptr instead of throwing an exception
     }
-    return nullptr; // Return nullptr instead of throwing an exception
-}
 
-// Non-const overload for modification
-template <typename T>
-T* getComponentDataPtr(uint32_t entityID) {
-    const ComponentType type = getComponentType<T>();
-    if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
-        if (entityID < componentPools[static_cast<size_t>(type)].size()) {
-            if (componentPools[static_cast<size_t>(type)][entityID]) {
-                return static_cast<T*>(componentPools[static_cast<size_t>(type)][entityID].get());
+    // Non-const overload for modification
+    template <typename T>
+    T* getComponentDataPtr(uint32_t entityID) {
+        const ComponentType type = getComponentType<T>();
+        if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
+            if (entityID < componentPools[static_cast<size_t>(type)].size()) {
+                if (componentPools[static_cast<size_t>(type)][entityID]) {
+                    return static_cast<T*>(componentPools[static_cast<size_t>(type)][entityID].get());
+                }
             }
         }
+        return nullptr; // Return nullptr instead of throwing an exception
     }
-    return nullptr; // Return nullptr instead of throwing an exception
-}
 
     template <typename T>
     bool hasComponent(uint32_t entityID) const {
@@ -109,11 +109,18 @@ T* getComponentDataPtr(uint32_t entityID) {
         return entityComponentMasks[entityID][static_cast<size_t>(type)];
     }
 
+    bool isDestroyed(uint32_t id) const;
+    bool isMarkedForDestruction(uint32_t id);
+    void destroyEntityLater(uint32_t id);
+    void applyPendindDestructions();
+
+
     std::vector<uint32_t> getEntitiesWithComponent(ComponentType type);
     size_t maxEntities;
     std::vector<std::bitset<64>> entityComponentMasks;
 private:
     uint32_t findAvailableEntityID();
+    void destroyEntity(uint32_t entityID);
     void printComponentPool(uint32_t entityID);
     void freeTexturePtr(uint32_t eID);
     template <typename T>
@@ -150,6 +157,9 @@ private:
     
     size_t entityCount = 0;
     std::vector<uint32_t> entities;
+    std::unordered_set<uint32_t> destroyedEntities;
+    std::unordered_set<uint32_t> toDestroy;
+    std::mutex toDestroyMutex;
     
     std::vector<std::vector<std::shared_ptr<void>>> componentPools;
 };
