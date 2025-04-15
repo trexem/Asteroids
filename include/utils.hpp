@@ -27,6 +27,7 @@ extern Pos g_screen_center;
 bool checkCollision(SDL_FRect a, SDL_FRect b);
 float getSquaredDistanceBetweenCenters(const SDL_FRect& rect1, const SDL_FRect& rect2);
 float calculateCenteredX(int w);
+FPair calculateCenters(float x, float y, float w, float h);
 std::string formatTimeMMSS(Uint32 seconds);
 
 struct pair_hash {

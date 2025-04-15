@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AsteroidAsteroidCollisionMessage.h"
 #include "CollisionMessage.h"
 #include "ExperiencePickupMessage.h"
 #include "MessageManager.h"

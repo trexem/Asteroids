@@ -1,8 +1,8 @@
 #pragma once
-#ifndef __MOVEMENT_SYSTEM_H_
-#define __MOVEMENT_SYSTEM_H_
 
 #include "Camera.h"
+#include "DestroyAsteroidMessage.h"
+#include "MessageManager.h"
 #include "System.h"
 
 class MovementSystem {
@@ -12,6 +12,3 @@ public:
     void updatePlayer(EntityManager* eMgr, double dT, uint32_t eID);
     Camera* camera;
 };
-
-
-#endif // !__MOVEMENT_SYSTEM_H_

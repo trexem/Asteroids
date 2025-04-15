@@ -46,7 +46,6 @@ void CollisionSystem::update(EntityManager* eManager) {
                 if (!transB || !colB || !typeB) continue;
                 if (TypesSet::sameType(EntityType::Shot, typeA->type, typeB->type) || 
                     TypesSet::match(TypesSet::PLAYER_SHOT, typeA->type, typeB->type) ||
-                    TypesSet::sameType(EntityType::Asteroid, typeA->type, typeB->type) ||
                     TypesSet::sameType(EntityType::Experience, typeA->type, typeB->type)) {
                     continue;
                 }
@@ -58,6 +57,13 @@ void CollisionSystem::update(EntityManager* eManager) {
                         eManager->destroyEntityLater(b);
                         MessageManager::getInstance().sendMessage(msg);
 
+                        continue;
+                    } else if (TypesSet::sameType(EntityType::Asteroid, typeA->type, typeB->type)) {
+                        std::vector<uint32_t> ids;
+                        ids.push_back(a);
+                        ids.push_back(b);
+                        auto msg = std::make_shared<AsteroidAsteroidCollisionMessage>(ids);
+                        MessageManager::getInstance().sendMessage(msg);
                         continue;
                     }
                     std::vector<uint32_t> ids;

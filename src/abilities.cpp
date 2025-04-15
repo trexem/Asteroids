@@ -19,7 +19,8 @@ std::vector<ShipAbilities> getRandomAbilityChoices(const PlayerComponent& player
 std::string getNextUpgradeText(const PlayerComponent& player, ShipAbilities ability) {
     size_t index = static_cast<size_t>(ability);
     size_t level = player.abilityLevels[index];
-
+    bool isActive = player.abilities[index];
+    level = isActive ? level + 1 : level;
     // Clamp to max level
     level = std::min(level, size_t(9));
 

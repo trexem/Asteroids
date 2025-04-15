@@ -127,7 +127,7 @@ bool Game::loadMedia() {
 void Game::start() {
 	createShip(ShipType::TANK);
 	counted_frames = 0;
-	asteroidSystem = std::make_unique<AsteroidSystem>(renderSystem->getRenderer());
+	asteroidSystem = std::make_unique<AsteroidSystem>(&entityManager, renderSystem->getRenderer());
 	asteroidSystem->generateAsteroids(&entityManager, 0.0);
 	//start fps timer
 	fps_timer.start();
@@ -253,7 +253,8 @@ void Game::createShip(ShipType shipType) {
 	PlayerComponent shipPlayer;
 	shipPlayer.type = shipType;
 	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::LaserGun)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 9;
+	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 0;
+	shipPlayer.currentXp = 100;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
 	// Movement
 	MovementComponent shipMovement;

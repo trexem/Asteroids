@@ -1,11 +1,13 @@
 #pragma once
-#ifndef __ASTEROID_SYSTEM_H_
-#define __ASTEROID_SYSTEM_H_
 
 #include <cmath>
 #include <cstdlib>
 #include <time.h>
 
+#include "AsteroidAsteroidCollisionMessage.h"
+#include "DestroyAsteroidMessage.h"
+#include "ExperienceSpawnMessage.h"
+#include "MessageManager.h"
 #include "System.h"
 #include "timer.hpp"
 #include "utils.hpp"
@@ -16,17 +18,18 @@ constexpr float ANGLE_BIAS_STRENGTH = PI; // 90degree bias
 
 class AsteroidSystem : public System {
 public:
-    AsteroidSystem(SDL_Renderer* renderer) : renderer(renderer) {}
+    AsteroidSystem(EntityManager* eManager, SDL_Renderer* renderer);
     void update(EntityManager* eManager, double timePassed);
     void generateAsteroids(EntityManager* eManager, double timePassed);
 
 private:
     void generateSingleAsteroid(EntityManager* eManager, int lvl);
     FPair generatePosition(EntityManager* eManager);
-    void updateAsteroidCount(EntityManager* eManager);
+    void handleDestroyAsteroidMessage(std::shared_ptr<DestroyAsteroidMessage> msg);
+    void handleAsteroidAsteroidCollision(std::shared_ptr<AsteroidAsteroidCollisionMessage> msg);
 
+    EntityManager* eManager;
     SDL_Renderer* renderer;
     uint32_t asteroidCount {0};
+    std::unordered_set<uint32_t> asteroids;
 };
-
-#endif // ! __ASTEROID_SYSTEM_H_

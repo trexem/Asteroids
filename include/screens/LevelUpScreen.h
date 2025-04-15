@@ -5,6 +5,8 @@
 
 #include "Screen.h"
 #include "LevelUpContainer.h"
+#include "LevelUpMessage.h"
+#include "MessageManager.h"
 
 class LevelUpScreen : public Screen {
     Texture container1;

@@ -44,13 +44,13 @@ void DamageSystem::handleAsteroidShotCollision(uint32_t shot, uint32_t asteroid)
         MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(asteroid, Animation::Damage));
     } else if (lifeRemaining < 0) {
         // std::cout << "Destroying " << asteroid << std::endl;
-        destroyAsteroid(asteroid);
+        MessageManager::getInstance().sendMessage(std::make_shared<DestroyAsteroidMessage>(asteroid));
         shotDamage.damage = -lifeRemaining;
         eManager->setComponentData<DamageComponent>(shot, shotDamage);
     } else {
         // std::cout << "Destroying " << asteroid << " & " << shot << std::endl;
         eManager->destroyEntityLater(shot);
-        destroyAsteroid(asteroid);
+        MessageManager::getInstance().sendMessage(std::make_shared<DestroyAsteroidMessage>(asteroid));
     }
     
 }
@@ -58,13 +58,4 @@ void DamageSystem::handleAsteroidShotCollision(uint32_t shot, uint32_t asteroid)
 void DamageSystem::handleAsteroidShipCollision(uint32_t ship, uint32_t asteroid) {
     // std::cout << "Handling Asteroid&Ship Collision" << std::endl;
     MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(ship, Animation::Damage));
-}
-
-void DamageSystem::destroyAsteroid(uint32_t asteroid) {
-    RenderComponent* renderComp = eManager->getComponentDataPtr<RenderComponent>(asteroid);
-    TransformComponent* trComp = eManager->getComponentDataPtr<TransformComponent>(asteroid);
-    FPair center = { trComp->position.x + renderComp->texture->getWidth() / 2,
-        trComp->position.y + renderComp->texture->getHeight() / 2 };
-    MessageManager::getInstance().sendMessage(std::make_shared<ExperienceSpawnMessage>(center, 1));
-    eManager->destroyEntityLater(asteroid);
 }

@@ -43,6 +43,10 @@ float calculateCenteredX(int w) {
     return SCREEN_CENTER.x - w / 2;
 }
 
+FPair calculateCenters(float x, float y, float w, float h) {
+    return FPair(x + w / 2, y + h / 2);
+}
+
 std::string formatTimeMMSS(Uint32 seconds) {
     Uint32 minutes = seconds / 60;
     Uint32 s = seconds % 60;

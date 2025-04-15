@@ -14,8 +14,8 @@ constexpr std::array<std::array<const char*, 10>, static_cast<size_t>(ShipAbilit
         "-0.05s Cooldown",
         "+1 Laser Projectile",
         "+5 Laser Damage",
-        "-0.05s Cooldown",
-        "FINAL: +1 Projectile, +10 Damage"
+        "+5 Laser Damage",
+        "FINAL: +1 Projectile, +10 Damage, -0.05s Cooldown"
     },
     // Rocket
     {
@@ -72,14 +72,14 @@ constexpr std::array<std::array<const char*, 10>, static_cast<size_t>(ShipAbilit
     // PickupRange
     {
         "Pick up Range",
-        "+1 Rocket",
-        "+10 Splash Damage",
-        "+1 Rocket",
-        "+10 Splash Damage",
-        "-0.05s Cooldown",
-        "+1 Rocket",
-        "+10 Splash Damage",
-        "-0.05s Cooldown",
-        "FINAL: +1 Rocket, +20 Damage"
+        "+50 Pick up Range",
+        "+50 Pick up Range",
+        "+50 Pick up Range",
+        "+50 Pick up Range",
+        "+100 Pick up Range",
+        "+100 Pick up Range",
+        "+100 Pick up Range",
+        "+100 Pick up Range",
+        "+200 Pick up Range"
     }
 }};

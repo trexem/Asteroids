@@ -9,6 +9,9 @@ PlayerSystem::PlayerSystem(EntityManager* eManager) : eManager(eManager) {
     MessageManager::getInstance().subscribe<ExperiencePickupMessage>(
         [this](std::shared_ptr<ExperiencePickupMessage> msg) { handleExperiencePickupMessage(msg); }
     );
+    MessageManager::getInstance().subscribe<LevelUpMessage>(
+        [this](std::shared_ptr<LevelUpMessage> msg) { handleLevelUpMessage(msg);  }
+    );
 }
 
 void PlayerSystem::update(double dT) {
@@ -129,4 +132,22 @@ void PlayerSystem::handleExperiencePickupMessage(std::shared_ptr<ExperiencePicku
     }
     eManager->setComponentData<PlayerComponent>(msg->playerID, playerComp);
     
+}
+
+void PlayerSystem::handleLevelUpMessage(std::shared_ptr<LevelUpMessage> msg) {
+    size_t ability = static_cast<size_t>(msg->ability);
+    uint32_t player = eManager->getEntitiesWithComponent(ComponentType::Player).at(0);
+    PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(player);
+    if (playerComp.abilities[ability]) {
+        playerComp.abilityLevels[ability]++;
+    }
+    else {
+        playerComp.abilities[ability] = true;
+    }
+    if (msg->ability == ShipAbilities::PickupRadius) {
+        StatsComponent stats = eManager->getComponentData<StatsComponent>(player);
+        stats.collectionRadius = abilitiesSize[ability][playerComp.abilityLevels[ability]];
+        eManager->setComponentData<StatsComponent>(player, stats);
+    }
+    eManager->setComponentData<PlayerComponent>(player, playerComp);
 }

@@ -21,8 +21,13 @@ void MovementSystem::update(EntityManager* eMgr, double dT) {
                 || transComp.position.x < playerTransform->position.x - SCREEN_WIDTH * 2
                 || transComp.position.y > playerTransform->position.y + SCREEN_HEIGHT * 3 
                 || transComp.position.y < playerTransform->position.y - SCREEN_HEIGHT * 2) {
-                    eMgr->destroyEntityLater(eID);
+                TypeComponent* type = eMgr->getComponentDataPtr<TypeComponent>(eID);
+                if (type->type & EntityType::Asteroid) {
+                    MessageManager::getInstance().sendMessage(std::make_shared<DestroyAsteroidMessage>(eID));
                     continue;
+                }
+                eMgr->destroyEntityLater(eID);
+                continue;
             }
             eMgr->setComponentData<TransformComponent>(eID, transComp);
         }

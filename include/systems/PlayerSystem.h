@@ -9,6 +9,7 @@
 #include "ExperiencePickupMessage.h"
 #include "GameStateManager.h"
 #include "KeyboardMessage.h"
+#include "LevelUpMessage.h"
 #include "MessageManager.h"
 #include "System.h"
 
@@ -24,6 +25,7 @@ public:
 private:
     void handleKeyboardInput(std::shared_ptr<KeyboardMessage> msg);
     void handleExperiencePickupMessage(std::shared_ptr<ExperiencePickupMessage> msg);
+    void handleLevelUpMessage(std::shared_ptr<LevelUpMessage> msg);
     EntityManager* eManager;
 };
 

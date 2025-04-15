@@ -111,9 +111,6 @@ void LevelUpScreen::drawConatiner(SDL_Renderer* renderer, SDL_Texture* texture) 
 }
 
 void LevelUpScreen::onContainerClick(int i) {
-    uint32_t player = eManager->getEntitiesWithComponent(ComponentType::Player).at(0);
-    PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(player);
-    playerComp.abilityLevels[static_cast<size_t>(options[i])]++;
-    eManager->setComponentData<PlayerComponent>(player, playerComp);
+    MessageManager::getInstance().sendMessage(std::make_shared<LevelUpMessage>(options[i]));
     GameStateManager::getInstance().setState(GameState::Playing);
 }

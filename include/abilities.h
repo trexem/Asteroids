@@ -19,7 +19,7 @@ enum class ShipAbilities : size_t{
 
 constexpr float abilitiesCooldowns[static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)][10] {
     //Levels 0     1     2       3      4      5      6      7      8      9
-    {   0.25f, 0.25f, 0.20f, 0.20f, 0.20f, 0.10f, 0.10f, 0.10f, 0.10f, 0.05f},  //LaserGun
+    {   0.50f, 0.50f, 0.50f, 0.50f, 0.50f, 0.45f, 0.45f, 0.45f, 0.45f, 0.35f},  //LaserGun
     {   1.25f, 1.25f, 1.20f, 1.20f, 1.20f, 1.10f, 1.10f, 1.10f, 1.10f, 1.00f},  //Rocket
     {   0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f},  //Laser
     {   1.25f, 1.25f, 1.20f, 1.20f, 1.20f, 1.10f, 1.10f, 1.10f, 1.10f, 1.00f},  //Explosives
@@ -55,6 +55,16 @@ constexpr float abilitiesDamage[static_cast<size_t>(ShipAbilities::ShipAbilities
     {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},
     {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},
     {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40}
+};
+
+constexpr float abilitiesSize[static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)][10]{
+    //Levels 0     1     2       3      4      5      6      7      8      9
+    {        1,    1,    1,      1,     1,     1,     1,     1,     1,     1},  //LaserGun
+    {        1,    1,    1,      1,     1,     1,     1,     1,     1,     1},  //Rocket
+    {        1,    1,    1,      1,     1,     1,     1,     1,     1,     1},
+    {        1,    1,    1,      1,     1,     1,     1,     1,     1,     1},
+    {        1,    1,    1,      1,     1,     1,     1,     1,     1,     1},
+    {      200,  250,  300,    350,   400,   500,   600,   700,   800,   1000}   //PickUpRadius
 };
 
 constexpr std::array<const char*, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilityIconLocation = {

@@ -2,6 +2,7 @@
 
 #include "AnimationMessage.h"
 #include "CollisionMessage.h"
+#include "DestroyAsteroidMessage.h"
 #include "ExperienceSpawnMessage.h"
 #include "MessageManager.h"
 #include "System.h"
@@ -15,6 +16,5 @@ private:
     void handleCollisionMessage(std::shared_ptr<CollisionMessage> msg);
     void handleAsteroidShotCollision(uint32_t shot, uint32_t asteroid);
     void handleAsteroidShipCollision(uint32_t ship, uint32_t asteroid);
-    void destroyAsteroid(uint32_t asteroid);
     EntityManager* eManager;
 };
