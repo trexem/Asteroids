@@ -48,11 +48,11 @@ void CollisionSystem::update(EntityManager* eManager) {
                     TypesSet::sameType(EntityType::Experience, typeA->type, typeB->type)) {
                     continue;
                 }
-                std::cout << "Checking Collision for: " << typeA->type << " and " << typeB->type << std::endl;
+                //std::cout << "Checking Collision for: " << typeA->type << " and " << typeB->type << std::endl;
                 if (checkCollision(transA, colA, transB, colB)) {
-                    std::cout << "Collision detected" << std::endl;
+                    //std::cout << "Collision detected" << std::endl;
                     if (TypesSet::match(TypesSet::PLAYER_EXPERIENCE, typeA->type, typeB->type)) {
-                        std::cout << "Player Experience Collision detected" << std::endl;
+                        //std::cout << "Player Experience Collision detected" << std::endl;
                         ExperienceComponent* xp = eManager->getComponentDataPtr<ExperienceComponent>(b);
                         auto msg = std::make_shared<ExperiencePickupMessage>(a, xp->xp);
                         eManager->destroyEntityLater(b);
@@ -97,9 +97,9 @@ bool CollisionSystem::checkCollision(
     };
     // Fast bounding sphere check first
     const float combinedRadius = colA.getBoundingRadius() + colB.getBoundingRadius();
-    std::cout << "Combined radius: " << combinedRadius << std::endl;
+    //std::cout << "Combined radius: " << combinedRadius << std::endl;
     const float distSq = getSquaredDistanceBetweenCenters(rectA, rectB);
-    std::cout << "distSq: " << distSq << std::endl;
+    //std::cout << "distSq: " << distSq << std::endl;
     
     if (distSq > combinedRadius * combinedRadius) {
         return false;  // No collision possible

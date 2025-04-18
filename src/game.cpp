@@ -150,7 +150,7 @@ void Game::restart() {
 void Game::gameLoop() {
 	while(GameStateManager::getInstance().getState() != GameState::Quit) {
 		auto loopTimeStart = std::chrono::high_resolution_clock::now();
-		cap_timer.start(); //start cap timer at the beggining of the "frame"
+		cap_timer.start(); //start cap timer at the beginning of the "frame"
 		//Inputs
 		inputSystem->update();
 		if (GameStateManager::getInstance().getState() == GameState::Quit) break;
@@ -232,10 +232,13 @@ void Game::gameLoop() {
 		++counted_frames;
 		//Wait time to cap FPS at 60
 		int frame_ticks = cap_timer.getTicks();
+		start = std::chrono::high_resolution_clock::now();
 		if (frame_ticks < SCREEN_TICKS_PER_FRAME) {
 			//Wait remaining time
 			SDL_Delay(SCREEN_TICKS_PER_FRAME - frame_ticks);
 		}
+		end = std::chrono::high_resolution_clock::now();
+		std::cout << "Waiting time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 		auto loopTimeEnd = std::chrono::high_resolution_clock::now();
 		std::cout << "LOOP time: " << std::chrono::duration_cast<std::chrono::microseconds>(loopTimeEnd - loopTimeStart).count() << " us\n";
 	}
