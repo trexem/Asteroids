@@ -2,6 +2,7 @@
 
 Texture g_ship_texture;
 Texture g_shot_texture;
+Texture g_rocket_texture;
 Texture g_particle_texture;
 Texture g_particle_shimmer_texture;
 Texture g_asteroid_big_texture;

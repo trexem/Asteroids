@@ -69,14 +69,36 @@ void PlayerSystem::updateMovement(uint32_t eID) {
         }
     } else if (playerComp.type == ShipType::FREE_MOVE) {
         if (moveComp.moveState[MoveState::MOVE_UP]) {
-            physics.velocity += stats.speed;
+            physics.speed.y -= stats.speed;
         } else if (moveComp.moveState[MoveState::MOVE_DOWN]) {
-            physics.velocity -= stats.speed;
+            physics.speed.y += stats.speed;
+        }else if (!moveComp.moveState[MoveState::MOVE_UP] && !moveComp.moveState[MoveState::MOVE_DOWN]) {
+            physics.speed.y *= 0.95;
+            if (std::abs(physics.speed.y) < 1) { //if the number is too small we round down to 0
+                physics.speed.y = 0;
+            }
         }
         if (moveComp.moveState[MoveState::MOVE_LEFT]) {
-            physics.velocity -= stats.speed;
+            physics.speed.x -= stats.speed;
         } else if (moveComp.moveState[MoveState::MOVE_RIGHT]) {
-            physics.velocity += stats.speed;
+            physics.speed.x += stats.speed;
+        } else if (!moveComp.moveState[MoveState::MOVE_RIGHT] && !moveComp.moveState[MoveState::MOVE_LEFT]) {
+            physics.speed.x *= 0.95;
+            if (std::abs(physics.speed.x) < 1) { //if the number is too small we round down to 0
+                physics.speed.x = 0;
+            }
+        }
+    }
+    if (physics.isSpeedVector) {
+        if (physics.speed.x > stats.maxSpeed) { 
+            physics.speed.x = stats.maxSpeed; 
+        } else if (physics.speed.x < -stats.maxSpeed) { 
+            physics.speed.x = -stats.maxSpeed; 
+        }
+        if (physics.speed.y > stats.maxSpeed) { 
+            physics.speed.y = stats.maxSpeed; 
+        } else if (physics.speed.y < -stats.maxSpeed) { 
+            physics.speed.y = -stats.maxSpeed; 
         }
     }
     if (physics.velocity > stats.maxSpeed) { 

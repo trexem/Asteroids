@@ -38,6 +38,7 @@ const uint32_t MAX_ENTITIES = 5000;
 #include "AnimationSystem.h"
 #include "AsteroidSystem.h"
 #include "ExperienceSystem.h"
+#include "LifeTimeSystem.h"
 
 
 class Game {
@@ -62,7 +63,7 @@ public:
 	Timer fps_timer, cap_timer, step_timer;
 	std::stringstream time_text, pause_text, score_text; //strings to print: fps, PAUSE and score
 	bool quit = false, pause = false;
-	double time_step;
+	double timeStep;
 	int counted_frames = 0;
 	EntityManager entityManager;  // Only one instance of EntityManager
 
@@ -81,6 +82,7 @@ private:
 	std::unique_ptr<AsteroidSystem> asteroidSystem;
 	std::unique_ptr<RenderSystem> renderSystem;
 	std::unique_ptr<ExperienceSystem> xpSystem;
+	std::unique_ptr<LifeTimeSystem> lifeTimeSystem;
 	Camera camera;
 	Uint32 last_tick = 0, tick = 0;
 	SDL_Event e; //event to catch keypresses

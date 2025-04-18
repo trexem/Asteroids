@@ -24,7 +24,6 @@ const FPair SCREEN_TOP_CENTER = { SCREEN_CENTER.x, 0 };
 constexpr double PI = 3.14159264;
 extern Pos g_screen_center;
 
-bool checkCollision(SDL_FRect a, SDL_FRect b);
 float getSquaredDistanceBetweenCenters(const SDL_FRect& rect1, const SDL_FRect& rect2);
 float calculateCenteredX(int w);
 FPair calculateCenters(float x, float y, float w, float h);

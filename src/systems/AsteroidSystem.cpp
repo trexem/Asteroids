@@ -121,8 +121,8 @@ void AsteroidSystem::handleAsteroidAsteroidCollision(std::shared_ptr<AsteroidAst
 	TransformComponent tB = eManager->getComponentData<TransformComponent>(b);
 	CollisionComponent cA = eManager->getComponentData<CollisionComponent>(a);
 	CollisionComponent cB = eManager->getComponentData<CollisionComponent>(b);
-	std::cout << "EntityA: " << a << " " << tA.position << std::endl;
-	std::cout << "EntityB: " << b << " " << tB.position << std::endl;
+	// std::cout << "EntityA: " << a << " " << tA.position << std::endl;
+	// std::cout << "EntityB: " << b << " " << tB.position << std::endl;
 	FPair centerA = calculateCenters(tA.position.x, tA.position.y, cA.width, cA.height);
 	FPair centerB = calculateCenters(tB.position.x, tB.position.y, cB.width, cB.height);
 
@@ -143,8 +143,8 @@ void AsteroidSystem::handleAsteroidAsteroidCollision(std::shared_ptr<AsteroidAst
 	tA.position.y -= normal.y * separationForce;
 	tB.position.x += normal.x * separationForce;
 	tB.position.y += normal.y * separationForce;
-	std::cout << "EntityA: " << a << " new position " << tA.position << std::endl;
-	std::cout << "EntityB: " << b << " new position " << tB.position << std::endl;
+	// std::cout << "EntityA: " << a << " new position " << tA.position << std::endl;
+	// std::cout << "EntityB: " << b << " new position " << tB.position << std::endl;
 	
 	eManager->setComponentData<PhysicsComponent>(a, pA);
 	eManager->setComponentData<PhysicsComponent>(b, pB);

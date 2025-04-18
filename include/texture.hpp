@@ -46,6 +46,7 @@ private:
 
 extern Texture g_ship_texture;
 extern Texture g_shot_texture;
+extern Texture g_rocket_texture;
 extern Texture g_particle_texture;
 extern Texture g_particle_shimmer_texture;
 extern Texture g_asteroid_big_texture;

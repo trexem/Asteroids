@@ -40,7 +40,7 @@ constexpr int abilitiesProjectileCount[static_cast<size_t>(ShipAbilities::ShipAb
 constexpr float abilitiesProjectileSpeed[static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)][10] {
     //Levels 0     1     2       3      4      5      6      7      8      9
     {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},  //LaserGun
-    {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},  //Rocket
+    {      100,  100,  200,    200,   400,   400,   600,   600,   800,  1000},  //Rocket
     {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},
     {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},
     {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},
@@ -50,7 +50,7 @@ constexpr float abilitiesProjectileSpeed[static_cast<size_t>(ShipAbilities::Ship
 constexpr float abilitiesDamage[static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)][10] {
     //Levels 0     1     2       3      4      5      6      7      8      9
     {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},  //LaserGun
-    {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},  //Rocket
+    {       25,   25,   25,  36.5f, 36.5f, 36.5f,    50,    50, 62.5f,    75},  //Rocket
     {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},
     {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},
     {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},
@@ -65,6 +65,16 @@ constexpr float abilitiesSize[static_cast<size_t>(ShipAbilities::ShipAbilitiesCo
     {        1,    1,    1,      1,     1,     1,     1,     1,     1,     1},
     {        1,    1,    1,      1,     1,     1,     1,     1,     1,     1},
     {      200,  250,  300,    350,   400,   500,   600,   700,   800,   1000}   //PickUpRadius
+};
+
+constexpr double abilitiesLifeTime[static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)][10]{
+    //Levels 0     1     2       3      4      5      6      7      8      9
+    {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},  //LaserGun
+    {     2.0f, 2.0f, 2.5f,   3.0f,  3.0f,  3.5f,  3.5f,  4.5f, 4.75f,  5.0f},  //Rocket
+    {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},
+    {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},
+    {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},
+    {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0}   //PickUpRadius
 };
 
 constexpr std::array<const char*, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilityIconLocation = {

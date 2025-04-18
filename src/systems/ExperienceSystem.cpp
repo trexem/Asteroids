@@ -13,7 +13,6 @@ void ExperienceSystem::handleExperienceSpawnMessage(std::shared_ptr<ExperienceSp
     trComp.position = {msg->position.x - experienceTexture.getWidth() / 2, 
         msg->position.y - experienceTexture.getHeight() / 2 };
     CollisionComponent colComp;
-    colComp.position = trComp.position;
     colComp.height = experienceTexture.getHeight();
     colComp.width = experienceTexture.getWidth();
     PhysicsComponent physComp;
@@ -59,7 +58,7 @@ void ExperienceSystem::update() {
                 const float normalizedDist = 1.0f - (dist / attractionRadius);
                 // std::cout << "Ship Position: " << playerTr->position.x << ", " << playerTr->position.y << std::endl;
                 // std::cout << "XP Position: " << xpTr.position.x << ", " << xpTr.position.y << std::endl;
-                xpPhys.velocity = 10.0 + (dist) * 50.0;
+                xpPhys.velocity = stats->maxSpeed + (attractionRadius - dist) * 5.0;
                 // std::cout << "xp rotation and velocity is: " << xpTr.rotDegrees << ", " << xpPhys.velocity << std::endl;
                 eManager->setComponentData<PhysicsComponent>(xp, xpPhys);
                 eManager->setComponentData<TransformComponent>(xp, xpTr);

@@ -12,9 +12,9 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	physicsSystem = std::make_unique<PhysicsSystem>();
 	movementSystem = std::make_unique<MovementSystem>(&camera);
 	collisionSystem = std::make_unique<CollisionSystem>();
-	abilitySystem = std::make_unique<AbilitySystem>(&entityManager);
 	damageSystem = std::make_unique<DamageSystem>(&entityManager);
 	animationSystem = std::make_unique<AnimationSystem>(&entityManager);
+	lifeTimeSystem = std::make_unique<LifeTimeSystem>(&entityManager);
 }
 
 Game::~Game() {
@@ -84,7 +84,9 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 			} else {
 				guiSystem = std::make_unique<GUISystem>(&entityManager, renderSystem->getRenderer());
 				xpSystem = std::make_unique<ExperienceSystem>(&entityManager, renderSystem->getRenderer());
+				abilitySystem = std::make_unique<AbilitySystem>(&entityManager, renderSystem->getRenderer());
 				g_shot_texture.m_renderer = renderSystem->getRenderer();
+				g_rocket_texture.m_renderer = renderSystem->getRenderer();
 				//init SDL_ttf
 				if (!TTF_Init()) {
 					std::cout << "SDL_ttf could not initialize! SDL_ttf Error: " << SDL_GetError() << '\n';
@@ -108,6 +110,10 @@ bool Game::loadMedia() {
 		printf("Failed to load shot texture");
 		success = false;
 	}
+	if (!g_rocket_texture.loadFromFile("data/img/rocket.bmp")) {
+		printf("Failed to load rocket texture");
+		success = false;
+	}
 	if (!g_particle_surface.loadFromFile("data/img/ship_particle.bmp")) {
 		printf("Failed to load ship particle texture");
 		success = false;
@@ -125,7 +131,7 @@ bool Game::loadMedia() {
 }
 
 void Game::start() {
-	createShip(ShipType::TANK);
+	createShip(ShipType::FREE_MOVE);
 	counted_frames = 0;
 	asteroidSystem = std::make_unique<AsteroidSystem>(&entityManager, renderSystem->getRenderer());
 	asteroidSystem->generateAsteroids(&entityManager, 0.0);
@@ -154,19 +160,28 @@ void Game::gameLoop() {
 			avg_fps = 0;
 		}
 		//Calculate time between previous movement and now
-		time_step = step_timer.getTicks() / 1000.0;
+		timeStep = step_timer.getTicks() / 1000.0;
 		auto start = std::chrono::high_resolution_clock::now();
 		auto end = std::chrono::high_resolution_clock::now();
 		//UpdateSystems
 		if (GameStateManager::getInstance().getState() == GameState::Playing) {
 			start = std::chrono::high_resolution_clock::now();
-			playerSystem->update(time_step);
+			playerSystem->update(timeStep);
 			end = std::chrono::high_resolution_clock::now();
 			std::cout << "playerSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			start = std::chrono::high_resolution_clock::now();
-			movementSystem->update(&entityManager, time_step);
+			physicsSystem->update(&entityManager, timeStep);
+			end = std::chrono::high_resolution_clock::now();
+			std::cout << "physicsSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			start = std::chrono::high_resolution_clock::now();
+			movementSystem->update(&entityManager, timeStep);
 			end = std::chrono::high_resolution_clock::now();
 			std::cout << "movementSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			//Update LifeTime System
+			start = std::chrono::high_resolution_clock::now();
+			lifeTimeSystem->update(timeStep);
+			end = std::chrono::high_resolution_clock::now();
+			std::cout << "LifeTimeSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			//Check collisions
 			start = std::chrono::high_resolution_clock::now();
 			collisionSystem->update(&entityManager);
@@ -174,9 +189,19 @@ void Game::gameLoop() {
 			std::cout << "collisionSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			//update asteroids
 			start = std::chrono::high_resolution_clock::now();
-			asteroidSystem->update(&entityManager, time_step);
+			asteroidSystem->update(&entityManager, timeStep);
 			end = std::chrono::high_resolution_clock::now();
 			std::cout << "asteroidSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			//Update damageSystem
+			start = std::chrono::high_resolution_clock::now();
+			damageSystem->update(timeStep);
+			end = std::chrono::high_resolution_clock::now();
+			std::cout << "damageSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			//Update abilities
+			start = std::chrono::high_resolution_clock::now();
+			abilitySystem->update();
+			end = std::chrono::high_resolution_clock::now();
+			std::cout << "abilitySystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			//Update Experience
 			start = std::chrono::high_resolution_clock::now();
 			xpSystem->update();
@@ -185,7 +210,7 @@ void Game::gameLoop() {
 		}
 		//animations
 		start = std::chrono::high_resolution_clock::now();
-		animationSystem->update(time_step);
+		animationSystem->update(timeStep);
 		end = std::chrono::high_resolution_clock::now();
 		std::cout << "animationSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 		//GUI
@@ -248,13 +273,18 @@ void Game::createShip(ShipType shipType) {
 	entityManager.setComponentData<StatsComponent>(ship, shipStats);
 	// Physics
 	PhysicsComponent shipPhys;
+	shipPhys.isSpeedVector = true;
 	entityManager.setComponentData<PhysicsComponent>(ship, shipPhys);
 	// Player
 	PlayerComponent shipPlayer;
 	shipPlayer.type = shipType;
-	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::LaserGun)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 0;
-	shipPlayer.currentXp = 100;
+	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::PickupRadius)] = true;
+	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::PickupRadius)] = 2;
+	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::LaserGun)] = true;
+	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 0;
+	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Rocket)] = true;
+	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Rocket)] = 5;
+	shipPlayer.currentXp = 0;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
 	// Movement
 	MovementComponent shipMovement;

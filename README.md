@@ -76,9 +76,9 @@ After it finishes downloading and `cmake` stops working you will have to choose 
  - [ ] ScoreSystem (tracks player score)
 ### Abilities
  - [X] LaserGun
- - [ ] RocketLauncher
+ - [X] RocketLauncher
  - [ ] Laser
  - [ ] Explosives
  - [ ] GravitySaws
- - [ ] PickupRadius
+ - [X] PickupRadius
  - [ ] ideas on more abilities

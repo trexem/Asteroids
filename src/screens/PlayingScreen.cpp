@@ -121,21 +121,22 @@ void PlayingScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
 
 void PlayingScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
     //Time
-    if (GameStateManager::getInstance().getState() == GameState::Playing) {
-        Uint32 currentSeconds = GameStateManager::getInstance().getGameTimeSeconds();
+    Uint32 newSeconds = GameStateManager::getInstance().getGameTimeSeconds();
+    if (GameStateManager::getInstance().getState() == GameState::Playing && currentSeconds != newSeconds) {
         std::string timeText = formatTimeMMSS(currentSeconds);
         timeTexture.loadFromText(timeText, Colors::White, Fonts::Subtitle);
+        currentSeconds = newSeconds;
     }
     //Experience
     std::ostringstream lvlText;
     auto players = eManager->getEntitiesWithComponent(ComponentType::Player);
     for (uint32_t player : players) {
-        PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(player);
-        drawCurrentXp(renderer, playerComp.currentXp, playerComp.xpToNextLevel);
-        if (previousLvl != playerComp.level) {
-            lvlText << "lvl:" << playerComp.level;
+        PlayerComponent* playerComp = eManager->getComponentDataPtr<PlayerComponent>(player);
+        drawCurrentXp(renderer, playerComp->currentXp, playerComp->xpToNextLevel);
+        if (previousLvl != playerComp->level) {
+            lvlText << "lvl:" << playerComp->level;
             levelTexture.loadFromText(lvlText.str(), Colors::White, Fonts::Body);
-            previousLvl = playerComp.level;
+            previousLvl = playerComp->level;
         }
     }
 }

@@ -8,7 +8,7 @@
 
 class PhysicsSystem : public System {
 public:
-    void update(EntityManager* eManager);
+    void update(EntityManager* eManager, double dT);
 };
 
 #endif // !__PHYSICS_SYSTEM_H_

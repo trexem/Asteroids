@@ -22,11 +22,17 @@ GUISystem::~GUISystem() {
 }
 
 void GUISystem::update() {
+    auto start = std::chrono::high_resolution_clock::now();
     updateState();
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout << "GUISystem updateState time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
     if (overlayScreen) {
         overlayScreen->update(eManager, renderer);
     }
-    screen->update(eManager, renderer);    
+    start = std::chrono::high_resolution_clock::now();
+    screen->update(eManager, renderer);
+    end = std::chrono::high_resolution_clock::now();
+    std::cout << "GUISystem screenUpdate time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 }
 
 void GUISystem::updateState() {

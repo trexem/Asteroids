@@ -24,6 +24,7 @@ enum class ComponentType {
     Animation,
     GUI,
     Experience,
+    LifeTime,
 
     Count
 };
@@ -45,6 +46,10 @@ enum ShipType {
 
 };
 
+enum class Shape {
+    Rectangle, Circle
+};
+
 struct TransformComponent {
     FPair position {0.0f, 0.0f};
     double rotDegrees {0.0f};
@@ -52,15 +57,24 @@ struct TransformComponent {
 
 struct PhysicsComponent {
     float velocity{0.0f};
+    FPair speed{0.0f, 0.0f};
+    bool isSpeedVector{false};
     float rotVelocity {0.0f};
-    float acceleration;
+    float acceleration {0.0f};
     float mass {1.0f};
 };
 
 struct CollisionComponent {
-    FPair position {0.0f, 0.0f};
+    Shape shape = Shape::Rectangle;
+    FPair position {0.0f, 0.0f}; //Offset from Transform Position
     float height {1.0f};
     float width {1.0f};
+    float radius {0.5f};
+
+    float getBoundingRadius() const {
+        return (shape == Shape::Circle) ? radius :
+            std::sqrt(width*width + height*height)/2.0f;
+    }
 };
 
 struct RenderComponent {
@@ -79,6 +93,7 @@ struct RenderComponent {
 struct HealthComponent {
     float health {1.0f};
     float maxHealth {1.0f};
+    double explosionCooldown {0.0f};
 };
 
 struct DamageComponent {
@@ -107,6 +122,7 @@ struct StatsComponent {
     float projectileSpeed {1.0f}; // Multiplier for projectile speed
     int projectileCount {0}; // Extra projectiles
     float collectionRadius {1.0f};
+    float extraSize {0.0f};
 };
 
 struct MovementComponent {
@@ -135,6 +151,10 @@ struct AnimationComponent {
 struct GUIComponent {
     bool clickable {false};
     bool hoverable {false};   
+};
+
+struct LifeTimeComponent {
+    double lifeTime{0.0f};
 };
 
 std::vector<ShipAbilities> getRandomAbilityChoices(const PlayerComponent& player);

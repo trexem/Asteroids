@@ -151,6 +151,8 @@ private:
             return ComponentType::GUI;
         } else if constexpr (std::is_same<T, ExperienceComponent>::value) {
             return ComponentType::Experience;
+        } if constexpr (std::is_same<T, LifeTimeComponent>::value) {
+            return ComponentType::LifeTime;
         }
     }
 

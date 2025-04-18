@@ -15,6 +15,7 @@ class PlayingScreen : public Screen {
     Texture pauseTexture;
     uint32_t xpContainerID, currentXpID, abilitiesContainersID;
     uint32_t timeID, levelID, pauseID;
+    Uint32 currentSeconds{0};
     int previousXp, previousLvl;
 
     void handleMouseHover(std::shared_ptr<MouseMotionMessage> msg);
