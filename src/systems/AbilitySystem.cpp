@@ -10,7 +10,9 @@ AbilitySystem::AbilitySystem(EntityManager* eManager, SDL_Renderer* renderer) : 
         [this](std::shared_ptr<DestroyRocketMessage> msg) { handleDestroyRocketMessage(msg); }
     );
     explosionTexture.m_renderer = renderer;
+    gravitySawTexture.m_renderer = renderer;
     explosionTexture.loadFromFile("data/img/explosion.bmp");
+    gravitySawTexture.loadFromFile("data/img/gravitySaw.bmp");
 }
 
 AbilitySystem::~AbilitySystem() {
@@ -24,6 +26,9 @@ void AbilitySystem::handleAbilityMessage(std::shared_ptr<AbilityMessage> msg) {
         break;
     case ShipAbilities::Rocket:
         spawnRocket(msg->eID);
+        break;
+    case ShipAbilities::GravitySaws:
+        spawnGravitySaws(msg->eID);
     default:
         break;
     }
@@ -55,7 +60,7 @@ void AbilitySystem::spawnLaserGun(uint32_t eID) {
 	laserCollider.width = laserTexture.texture->getWidth();
     
     // Transform
-    double radians = transform->rotDegrees * PI / 180;
+    double radians = transform->rotDegrees * DEG2RAD;
     double sinRadians = sin(radians);
     double cosRadians = cos(radians);
     int laserWidth = laserTexture.texture->getWidth();
@@ -143,7 +148,7 @@ void AbilitySystem::spawnRocket(uint32_t eID) {
     float radius = std::max(render->texture->getHeight(), render->texture->getWidth());
     for (int i = 0; i < shots; i++) {
         float currentAngle = startAngle + (i * angleStep);
-        float radians = currentAngle * PI / 180.0f;
+        float radians = currentAngle * DEG2RAD;
 
         float xOffset = radius * cos(radians);
         float yOffset = radius * sin(radians);
@@ -199,11 +204,13 @@ void AbilitySystem::createExplosion(const FPair& pos) {
     LifeTimeComponent lifeComp;
     DamageComponent damageComp;
     PhysicsComponent physComp;
-    transComp.position = pos;
     rendComp.texture = &explosionTexture;
-    rendComp.size = abilitiesSize[ability][playerComp->abilityLevels[ability]] + statsComp->extraSize;
+    rendComp.size = abilitiesSize[ability][playerComp->abilityLevels[ability]] + statsComp->extraSize + 1;
+    float w = explosionTexture.getWidth() * rendComp.size;
+    float h = explosionTexture.getHeight() * rendComp.size;
+    transComp.position = {pos.x - w / 2, pos.y - h / 2};
     colComp.shape = Shape::Circle;
-    colComp.radius = std::max(explosionTexture.getHeight(), explosionTexture.getWidth());
+    colComp.radius = std::max(w, h);
     lifeComp.lifeTime = abilitiesLifeTime[ability][playerComp->abilityLevels[ability]];
     damageComp.damage = abilitiesDamage[ability][playerComp->abilityLevels[ability]];
     eManager->addComponent(eID, ComponentType::Transform);
@@ -220,4 +227,75 @@ void AbilitySystem::createExplosion(const FPair& pos) {
     eManager->setComponentData(eID, lifeComp);
     eManager->setComponentData(eID, damageComp);
     eManager->setComponentData(eID, physComp);
+}
+
+void AbilitySystem::spawnGravitySaws(uint32_t eID) {
+    const size_t ability = static_cast<size_t>(ShipAbilities::GravitySaws);
+    PlayerComponent* player = eManager->getComponentDataPtr<PlayerComponent>(eID);
+    StatsComponent* stats = eManager->getComponentDataPtr<StatsComponent>(eID);
+    TransformComponent* transform = eManager->getComponentDataPtr<TransformComponent>(eID);
+    RenderComponent* render = eManager->getComponentDataPtr<RenderComponent>(eID);
+    //GravitySaw Type
+    TypeComponent type = EntityType::GravitySaw;
+    //GravitySaw Physics
+    PhysicsComponent gravityPhysics;
+    gravityPhysics.rotVelocity = 720;
+    //GravitySaw Damage
+    DamageComponent damage;
+    damage.damage = abilitiesDamage[ability][player->abilityLevels[ability]] * stats->baseDamage;
+    //GravitySaw Render
+    RenderComponent rendComp;
+    rendComp.texture = &gravitySawTexture;
+    rendComp.size = abilitiesSize[ability][player->abilityLevels[ability]] + stats->extraSize;
+    //GravitySaw Collider
+    CollisionComponent colComp;
+    colComp.shape = Shape::Circle;
+    //GravitySaw Transform
+    TransformComponent transComp;
+    //LifeTime
+    LifeTimeComponent lifeComp;
+    lifeComp.lifeTime = abilitiesLifeTime[ability][player->abilityLevels[ability]];
+    //Orbit Comp
+    OrbitComponent orbitComp;
+    orbitComp.parentId = eID;
+    int shots = abilitiesProjectileCount[ability][player->abilityLevels[ability]] 
+        + stats->projectileCount;
+    float angleStep = TAU / shots;
+    float startAngle = transform->rotDegrees; // Start at right side (90 degrees)
+    float w = gravitySawTexture.getWidth() * rendComp.size;
+    float h = gravitySawTexture.getHeight() * rendComp.size;
+    float radius = std::max(w, h);
+    colComp.radius = radius;
+    orbitComp.radius = radius + 100.0f;
+    orbitComp.rotationSpeed = abilitiesProjectileSpeed[ability][player->abilityLevels[ability]];
+    for (int i = 0; i < shots; i++) {
+        float currentAngle = startAngle + (i * angleStep);
+        orbitComp.angle = currentAngle - PI / 2;
+
+        float xOffset = radius * cos(currentAngle);
+        float yOffset = radius * sin(currentAngle);
+
+        transComp.position.x = transform->position.x + render->texture->getWidth()/2 + xOffset;
+        transComp.position.y = transform->position.y + render->texture->getHeight()/2 + yOffset;
+
+        uint32_t gravitySaw = eManager->createEntity();
+        eManager->addComponent(gravitySaw, ComponentType::Type);
+        eManager->addComponent(gravitySaw, ComponentType::Physics);
+        eManager->addComponent(gravitySaw, ComponentType::Damage);
+        eManager->addComponent(gravitySaw, ComponentType::Render);
+        eManager->addComponent(gravitySaw, ComponentType::Collision);
+        eManager->addComponent(gravitySaw, ComponentType::Transform);
+        eManager->addComponent(gravitySaw, ComponentType::LifeTime);
+        eManager->addComponent(gravitySaw, ComponentType::Orbit);
+        
+        eManager->setComponentData<TypeComponent>(gravitySaw, type);
+        eManager->setComponentData<PhysicsComponent>(gravitySaw, gravityPhysics);
+        eManager->setComponentData<DamageComponent>(gravitySaw, damage);
+        eManager->setComponentData<RenderComponent>(gravitySaw, rendComp);
+        eManager->setComponentData<CollisionComponent>(gravitySaw, colComp);
+        eManager->setComponentData<TransformComponent>(gravitySaw, transComp);
+        eManager->setComponentData<LifeTimeComponent>(gravitySaw, lifeComp);
+        eManager->setComponentData<OrbitComponent>(gravitySaw, orbitComp);
+    }
+
 }

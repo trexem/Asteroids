@@ -146,7 +146,7 @@ void PlayingScreen::drawAbilityContainers(SDL_Renderer* renderer) {
     SDL_SetRenderTarget(renderer, abilitiesContainersTexture.getTexture());
     SDL_SetRenderDrawColor(renderer, 230, 230, 230, 100);
     for (int i = 0; i < 5; ++i) {
-        SDL_FRect rect = { i * (35 + 5), 0, 35, 35 }; // Draw 10x10 rectangles
+        SDL_FRect rect = { i * (35.0f + 5.0f), 0, 35, 35 }; // Draw 10x10 rectangles
         SDL_RenderFillRect(renderer, &rect); // Fill the rectangle
     }
     SDL_SetRenderTarget(renderer, NULL);
@@ -163,7 +163,7 @@ void PlayingScreen::drawXpContainer(SDL_Renderer* renderer) {
 
 void PlayingScreen::drawCurrentXp(SDL_Renderer* renderer, int currentXp, int xpToNextLevel) {
     if (previousXp != currentXp) {
-        int maxWidth = SCREEN_WIDTH - 8;
+        float maxWidth = SCREEN_WIDTH - 8.0f;
         float currentWidth = float(currentXp) / float(xpToNextLevel) * maxWidth;
         SDL_SetRenderTarget(renderer, currentXpTexture.getTexture());
         if (currentXp < previousXp) {

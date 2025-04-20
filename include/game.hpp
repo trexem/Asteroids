@@ -39,6 +39,7 @@ const uint32_t MAX_ENTITIES = 5000;
 #include "AsteroidSystem.h"
 #include "ExperienceSystem.h"
 #include "LifeTimeSystem.h"
+#include "OrbitSystem.h"
 
 
 class Game {
@@ -83,6 +84,7 @@ private:
 	std::unique_ptr<RenderSystem> renderSystem;
 	std::unique_ptr<ExperienceSystem> xpSystem;
 	std::unique_ptr<LifeTimeSystem> lifeTimeSystem;
+	std::unique_ptr<OrbitSystem> orbitSystem;
 	Camera camera;
 	Uint32 last_tick = 0, tick = 0;
 	SDL_Event e; //event to catch keypresses

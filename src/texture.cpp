@@ -45,8 +45,8 @@ bool Texture::loadFromFile(std::string t_path) {
 		if (new_texture == NULL) {
 			std::cout << "Unable to create texture from " << t_path.c_str() << "! SDL Eerror: " << SDL_GetError() << '\n';
 		} else{
-			m_width = loaded_surface->w;
-			m_height = loaded_surface->h;
+			m_width = static_cast<float>(loaded_surface->w);
+			m_height = static_cast<float>(loaded_surface->h);
 		}
 	}
 	// std::cout << "[LOAD] Created texture @ " << (void*)m_texture << "\n";
@@ -62,8 +62,8 @@ bool Texture::loadFromText(std::string t_texture_text, SDL_Color t_text_color, T
 		if (m_texture == NULL) {
 			std::cout << "Unable to create texture from rendered text! SDL Error: " << SDL_GetError() << '\n';
 		} else {
-			m_width = text_surface->w;
-			m_height = text_surface->h;
+			m_width = static_cast<float>(text_surface->w);
+			m_height = static_cast<float>(text_surface->h);
 		}
 	} else {
 		std::cout << "Unable to render text surface! SDL_ttf Error:" << SDL_GetError() << '\n';
@@ -103,11 +103,11 @@ void Texture::renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle
 	SDL_RenderTextureRotated(m_renderer, m_texture, t_clip, &render_quad, t_angle, t_center, t_flip);
 }
 
-int Texture::getWidth() {
+float Texture::getWidth() {
 	return m_width;
 }
 
-int Texture::getHeight() {
+float Texture::getHeight() {
 	return m_height;
 }
 
@@ -118,8 +118,8 @@ void Texture::setAlphaMod(int alpha) {
 void Texture::createEmptyTexture(int w, int h) {
 	free();
 	m_texture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, w, h);
-	m_width = w;
-	m_height = h;
+	m_width = static_cast<float>(w);
+	m_height = static_cast<float>(h);
 	if (!m_texture) {
         std::cerr << "Unable to create texture! SDL_Error: " << SDL_GetError() << std::endl;
     }

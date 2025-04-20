@@ -54,7 +54,7 @@ void ExperienceSystem::update() {
             // std::cout << "Distance and collectionRadius is: " << dist << ", " << stats->collectionRadius << std::endl;
             if (distSq <= attractionRadius * attractionRadius) {
                 const float dist = sqrtf(distSq);
-                xpTr.rotDegrees = xpTr.position.angleTowards(playerTr->position) * 180 / PI;
+                xpTr.rotDegrees = xpTr.position.angleTowards(playerTr->position) * RAD2DEG;
                 const float normalizedDist = 1.0f - (dist / attractionRadius);
                 // std::cout << "Ship Position: " << playerTr->position.x << ", " << playerTr->position.y << std::endl;
                 // std::cout << "XP Position: " << xpTr.position.x << ", " << xpTr.position.y << std::endl;

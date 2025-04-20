@@ -33,15 +33,15 @@ public:
 	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, SDL_FlipMode t_flip, float t_scale = 1.0f);
 	void setAlphaMod(int alpha);
 
-	int getWidth();
-	int getHeight();
+	float getWidth();
+	float getHeight();
 	SDL_Texture* getTexture();
 
 	SDL_Renderer* m_renderer{nullptr};
 private:
 	SDL_Texture* m_texture{nullptr};
-	int m_width{0};
-	int m_height{0};
+	float m_width{0};
+	float m_height{0};
 };
 
 extern Texture g_ship_texture;

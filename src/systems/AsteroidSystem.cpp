@@ -76,12 +76,12 @@ FPair AsteroidSystem::generatePosition(EntityManager* eManager) {
         const PhysicsComponent* playerPhys = eManager->getComponentDataPtr<PhysicsComponent>(playerID);
 
 		while (attempts < maxAttempts) {
-			double movementAngle = playerTransform->rotDegrees * PI / 180; //Bias to spawn asteroids only in this direction
+			double movementAngle = playerTransform->rotDegrees * DEG2RAD; //Bias to spawn asteroids only in this direction
 			if (playerPhys->velocity < 0) { //if player is going backwards the spawn should be biased the other way
 				movementAngle = -movementAngle;
 			}
 			else if (playerPhys->velocity == 0) { //If player is not moving we spawn it anywhere
-				movementAngle = static_cast<float>(rand()) / RAND_MAX * 2 * PI;
+				movementAngle = static_cast<float>(rand()) / RAND_MAX * TAU;
 			}
 
 			float angleOffset = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * ANGLE_BIAS_STRENGTH;

@@ -15,6 +15,7 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	damageSystem = std::make_unique<DamageSystem>(&entityManager);
 	animationSystem = std::make_unique<AnimationSystem>(&entityManager);
 	lifeTimeSystem = std::make_unique<LifeTimeSystem>(&entityManager);
+	orbitSystem = std::make_unique<OrbitSystem>(&entityManager);
 }
 
 Game::~Game() {
@@ -177,6 +178,10 @@ void Game::gameLoop() {
 			movementSystem->update(&entityManager, timeStep);
 			end = std::chrono::high_resolution_clock::now();
 			std::cout << "movementSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			start = std::chrono::high_resolution_clock::now();
+			orbitSystem->update(timeStep);
+			end = std::chrono::high_resolution_clock::now();
+			std::cout << "orbitSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			//Update LifeTime System
 			start = std::chrono::high_resolution_clock::now();
 			lifeTimeSystem->update(timeStep);
@@ -272,7 +277,7 @@ void Game::createShip(ShipType shipType) {
 	shipStats.speed = SHIP_SPEED;
 	shipStats.rotationSpeed = SHIP_ROT_SPEED;
 	shipStats.fireSpeed = SHIP_SHOT_DELAY;
-	shipStats.collectionRadius = SHIP_BASE_RADIUS;
+	shipStats.collectionRadius = 200;
 	entityManager.setComponentData<StatsComponent>(ship, shipStats);
 	// Physics
 	PhysicsComponent shipPhys;
@@ -285,8 +290,10 @@ void Game::createShip(ShipType shipType) {
 	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::PickupRadius)] = 2;
 	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::LaserGun)] = true;
 	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 0;
+	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::GravitySaws)] = true;
+	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::GravitySaws)] = 9;
 	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Rocket)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Rocket)] = 5;
+	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Rocket)] = 0;
 	shipPlayer.currentXp = 0;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
 	// Movement

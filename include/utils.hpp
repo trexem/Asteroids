@@ -17,11 +17,14 @@ struct Pos
 	double y;
 };
 
-const int SCREEN_WIDTH = 1920;
-const int SCREEN_HEIGHT = 1080;
+constexpr float SCREEN_WIDTH = 1920;
+constexpr float SCREEN_HEIGHT = 1080;
 const FPair SCREEN_CENTER = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
 const FPair SCREEN_TOP_CENTER = { SCREEN_CENTER.x, 0 };
-constexpr double PI = 3.14159264;
+constexpr float PI = 3.141592653589793f;
+constexpr float TAU = 2 * PI;
+constexpr float DEG2RAD = PI / 180.0f;
+constexpr float RAD2DEG = 180.0f / PI;
 extern Pos g_screen_center;
 
 float getSquaredDistanceBetweenCenters(const SDL_FRect& rect1, const SDL_FRect& rect2);

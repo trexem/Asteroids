@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "Components.h"
+#include "ComponentTraits.h"
 
 class EntityManager {
 public:
@@ -33,7 +34,7 @@ public:
         static_assert(std::is_standard_layout<T>::value, "Component type must be standard layout.");
         assert(entityID < maxEntities);
         
-        ComponentType type = getComponentType<T>();
+        constexpr ComponentType type = ComponentTraits<T>::type;
         if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
             if (entityID < componentPools[static_cast<size_t>(type)].size()) {
                 // Create and store a copy of the component data
@@ -44,7 +45,7 @@ public:
 
     template <typename T>
     const T& getComponentData(uint32_t entityID) const {
-        const ComponentType type = getComponentType<T>();
+        constexpr ComponentType type = ComponentTraits<T>::type;
         // std::cout << "Getting component data for component: " << typeid(T).name() 
         // << " for entity: " << entityID << std::endl;
         if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
@@ -61,7 +62,7 @@ public:
 
     template <typename T>
     const T& getComponentData(uint32_t entityID) {
-        const ComponentType type = getComponentType<T>();
+        constexpr ComponentType type = ComponentTraits<T>::type;
         // std::cout << "Getting component data for component: " << typeid(T).name() 
         // << " for entity: " << entityID << std::endl;
         if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
@@ -78,7 +79,7 @@ public:
 
     template <typename T>
     const T* getComponentDataPtr(uint32_t entityID) const {
-        const ComponentType type = getComponentType<T>();
+        constexpr ComponentType type = ComponentTraits<T>::type;
         if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
             if (entityID < componentPools[static_cast<size_t>(type)].size()) {
                 if (componentPools[static_cast<size_t>(type)][entityID]) {
@@ -92,7 +93,7 @@ public:
     // Non-const overload for modification
     template <typename T>
     T* getComponentDataPtr(uint32_t entityID) {
-        const ComponentType type = getComponentType<T>();
+        constexpr ComponentType type = ComponentTraits<T>::type;
         if (entityComponentMasks[entityID][static_cast<size_t>(type)]) {
             if (entityID < componentPools[static_cast<size_t>(type)].size()) {
                 if (componentPools[static_cast<size_t>(type)][entityID]) {
@@ -105,7 +106,7 @@ public:
 
     template <typename T>
     bool hasComponent(uint32_t entityID) const {
-        ComponentType type = getComponentType<T>();
+        constexpr ComponentType type = ComponentTraits<T>::type;
         return entityComponentMasks[entityID][static_cast<size_t>(type)];
     }
 
@@ -123,39 +124,11 @@ private:
     void destroyEntity(uint32_t entityID);
     void printComponentPool(uint32_t entityID);
     void freeTexturePtr(uint32_t eID);
-    template <typename T>
-    ComponentType getComponentType() const {
-        if constexpr (std::is_same<T, TransformComponent>::value) {
-            return ComponentType::Transform;
-        } else if constexpr (std::is_same<T, PhysicsComponent>::value) {
-            return ComponentType::Physics;
-        } else if constexpr (std::is_same<T, CollisionComponent>::value) {
-            return ComponentType::Collision;
-        } else if constexpr (std::is_same<T, RenderComponent>::value) {
-            return ComponentType::Render;
-        } else if constexpr (std::is_same<T, HealthComponent>::value) {
-            return ComponentType::Health;
-        } else if constexpr (std::is_same<T, DamageComponent>::value) {
-            return ComponentType::Damage;
-        } else if constexpr (std::is_same<T, PlayerComponent>::value) {
-            return ComponentType::Player;
-        } else if constexpr (std::is_same<T, StatsComponent>::value) {
-            return ComponentType::Stats;
-        } else if constexpr (std::is_same<T, MovementComponent>::value) {
-            return ComponentType::Movement;
-        } else if constexpr (std::is_same<T, TypeComponent>::value) {
-            return ComponentType::Type;
-        } else if constexpr (std::is_same<T, AnimationComponent>::value) {
-            return ComponentType::Animation;
-        } else if constexpr (std::is_same<T, GUIComponent>::value) {
-            return ComponentType::GUI;
-        } else if constexpr (std::is_same<T, ExperienceComponent>::value) {
-            return ComponentType::Experience;
-        } if constexpr (std::is_same<T, LifeTimeComponent>::value) {
-            return ComponentType::LifeTime;
-        }
-    }
 
+    template <typename T>
+    static constexpr ComponentType getComponentType() {
+        return ComponentTraits<T>::type;
+    }
     
     size_t entityCount = 0;
     std::vector<uint32_t> entities;

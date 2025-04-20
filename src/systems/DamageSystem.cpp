@@ -33,6 +33,10 @@ void DamageSystem::handleCollisionMessage(std::shared_ptr<CollisionMessage> msg)
         uint32_t explosion = (typeA.type & EntityType::Explosion) ? entityA : entityB;
         uint32_t asteroid = (explosion == entityA) ? entityB : entityA;
         handleAsteroidExplosionCollision(explosion, asteroid);
+    } else if (TypesSet::match(TypesSet::SAW_ASTEROID, typeA.type, typeB.type)) {
+        uint32_t saw = (typeA.type & EntityType::GravitySaw) ? entityA : entityB;
+        uint32_t asteroid = (saw == entityA) ? entityB : entityA;
+        handleAsteroidSawCollision(saw, asteroid);
     }
 }
 
@@ -64,7 +68,7 @@ void DamageSystem::handleAsteroidShotCollision(uint32_t shot, uint32_t asteroid)
 }
 
 void DamageSystem::handleAsteroidExplosionCollision(uint32_t explosion, uint32_t asteroid) {
-    float damage = eManager->getComponentData<DamageComponent>(explosion).damage;
+    float damage = eManager->getComponentDataPtr<DamageComponent>(explosion)->damage;
     HealthComponent asteroidHealth = eManager->getComponentData<HealthComponent>(asteroid);
     if (asteroidHealth.explosionCooldown > 0) return;
     float lifeRemaining = asteroidHealth.health - damage;
@@ -73,6 +77,8 @@ void DamageSystem::handleAsteroidExplosionCollision(uint32_t explosion, uint32_t
     eManager->setComponentData<HealthComponent>(asteroid, asteroidHealth);
     if (lifeRemaining < 0) {
         MessageManager::getInstance().sendMessage(std::make_shared<DestroyAsteroidMessage>(asteroid));
+    } else {
+        MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(asteroid, Animation::Damage));
     }
     return;
 }
@@ -80,6 +86,22 @@ void DamageSystem::handleAsteroidExplosionCollision(uint32_t explosion, uint32_t
 void DamageSystem::handleAsteroidShipCollision(uint32_t ship, uint32_t asteroid) {
     // std::cout << "Handling Asteroid&Ship Collision" << std::endl;
     MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(ship, Animation::Damage));
+}
+
+void DamageSystem::handleAsteroidSawCollision(uint32_t saw, uint32_t asteroid) {
+    float damage = eManager->getComponentDataPtr<DamageComponent>(saw)->damage;
+    HealthComponent asteroidHealth = eManager->getComponentData<HealthComponent>(asteroid);
+    if (asteroidHealth.explosionCooldown > 0) return;
+    float lifeRemaining = asteroidHealth.health - damage;
+    asteroidHealth.health = lifeRemaining;
+    asteroidHealth.explosionCooldown = EXPLOSION_COOLDOWN;
+    eManager->setComponentData<HealthComponent>(asteroid, asteroidHealth);
+    if (lifeRemaining < 0) {
+        MessageManager::getInstance().sendMessage(std::make_shared<DestroyAsteroidMessage>(asteroid));
+    } else {
+        MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(asteroid, Animation::Damage));
+    }
+    return;
 }
 
 void DamageSystem::update(double dT) {

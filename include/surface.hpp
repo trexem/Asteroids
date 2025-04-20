@@ -17,8 +17,8 @@ public:
     bool loadFromText(std::string t_texture_text, SDL_Color t_text_color, TTF_Font* g_font);
 
     SDL_Surface* getSurface() { return m_surface.get(); }
-    int getWidth() { return m_surface->w; }
-	int getHeight() { return m_surface->h; }
+    float getWidth() { return static_cast<float>(m_surface->w); }
+	float getHeight() { return static_cast<float>(m_surface->h); }
 
     SDL_Renderer* m_renderer{nullptr};
 

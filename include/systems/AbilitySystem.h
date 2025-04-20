@@ -19,7 +19,8 @@ public:
     void createExplosion(const FPair& pos);
     void spawnLaserGun(uint32_t eID);
     void spawnRocket(uint32_t eID);
+    void spawnGravitySaws(uint32_t eID);
     EntityManager* eManager;
     std::vector<FPair> rocketsDestroyed;
-    Texture explosionTexture;
+    Texture explosionTexture, gravitySawTexture;
 };

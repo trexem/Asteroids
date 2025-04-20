@@ -6,6 +6,8 @@
 #include <random>
 #include <vector>
 
+#include "utils.hpp"
+
 enum class ShipAbilities : size_t{
     LaserGun,
     Rocket,
@@ -23,7 +25,7 @@ constexpr float abilitiesCooldowns[static_cast<size_t>(ShipAbilities::ShipAbilit
     {   1.25f, 1.25f, 1.20f, 1.20f, 1.20f, 1.10f, 1.10f, 1.10f, 1.10f, 1.00f},  //Rocket
     {   0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f},  //Laser
     {   1.25f, 1.25f, 1.20f, 1.20f, 1.20f, 1.10f, 1.10f, 1.10f, 1.10f, 1.00f},  //Explosives
-    {   0.25f, 0.25f, 0.20f, 0.20f, 0.20f, 0.10f, 0.10f, 0.10f, 0.10f, 0.05f},  //GravitySaws
+    {   3.25f, 3.25f, 3.20f, 3.20f, 3.20f, 3.10f, 3.10f, 3.10f, 3.10f, 3.05f},  //GravitySaws
     {   0.25f, 0.25f, 0.20f, 0.20f, 0.20f, 0.10f, 0.10f, 0.10f, 0.10f, 0.05f}   //PickupRadius
 };
 
@@ -41,9 +43,9 @@ constexpr float abilitiesProjectileSpeed[static_cast<size_t>(ShipAbilities::Ship
     //Levels 0     1     2       3      4      5      6      7      8      9
     {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},  //LaserGun
     {      100,  100,  200,    200,   400,   400,   600,   600,   800,  1000},  //Rocket
-    {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},
-    {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},
-    {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},
+    {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},  //Laser
+    {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},  //Explosives
+    {      TAU,  TAU,  TAU,    TAU,   TAU,   TAU,   TAU,   TAU,   TAU,   TAU},  //GravitySaw
     {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000}
 };
 
@@ -70,10 +72,10 @@ constexpr float abilitiesSize[static_cast<size_t>(ShipAbilities::ShipAbilitiesCo
 constexpr double abilitiesLifeTime[static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)][10]{
     //Levels 0     1     2       3      4      5      6      7      8      9
     {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},  //LaserGun
-    {     2.0f, 2.0f, 2.5f,   3.0f,  3.0f,  3.5f,  3.5f,  4.5f, 4.75f,  5.0f},  //Rocket
+    {     2.0f, 2.0f, 2.0f,   2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f},  //Rocket
     {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},
     {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},
-    {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},
+    {     2.0f, 2.0f, 2.0f,   2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f},  //GravitySaw
     {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0}   //PickUpRadius
 };
 

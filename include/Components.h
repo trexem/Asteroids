@@ -25,6 +25,7 @@ enum class ComponentType {
     GUI,
     Experience,
     LifeTime,
+    Orbit,
 
     Count
 };
@@ -155,6 +156,13 @@ struct GUIComponent {
 
 struct LifeTimeComponent {
     double lifeTime{0.0f};
+};
+
+struct OrbitComponent {
+    float radius;
+    float angle;
+    float rotationSpeed;
+    uint32_t parentId;
 };
 
 std::vector<ShipAbilities> getRandomAbilityChoices(const PlayerComponent& player);
