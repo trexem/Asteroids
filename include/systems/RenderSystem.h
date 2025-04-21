@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __RENDER_SYSTEM_H_
-#define __RENDER_SYSTEM_H_
 
 #include "Camera.h"
 #include "System.h"
@@ -20,5 +18,3 @@ private:
     Camera* camera;
     uint32_t frame {0};
 };
-
-#endif // !__RENDER_SYSTEM_H_

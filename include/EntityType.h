@@ -1,6 +1,8 @@
 #pragma once
 
 #include <unordered_set>
+#include <unordered_map>
+#include <cstdint>
 #include <iostream>
 #include <string>
 

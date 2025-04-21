@@ -1,6 +1,4 @@
 #pragma once
-#ifndef _RENDERER_H_
-#define _RENDERER_H_
 
 #include <iostream>
 #include <memory>
@@ -24,5 +22,3 @@ public:
 private:
 	std::unique_ptr<SDL_Renderer, SDL_Renderer_Deleter> m_renderer;
 };
-
-#endif

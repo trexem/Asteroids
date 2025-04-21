@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __ANIMATION_MESSAGE_H_
-#define __ANIMATION_MESSAGE_H_
 
 #include <cstdint>
 
@@ -13,5 +11,3 @@ public:
     Animation animation;
     AnimationMessage(uint32_t eID, Animation animation) : eID(eID), animation(animation) {}
 };
-
-#endif // !__ANIMATION_MESSAGE_H_

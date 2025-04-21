@@ -1,6 +1,4 @@
 #pragma once
-#ifndef _GAME_H_
-#define _GAME_H_
 
 #include <iostream>
 #include <string>
@@ -91,5 +89,3 @@ private:
 
 	void createShip(ShipType shipType);
 };
-
-#endif

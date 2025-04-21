@@ -1,6 +1,5 @@
 #pragma once
-#ifndef _TIMER_H_
-#define _TIMER_H_
+
 #include <SDL3/SDL.h>
 
 class Timer {
@@ -23,5 +22,3 @@ private:
 	bool m_paused{false};
 	bool m_started{false};
 };
-
-#endif

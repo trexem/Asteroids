@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __ANIMATION_SYSTEM_H
-#define __ANIMATION_SYSTEM_H
 
 #include "AnimationMessage.h"
 #include "MessageManager.h"
@@ -15,5 +13,3 @@ private:
     void handleAnimationMessage(std::shared_ptr<AnimationMessage> msg);
     EntityManager* eManager;
 };
-
-#endif // !__ANIMATION_SYSTEM_H

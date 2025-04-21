@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __SURFACE_HPP_
-#define __SURFACE_HPP_
 
 #include <stdio.h>
 #include <iostream>
@@ -31,5 +29,3 @@ extern Surface g_shot_surface;
 extern Surface g_particle_surface;
 extern Surface g_particle_shimmer_surface;
 extern Surface g_asteroid_big_surface;
-
-#endif // !__SURFACE_HPP_

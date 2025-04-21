@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __GAME_STATE_MANAGER_H_
-#define __GAME_STATE_MANAGER_H_
 
 #include "GameStateMessage.h"
 #include "message.h"
@@ -26,5 +24,3 @@ private:
     GameStateManager(const GameStateManager&) = delete;
     GameStateManager& operator=(const GameStateManager&) = delete;
 };
-
-#endif // !__GAME_STATE_MANAGER_H_

@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __PLAYER_SYSTEM_H_
-#define __PLAYER_SYSTEM_H_
 
 #include <iostream>
 
@@ -28,5 +26,3 @@ private:
     void handleLevelUpMessage(std::shared_ptr<LevelUpMessage> msg);
     EntityManager* eManager;
 };
-
-#endif // !__PLAYER_SYSTEM_H_
