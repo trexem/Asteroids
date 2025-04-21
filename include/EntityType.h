@@ -8,15 +8,17 @@
 
 enum EntityType : uint32_t {
     Default         = 0,
-    Player          = 1 << 0, //  1
-    Asteroid        = 1 << 1, //  2
-    Enemy           = 1 << 2, //  4
-    Shot            = 1 << 3, //  8
-    GUI             = 1 << 4, // 16
-    Experience      = 1 << 5, // 32
-    Rocket          = 1 << 6, // 64
-    Explosion       = 1 << 7, //128
-    GravitySaw      = 1 << 8  //256
+    Player          = 1 << 0,
+    Asteroid        = 1 << 1,
+    Enemy           = 1 << 2,
+    Shot            = 1 << 3,
+    GUI             = 1 << 4,
+    Experience      = 1 << 5,
+    Rocket          = 1 << 6,
+    Explosion       = 1 << 7,
+    GravitySaw      = 1 << 8,
+    Laser           = 1 << 9,
+    Explosive       = 1 << 10
 };
 
 inline const std::unordered_map<EntityType, std::string> EntityTypeNames = {
@@ -29,6 +31,8 @@ inline const std::unordered_map<EntityType, std::string> EntityTypeNames = {
     {EntityType::Rocket,    "Rocket"},
     {EntityType::Explosion, "Explosion"},
     {EntityType::GravitySaw,"GravitySaw"},
+    {EntityType::Laser,     "Laser"},
+    {EntityType::Explosive, "Explosive"},
 };
 
 inline std::string getEntityTypeName(EntityType type) {

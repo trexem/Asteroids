@@ -132,7 +132,7 @@ bool Game::loadMedia() {
 }
 
 void Game::start() {
-	createShip(ShipType::FREE_MOVE);
+	createShip(ShipType::TANK);
 	counted_frames = 0;
 	asteroidSystem = std::make_unique<AsteroidSystem>(&entityManager, renderSystem->getRenderer());
 	asteroidSystem->generateAsteroids(&entityManager, 0.0);
@@ -286,10 +286,10 @@ void Game::createShip(ShipType shipType) {
 	// Player
 	PlayerComponent shipPlayer;
 	shipPlayer.type = shipType;
-	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::PickupRadius)] = true;
-	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::PickupRadius)] = 2;
-	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::LaserGun)] = true;
-	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 0;
+	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::PickupRadius)] = true;
+	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::PickupRadius)] = 2;
+	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::LaserGun)] = true;
+	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 0;
 	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::GravitySaws)] = true;
 	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::GravitySaws)] = 9;
 	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Rocket)] = true;

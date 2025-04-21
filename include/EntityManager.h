@@ -119,16 +119,16 @@ public:
     std::vector<uint32_t> getEntitiesWithComponent(ComponentType type);
     size_t maxEntities;
     std::vector<std::bitset<64>> entityComponentMasks;
-private:
-    uint32_t findAvailableEntityID();
-    void destroyEntity(uint32_t entityID);
-    void printComponentPool(uint32_t entityID);
-    void freeTexturePtr(uint32_t eID);
 
     template <typename T>
     static constexpr ComponentType getComponentType() {
         return ComponentTraits<T>::type;
     }
+private:
+    uint32_t findAvailableEntityID();
+    void destroyEntity(uint32_t entityID);
+    void printComponentPool(uint32_t entityID);
+    void freeTexturePtr(uint32_t eID);
     
     size_t entityCount = 0;
     std::vector<uint32_t> entities;

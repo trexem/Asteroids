@@ -89,6 +89,7 @@ struct RenderComponent {
         texture = new Texture(renderer, surface);
         free = true;
     }
+    RenderComponent(Texture* t, float s) : texture(t), size(s) {}
 };
 
 struct HealthComponent {
@@ -99,6 +100,9 @@ struct HealthComponent {
 
 struct DamageComponent {
     float damage {1.0f};
+
+    DamageComponent() = default;
+    DamageComponent(float d) : damage(d) {}
 };
 
 struct PlayerComponent {

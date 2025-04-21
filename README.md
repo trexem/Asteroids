@@ -54,8 +54,8 @@ After it finishes downloading and `cmake` stops working you will have to choose 
  - [X] ExperienceComponent (how much xp will give)
  - [X] AnimationComponent (render different textures for one entity)
  - [X] GUIComponent (for GUI/HUD components)
- - [ ] ExpirationComponent (for projectiles/lifespan)
- - [ ] ExperienceComponent (points on destruction)
+ - [X] LifeTimeComponent (for projectiles/lifespan)
+ - [X] ExperienceComponent (points on destruction)
  - [ ] AIComponent (for enemies with patterns)
  - [ ] SpawnerComponent (controls enemy/asteroid waves)
  ### Systems
@@ -79,6 +79,6 @@ After it finishes downloading and `cmake` stops working you will have to choose 
  - [X] RocketLauncher
  - [ ] Laser
  - [ ] Explosives
- - [ ] GravitySaws
+ - [X] GravitySaws
  - [X] PickupRadius
  - [ ] ideas on more abilities
