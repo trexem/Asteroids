@@ -37,6 +37,10 @@ void DamageSystem::handleCollisionMessage(std::shared_ptr<CollisionMessage> msg)
         uint32_t saw = (typeA.type & EntityType::GravitySaw) ? entityA : entityB;
         uint32_t asteroid = (saw == entityA) ? entityB : entityA;
         handleAsteroidSawCollision(saw, asteroid);
+    } else if(TypesSet::match(TypesSet::LASER_ASTEROID, typeA.type, typeB.type)) {
+        uint32_t laser = (typeA.type & EntityType::Laser) ? entityA : entityB;
+        uint32_t asteroid = (laser == entityA) ? entityB : entityA;
+        handleAsteroidLaserCollision(laser, asteroid);
     }
 }
 
@@ -104,12 +108,31 @@ void DamageSystem::handleAsteroidSawCollision(uint32_t saw, uint32_t asteroid) {
     return;
 }
 
+void DamageSystem::handleAsteroidLaserCollision(uint32_t laser, uint32_t asteroid) {
+    float damage = eManager->getComponentDataPtr<DamageComponent>(laser)->damage;
+    HealthComponent asteroidHealth = eManager->getComponentData<HealthComponent>(asteroid);
+    if (asteroidHealth.laserCooldown > 0) return;
+    float lifeRemaining = asteroidHealth.health - damage;
+    asteroidHealth.health = lifeRemaining;
+    asteroidHealth.laserCooldown = LASER_COOLDOWN;
+    eManager->setComponentData<HealthComponent>(asteroid, asteroidHealth);
+    if (lifeRemaining < 0) {
+        MessageManager::getInstance().sendMessage(std::make_shared<DestroyAsteroidMessage>(asteroid));
+    } else {
+        MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(asteroid, Animation::Damage));
+    }
+    return;
+}
+
 void DamageSystem::update(double dT) {
     for (uint32_t eID : eManager->getEntitiesWithComponent(ComponentType::Health)) {
         HealthComponent healthComp = eManager->getComponentData<HealthComponent>(eID);
         if (healthComp.explosionCooldown >= 0) {
             healthComp.explosionCooldown -= dT;
-            eManager->setComponentData(eID, healthComp);
         }
+        if (healthComp.laserCooldown >= 0) {
+            healthComp.laserCooldown -= dT;
+        }
+        eManager->setComponentData(eID, healthComp);
     }
 }

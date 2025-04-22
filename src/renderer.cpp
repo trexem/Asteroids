@@ -21,3 +21,10 @@ void Renderer::clear() {
 void Renderer::render() {
 	SDL_RenderPresent(&*m_renderer);
 }
+
+void Renderer::drawDebugRect(const SDL_FRect& rect, SDL_Color color) {
+    SDL_SetRenderDrawColor(&*m_renderer, color.r, color.g, color.b, color.a);
+    SDL_RenderRect(&*m_renderer, &rect);
+    // Reset to default color if needed
+    SDL_SetRenderDrawColor(&*m_renderer, 0, 0, 0, 255); 
+}

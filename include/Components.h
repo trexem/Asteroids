@@ -99,6 +99,7 @@ struct HealthComponent {
     float health {1.0f};
     float maxHealth {1.0f};
     double explosionCooldown {0.0f};
+    double laserCooldown {0.0f};
 };
 
 struct DamageComponent {
@@ -174,8 +175,10 @@ struct OrbitComponent {
 
 struct FollowComponent {
     uint32_t parentId;
+    bool isRadial {false};
     FPair offsetPosition {0.0f};
     double offsetAngle {0.0f};
+    float radius {0.0f};
 };
 
 std::vector<ShipAbilities> getRandomAbilityChoices(const PlayerComponent& player);

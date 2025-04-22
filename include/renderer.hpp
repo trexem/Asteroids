@@ -19,6 +19,7 @@ public:
 	SDL_Renderer* getRenderer(void);
 	void clear(void);
 	void render(void);
+	void drawDebugRect(const SDL_FRect& rect, SDL_Color color);
 private:
 	std::unique_ptr<SDL_Renderer, SDL_Renderer_Deleter> m_renderer;
 };

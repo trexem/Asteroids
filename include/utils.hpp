@@ -41,3 +41,18 @@ struct pair_hash {
         return h1 ^ h2; // Combine them (XOR works fine for most things)
     }
 };
+
+enum RotationPoint : uint16_t {
+	TopLeft 	= 1 << 0,
+	TopCenter 	= 1 << 1,
+	TopRight 	= 1 << 2,
+	CenterLeft 	= 1 << 3,
+	CenterCenter= 1 << 4,
+	CenterRight = 1 << 5,
+	BottomLeft 	= 1 << 6,
+	BottomCenter= 1 << 7,
+	BottomRight = 1 << 8,
+	defaultRotation = 0
+};
+
+SDL_FPoint getPivotFromRotationPoint(RotationPoint rp, int texW, int texH);

@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "System.h"
 #include "renderer.hpp"
+#include "Colors.h"
 
 #include <SDL3_image/SDL_image.h>
 

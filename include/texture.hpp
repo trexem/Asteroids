@@ -10,6 +10,7 @@
 
 #include "surface.hpp"
 #include "FPair.h"
+#include "utils.hpp"
 
 struct SDL_Surface_Deleter {
 	void operator()(SDL_Surface* surface) {
@@ -38,6 +39,7 @@ public:
 	SDL_Texture* getTexture();
 
 	SDL_Renderer* m_renderer{nullptr};
+	RotationPoint rotationPoint {RotationPoint::CenterCenter};
 private:
 	SDL_Texture* m_texture{nullptr};
 	float m_width{0};

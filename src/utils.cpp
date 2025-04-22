@@ -31,3 +31,31 @@ std::string formatTimeMMSS(Uint32 seconds) {
 
     return oss.str();
 }
+
+SDL_FPoint getPivotFromRotationPoint(RotationPoint rp, int w, int h) {
+    float x = 0.f, y = 0.f;
+
+    // Horizontal
+    if (rp & TopLeft || rp & CenterLeft || rp & BottomLeft)
+        x = 0.f;
+    else if (rp & TopCenter || rp & CenterCenter || rp & BottomCenter)
+        x = w / 2.0f;
+    else if (rp & TopRight || rp & CenterRight || rp & BottomRight)
+        x = float(w);
+
+    // Vertical
+    if (rp & TopLeft || rp & TopCenter || rp & TopRight)
+        y = 0.f;
+    else if (rp & CenterLeft || rp & CenterCenter || rp & CenterRight)
+        y = h / 2.0f;
+    else if (rp & BottomLeft || rp & BottomCenter || rp & BottomRight)
+        y = float(h);
+
+    // Fallback for Default or unknown
+    if (rp == RotationPoint::defaultRotation || (x == 0.f && y == 0.f)) {
+        x = 0.f;
+        y = 0.f;
+    }
+
+    return SDL_FPoint{ x, y };
+}

@@ -181,17 +181,19 @@ void AbilitySystem::spawnProjectile(uint32_t eID, ShipAbilities ability) {
             orbit.angle = currentAngle - PI / 2;
             entity.set<OrbitComponent>(orbit);
         } else if (ability == ShipAbilities::Laser) {
-            // textureComp.isStretched = true;
-            // textureComp.exactSize = {size * laserTexture.getWidth(), size * 250.0f};
-            colComp.width = textureComp.texture->getWidth();
-            colComp.height = textureComp.texture->getHeight();
+            textureComp.isStretched = true;
+            textureComp.exactSize = {size * laserTexture.getWidth(), size * 250.0f};
+            textureComp.texture->rotationPoint = RotationPoint::BottomCenter;
+            colComp.width = textureComp.exactSize.x;
+            colComp.height = textureComp.exactSize.y;
             physComp.velocity = 0;
             entity.add<FollowComponent>();
             FollowComponent follow;
             follow.parentId = eID;
+            follow.offsetAngle = 0;
             follow.offsetPosition = { 
                 render->texture->getWidth() / 2.0f - colComp.width / 2.0f,
-                -colComp.height 
+                render->texture->getHeight() / 2.0f
             };
             entity.set<FollowComponent>(follow);
         } else if (ability == ShipAbilities::Rocket) {

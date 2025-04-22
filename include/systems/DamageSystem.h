@@ -20,6 +20,8 @@ private:
     void handleAsteroidShipCollision(uint32_t ship, uint32_t asteroid);
     void handleAsteroidExplosionCollision(uint32_t explosion, uint32_t asteroid);
     void handleAsteroidSawCollision(uint32_t saw, uint32_t asteroid);
+    void handleAsteroidLaserCollision(uint32_t laser, uint32_t asteroid);
     EntityManager* eManager;
     const double EXPLOSION_COOLDOWN = 0.25f;
+    const double LASER_COOLDOWN = 0.10f;
 };

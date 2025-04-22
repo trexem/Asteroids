@@ -11,6 +11,7 @@ SDL_Renderer* RenderSystem::getRenderer() {
 
 void RenderSystem::render(EntityManager& eM) {
     renderer->clear();
+    const SDL_Color debugColor = Colors::Experience;
     // std::cout << "Rendering frame: " << frame << std::endl;
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::Render)) {
         if (eM.isMarkedForDestruction(eID)) continue;
@@ -20,14 +21,17 @@ void RenderSystem::render(EntityManager& eM) {
             FPair position;
             position.x = trComp.position.x - camera->position.x;
             position.y = trComp.position.y - camera->position.y;
+            const int w = rComp.isStretched ? rComp.exactSize.x : rComp.texture->getWidth();
+            const int h = rComp.isStretched ? rComp.exactSize.y : rComp.texture->getHeight();
+            SDL_FPoint pivot = getPivotFromRotationPoint(
+                rComp.texture->rotationPoint, w, h);
             if (rComp.isStretched) {
-                SDL_FPoint center = { rComp.exactSize.x / 2.0f, rComp.exactSize.y / 2.0f };
                 rComp.texture->renderEx(
                     static_cast<int>(position.x),
                     static_cast<int>(position.y),
                     nullptr,
                     static_cast<int>(trComp.rotDegrees),
-                    &center,
+                    &pivot,
                     SDL_FLIP_NONE,
                     rComp.exactSize
                 );
@@ -37,11 +41,13 @@ void RenderSystem::render(EntityManager& eM) {
                     static_cast<int>(position.y),
                     nullptr,
                     static_cast<int>(trComp.rotDegrees),
-                    nullptr,
+                    &pivot,
                     SDL_FLIP_NONE,
                     rComp.size
                 );
             }
+            SDL_FRect debugRect = { position.x, position.y, w, h};
+            renderer->drawDebugRect(debugRect, debugColor);
         }
     }
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::GUI)) {
@@ -59,7 +65,7 @@ void RenderSystem::render(EntityManager& eM) {
     }
     renderer->render();
     frame++;
-    // saveRendererToImage();
+    saveRendererToImage();
 }
 
 

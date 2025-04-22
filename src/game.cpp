@@ -291,14 +291,14 @@ void Game::createShip(ShipType shipType) {
 	// Player
 	PlayerComponent shipPlayer;
 	shipPlayer.type = shipType;
-	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::PickupRadius)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::PickupRadius)] = 2;
-	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::LaserGun)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 0;
-	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::GravitySaws)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::GravitySaws)] = 9;
-	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Rocket)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Rocket)] = 0;
+	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::PickupRadius)] = true;
+	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::PickupRadius)] = 2;
+	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::LaserGun)] = true;
+	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 0;
+	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::GravitySaws)] = true;
+	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::GravitySaws)] = 9;
+	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Rocket)] = true;
+	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Rocket)] = 0;
 	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Laser)] = true;
 	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Laser)] = 0;
 	shipPlayer.currentXp = 0;
