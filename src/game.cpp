@@ -16,6 +16,7 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	animationSystem = std::make_unique<AnimationSystem>(&entityManager);
 	lifeTimeSystem = std::make_unique<LifeTimeSystem>(&entityManager);
 	orbitSystem = std::make_unique<OrbitSystem>(&entityManager);
+	followSystem = std::make_unique<FollowSystem>();
 }
 
 Game::~Game() {
@@ -182,6 +183,10 @@ void Game::gameLoop() {
 			orbitSystem->update(timeStep);
 			end = std::chrono::high_resolution_clock::now();
 			std::cout << "orbitSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			start = std::chrono::high_resolution_clock::now();
+			followSystem->update(&entityManager);
+			end = std::chrono::high_resolution_clock::now();
+			std::cout << "followSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			//Update LifeTime System
 			start = std::chrono::high_resolution_clock::now();
 			lifeTimeSystem->update(timeStep);
@@ -294,6 +299,8 @@ void Game::createShip(ShipType shipType) {
 	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::GravitySaws)] = 9;
 	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Rocket)] = true;
 	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Rocket)] = 0;
+	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Laser)] = true;
+	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Laser)] = 0;
 	shipPlayer.currentXp = 0;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
 	// Movement

@@ -20,15 +20,28 @@ void RenderSystem::render(EntityManager& eM) {
             FPair position;
             position.x = trComp.position.x - camera->position.x;
             position.y = trComp.position.y - camera->position.y;
-            rComp.texture->renderEx(
-                static_cast<int>(position.x),
-                static_cast<int>(position.y),
-                nullptr,
-                static_cast<int>(trComp.rotDegrees),
-                nullptr,
-                SDL_FLIP_NONE,
-                rComp.size
-            );
+            if (rComp.isStretched) {
+                SDL_FPoint center = { rComp.exactSize.x / 2.0f, rComp.exactSize.y / 2.0f };
+                rComp.texture->renderEx(
+                    static_cast<int>(position.x),
+                    static_cast<int>(position.y),
+                    nullptr,
+                    static_cast<int>(trComp.rotDegrees),
+                    &center,
+                    SDL_FLIP_NONE,
+                    rComp.exactSize
+                );
+            } else {
+                rComp.texture->renderEx(
+                    static_cast<int>(position.x),
+                    static_cast<int>(position.y),
+                    nullptr,
+                    static_cast<int>(trComp.rotDegrees),
+                    nullptr,
+                    SDL_FLIP_NONE,
+                    rComp.size
+                );
+            }
         }
     }
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::GUI)) {

@@ -33,6 +33,8 @@ void AbilitySystem::handleAbilityMessage(std::shared_ptr<AbilityMessage> msg) {
         break;
     case ShipAbilities::GravitySaws:
         spawnGravitySaws(msg->eID);
+    case ShipAbilities::Laser:
+        spawnLaser(msg->eID);
     default:
         break;
     }
@@ -104,7 +106,7 @@ void AbilitySystem::spawnGravitySaws(uint32_t eID) {
 }
 
 void AbilitySystem::spawnLaser(uint32_t eID) {
-
+    spawnProjectile(eID, ShipAbilities::Laser);
 }
 
 void AbilitySystem::spawnExplosive(uint32_t eID) {
@@ -163,6 +165,39 @@ void AbilitySystem::spawnProjectile(uint32_t eID, ShipAbilities ability) {
     for (int i = 0; i < count; i++) {
         auto entity = createProjectileEntity();
 
+        float currentAngle = startAngle + (i * angleStep);
+        entity.add<TransformComponent>();
+        FPair pos = positionProjectile(i, count, playerPos, transform->rotDegrees, playerWH, ability);
+        transComp.position = pos;
+        transComp.rotDegrees = transform->rotDegrees;
+        
+        if (ability == ShipAbilities::GravitySaws) {
+            entity.add<OrbitComponent>();
+            physComp.velocity = 0;
+            OrbitComponent orbit;
+            orbit.parentId = eID;
+            orbit.rotationSpeed = speed;
+            orbit.radius = std::max(playerWH.x, playerWH.y) + 100;
+            orbit.angle = currentAngle - PI / 2;
+            entity.set<OrbitComponent>(orbit);
+        } else if (ability == ShipAbilities::Laser) {
+            // textureComp.isStretched = true;
+            // textureComp.exactSize = {size * laserTexture.getWidth(), size * 250.0f};
+            colComp.width = textureComp.texture->getWidth();
+            colComp.height = textureComp.texture->getHeight();
+            physComp.velocity = 0;
+            entity.add<FollowComponent>();
+            FollowComponent follow;
+            follow.parentId = eID;
+            follow.offsetPosition = { 
+                render->texture->getWidth() / 2.0f - colComp.width / 2.0f,
+                -colComp.height 
+            };
+            entity.set<FollowComponent>(follow);
+        } else if (ability == ShipAbilities::Rocket) {
+            transComp.rotDegrees = (currentAngle + HALF_PI) * RAD2DEG;
+        }
+
         entity.add<TypeComponent>();
         entity.set<TypeComponent>(config.type);
 
@@ -180,23 +215,6 @@ void AbilitySystem::spawnProjectile(uint32_t eID, ShipAbilities ability) {
             entity.set<LifeTimeComponent>(lifeComp);
         }
         
-        float currentAngle = startAngle + (i * angleStep);
-        entity.add<TransformComponent>();
-        FPair pos = positionProjectile(i, count, playerPos, transform->rotDegrees, playerWH, ability);
-        transComp.position = pos;
-        transComp.rotDegrees = transform->rotDegrees;
-        
-        if (ability == ShipAbilities::GravitySaws) {
-            entity.add<OrbitComponent>();
-            OrbitComponent orbit;
-            orbit.parentId = eID;
-            orbit.rotationSpeed = speed;
-            orbit.radius = std::max(playerWH.x, playerWH.y) + 100;
-            orbit.angle = currentAngle - PI / 2;
-            entity.set<OrbitComponent>(orbit);
-        } else if (ability == ShipAbilities::Rocket) {
-            transComp.rotDegrees = (currentAngle + HALF_PI) * RAD2DEG;
-        }
         
         entity.set<TransformComponent>(transComp);
         entity.add<CollisionComponent>();
@@ -215,18 +233,17 @@ FPair AbilitySystem::positionProjectile(int index, int total, const FPair& posSo
     switch (ability) {
     case ShipAbilities::LaserGun:
         return positionLinearSpread(index, total, posSource, angleSource, whSource);
-        break;
     case ShipAbilities::Rocket:
         return positionRadialSpread(index, total, posSource, angleSource, whSource, HALF_PI);
     case ShipAbilities::GravitySaws:
         return positionRadialSpread(index, total, posSource, angleSource, whSource, -HALF_PI);
     case ShipAbilities::Explosives:
         return positionLinearSpread(index, total, posSource, angleSource, whSource, PI);
+    case ShipAbilities::Laser:
+        return positionLinearSpread(index, total, posSource, angleSource, whSource);
     default:
         return posSource;
-        break;
     }
-
 } 
 
 FPair AbilitySystem::positionLinearSpread(int index, int total, const FPair& posSource, const float& angleSource,

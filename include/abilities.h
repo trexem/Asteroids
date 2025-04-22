@@ -23,7 +23,7 @@ constexpr float abilitiesCooldowns[static_cast<size_t>(ShipAbilities::ShipAbilit
     //Levels 0     1     2       3      4      5      6      7      8      9
     {   0.50f, 0.50f, 0.50f, 0.50f, 0.50f, 0.45f, 0.45f, 0.45f, 0.45f, 0.35f},  //LaserGun
     {   1.25f, 1.25f, 1.20f, 1.20f, 1.20f, 1.10f, 1.10f, 1.10f, 1.10f, 1.00f},  //Rocket
-    {   0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f},  //Laser
+    {   3.25f, 3.25f, 3.20f, 3.20f, 3.20f, 3.10f, 3.10f, 3.10f, 3.10f, 3.05f},  //Laser
     {   1.25f, 1.25f, 1.20f, 1.20f, 1.20f, 1.10f, 1.10f, 1.10f, 1.10f, 1.00f},  //Explosives
     {   3.25f, 3.25f, 3.20f, 3.20f, 3.20f, 3.10f, 3.10f, 3.10f, 3.10f, 3.05f},  //GravitySaws
     {   0.25f, 0.25f, 0.20f, 0.20f, 0.20f, 0.10f, 0.10f, 0.10f, 0.10f, 0.05f}   //PickupRadius
@@ -33,7 +33,7 @@ constexpr int abilitiesProjectileCount[static_cast<size_t>(ShipAbilities::ShipAb
     //Levels 0     1     2       3      4      5      6      7      8      9
     {       1,     2,    2,      3,     3,     3,     4,     4,     4,     5},  //LaserGun
     {       1,     2,    2,      3,     3,     3,     4,     4,     4,     5},  //Rocket
-    {       1,     2,    2,      3,     3,     3,     4,     4,     4,     5},  //Laser
+    {       1,     1,    1,      1,     1,     1,     1,     1,     1,     1},  //Laser
     {       1,     2,    2,      3,     3,     3,     4,     4,     4,     5},  //Explosives
     {       1,     2,    2,      3,     3,     3,     4,     4,     4,     5},  //GravitySaws
     {       1,     2,    2,      3,     3,     3,     4,     4,     4,     5}   //PickupRadius
@@ -63,7 +63,7 @@ constexpr float abilitiesSize[static_cast<size_t>(ShipAbilities::ShipAbilitiesCo
     //Levels 0     1     2       3      4      5      6      7      8      9
     {        1,    1,    1,      1,     1,     1,     1,     1,     1,     1},  //LaserGun
     {        1,    1,    1,      1,     1,     1,     1,     1,     1,     1},  //Rocket
-    {        1,    1,    1,      1,     1,     1,     1,     1,     1,     1},
+    {        1,1.05f,1.05f,   1.1f,  1.1f, 1.15f, 1.15f, 1.15f,  1.2f, 1.25f},
     {        1,    1,    1,      1,     1,     1,     1,     1,     1,     1},
     {        1,    1,    1,      1,     1,     1,     1,     1,     1,     1},
     {      200,  250,  300,    350,   400,   500,   600,   700,   800,   1000}   //PickUpRadius
@@ -73,7 +73,7 @@ constexpr double abilitiesLifeTime[static_cast<size_t>(ShipAbilities::ShipAbilit
     //Levels 0     1     2       3      4      5      6      7      8      9
     {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},  //LaserGun
     {     2.0f, 2.0f, 2.0f,   2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f},  //Rocket
-    {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},
+    {     1.0f, 1.0f, 1.0f,   1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f},
     {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},
     {     2.0f, 2.0f, 2.0f,   2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f},  //GravitySaw
     {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0}   //PickUpRadius

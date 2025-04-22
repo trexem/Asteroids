@@ -45,6 +45,7 @@ private:
     EntityManager* eManager;
     std::vector<FPair> rocketsDestroyed;
     Texture explosionTexture, gravitySawTexture, laserTexture, explosiveTexture;
+    FPair laserSize;
 
     std::unordered_map<ShipAbilities, ProjectileConfig> abilityConfigs = {
         {ShipAbilities::LaserGun, {

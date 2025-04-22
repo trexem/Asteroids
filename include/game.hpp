@@ -24,21 +24,7 @@ const uint32_t MAX_ENTITIES = 5000;
 #include "EntityManager.h"
 #include "Fonts.h"
 #include "GameStateManager.h"
-#include "GUISystem.h"
-#include "PlayerSystem.h"
-#include "InputSystem.h"
-#include "RenderSystem.h"
-#include "PhysicsSystem.h"
-#include "MovementSystem.h"
-#include "CollisionSystem.h"
-#include "AbilitySystem.h"
-#include "DamageSystem.h"
-#include "AnimationSystem.h"
-#include "AsteroidSystem.h"
-#include "ExperienceSystem.h"
-#include "LifeTimeSystem.h"
-#include "OrbitSystem.h"
-
+#include "Systems.h"
 
 class Game {
 public:
@@ -83,6 +69,7 @@ private:
 	std::unique_ptr<ExperienceSystem> xpSystem;
 	std::unique_ptr<LifeTimeSystem> lifeTimeSystem;
 	std::unique_ptr<OrbitSystem> orbitSystem;
+	std::unique_ptr<FollowSystem> followSystem;
 	Camera camera;
 	Uint32 last_tick = 0, tick = 0;
 	SDL_Event e; //event to catch keypresses

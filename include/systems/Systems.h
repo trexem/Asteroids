@@ -1,0 +1,17 @@
+#pragma once
+
+#include "GUISystem.h"
+#include "PlayerSystem.h"
+#include "InputSystem.h"
+#include "RenderSystem.h"
+#include "PhysicsSystem.h"
+#include "MovementSystem.h"
+#include "CollisionSystem.h"
+#include "AbilitySystem.h"
+#include "DamageSystem.h"
+#include "AnimationSystem.h"
+#include "AsteroidSystem.h"
+#include "ExperienceSystem.h"
+#include "LifeTimeSystem.h"
+#include "OrbitSystem.h"
+#include "FollowSystem.h"

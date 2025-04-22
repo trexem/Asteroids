@@ -9,6 +9,7 @@
 #include <SDL3_ttf/SDL_ttf.h>
 
 #include "surface.hpp"
+#include "FPair.h"
 
 struct SDL_Surface_Deleter {
 	void operator()(SDL_Surface* surface) {
@@ -29,6 +30,7 @@ public:
 	void free(void);
 	void render(int t_x, int t_y, float t_scale = 1.0f);
 	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, SDL_FlipMode t_flip, float t_scale = 1.0f);
+	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, SDL_FlipMode t_flip, FPair size);
 	void setAlphaMod(int alpha);
 
 	float getWidth();

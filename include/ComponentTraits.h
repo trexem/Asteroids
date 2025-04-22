@@ -66,3 +66,7 @@ template <> struct ComponentTraits<LifeTimeComponent> {
 template <> struct ComponentTraits<OrbitComponent> {
     static constexpr ComponentType type = ComponentType::Orbit;
 };
+
+template <> struct ComponentTraits<FollowComponent> {
+    static constexpr ComponentType type = ComponentType::Follow;
+};

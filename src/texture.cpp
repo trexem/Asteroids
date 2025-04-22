@@ -103,6 +103,17 @@ void Texture::renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle
 	SDL_RenderTextureRotated(m_renderer, m_texture, t_clip, &render_quad, t_angle, t_center, t_flip);
 }
 
+void Texture::renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle
+	, SDL_FPoint* t_center, SDL_FlipMode t_flip, FPair size) {
+	SDL_FRect render_quad = {
+        static_cast<float>(t_x),
+        static_cast<float>(t_y),
+        size.x,
+        size.y
+    };
+	SDL_RenderTextureRotated(m_renderer, m_texture, t_clip, &render_quad, t_angle, t_center, t_flip);
+}
+
 float Texture::getWidth() {
 	return m_width;
 }

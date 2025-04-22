@@ -26,6 +26,7 @@ enum class ComponentType {
     Experience,
     LifeTime,
     Orbit,
+    Follow,
 
     Count
 };
@@ -81,6 +82,8 @@ struct CollisionComponent {
 struct RenderComponent {
     Texture* texture{nullptr};
     float size{1.0f};
+    bool isStretched {false};
+    FPair exactSize{1.0f, 1.0f};
     int visibility{255};
     bool free {false};
 
@@ -163,10 +166,16 @@ struct LifeTimeComponent {
 };
 
 struct OrbitComponent {
-    float radius;
-    float angle;
-    float rotationSpeed;
+    float radius {0.0f};
+    double angle {0.0f};
+    float rotationSpeed {0.0f};
     uint32_t parentId;
+};
+
+struct FollowComponent {
+    uint32_t parentId;
+    FPair offsetPosition {0.0f};
+    double offsetAngle {0.0f};
 };
 
 std::vector<ShipAbilities> getRandomAbilityChoices(const PlayerComponent& player);
