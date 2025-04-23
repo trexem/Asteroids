@@ -184,6 +184,7 @@ void AbilitySystem::spawnProjectile(uint32_t eID, ShipAbilities ability) {
             textureComp.isStretched = true;
             textureComp.exactSize = {size * laserTexture.getWidth(), size * 250.0f};
             textureComp.texture->rotationPoint = RotationPoint::BottomCenter;
+            colComp.rotationPoint = RotationPoint::BottomCenter;
             colComp.width = textureComp.exactSize.x;
             colComp.height = textureComp.exactSize.y;
             physComp.velocity = 0;

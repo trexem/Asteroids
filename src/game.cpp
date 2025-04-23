@@ -156,11 +156,6 @@ void Game::gameLoop() {
 		//Inputs
 		inputSystem->update();
 		if (GameStateManager::getInstance().getState() == GameState::Quit) break;
-		//calculate fps: how many frames divided by the time that has passed since the game started
-		float avg_fps = counted_frames / (fps_timer.getTicks() / 1000.f);
-		if (avg_fps > 9999) {
-			avg_fps = 0;
-		}
 		//Calculate time between previous movement and now
 		timeStep = step_timer.getTicks() / 1000.0;
 		auto start = std::chrono::high_resolution_clock::now();
@@ -291,12 +286,12 @@ void Game::createShip(ShipType shipType) {
 	// Player
 	PlayerComponent shipPlayer;
 	shipPlayer.type = shipType;
-	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::PickupRadius)] = true;
-	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::PickupRadius)] = 2;
+	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::PickupRadius)] = true;
+	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::PickupRadius)] = 2;
 	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::LaserGun)] = true;
 	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 0;
 	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::GravitySaws)] = true;
-	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::GravitySaws)] = 9;
+	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::GravitySaws)] = 0;
 	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Rocket)] = true;
 	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Rocket)] = 0;
 	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Laser)] = true;

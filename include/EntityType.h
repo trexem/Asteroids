@@ -66,6 +66,10 @@ public:
     inline static constexpr uint32_t SAW_ASTEROID = EntityType::GravitySaw | EntityType::Asteroid;
     inline static constexpr uint32_t LASER_ASTEROID = EntityType::Laser | EntityType::Asteroid;
     inline static constexpr uint32_t EXPLOSIVE_ASTEROID = EntityType::Explosive | EntityType::Asteroid;
+    inline static constexpr uint32_t SAW_PLAYER = EntityType::GravitySaw | EntityType::Player;
+    inline static constexpr uint32_t LASER_PLAYER = EntityType::Laser | EntityType::Player;
+    inline static constexpr uint32_t EXPLOSIVE_PLAYER = EntityType::Explosive | EntityType::Player;
+    inline static constexpr uint32_t ROCKET_PLAYER = EntityType::Rocket | EntityType::Player;
         
     static bool contains(uint32_t mask, EntityType type) {
         return (mask & type) != 0;

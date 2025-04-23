@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <ostream>
+#include <SDL3/SDL_rect.h>
 
 class FPair {
 public:
@@ -10,6 +11,7 @@ public:
     FPair() : x(0.0f), y(0.0f) {}
     FPair(float x, float y) : x(x), y(y) {}
     explicit FPair(float s) : x(s), y(s) {}
+    FPair(const SDL_FPoint& p) : x(p.x), y(p.y) {}
 
     // Assignment operators
     FPair& operator=(float s) { x = y = s; return *this; }

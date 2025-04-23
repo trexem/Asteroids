@@ -72,10 +72,12 @@ struct CollisionComponent {
     float height {1.0f};
     float width {1.0f};
     float radius {0.5f};
+    float rotation {0.0f}; //Offset fromTransform rotDegrees
+    RotationPoint rotationPoint {RotationPoint::CenterCenter};
 
     float getBoundingRadius() const {
         return (shape == Shape::Circle) ? radius :
-            std::sqrt(width*width + height*height)/2.0f;
+            std::sqrt(width * width + height * height) * 0.5f;
     }
 };
 
@@ -183,3 +185,4 @@ struct FollowComponent {
 
 std::vector<ShipAbilities> getRandomAbilityChoices(const PlayerComponent& player);
 std::string getNextUpgradeText(const PlayerComponent& player, ShipAbilities ability);
+std::array<FPair, 4> getCorners(const TransformComponent& tComp, const CollisionComponent& cComp);

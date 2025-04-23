@@ -18,6 +18,7 @@ void RenderSystem::render(EntityManager& eM) {
         if (! eM.hasComponent<GUIComponent>(eID)) {
             RenderComponent rComp = eM.getComponentData<RenderComponent>(eID);
             TransformComponent trComp = eM.getComponentData<TransformComponent>(eID);
+            CollisionComponent cComp = eM.getComponentData<CollisionComponent>(eID);
             FPair position;
             position.x = trComp.position.x - camera->position.x;
             position.y = trComp.position.y - camera->position.y;
@@ -46,8 +47,14 @@ void RenderSystem::render(EntityManager& eM) {
                     rComp.size
                 );
             }
-            SDL_FRect debugRect = { position.x, position.y, w, h};
-            renderer->drawDebugRect(debugRect, debugColor);
+            //Debug oriented bounding box (no circles though)
+            // TransformComponent a = trComp;
+            // a.position = position;
+            // auto corners = getCorners(a, cComp);
+            // renderer->drawDebugLine(corners[3].x, corners[3].y, corners[0].x, corners[0].y, Colors::Experience);
+            // for (int i = 0; i < 3; i++) {
+            //     renderer->drawDebugLine(corners[i].x, corners[i].y, corners[i+1].x, corners[i+1].y, Colors::Experience);
+            // }
         }
     }
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::GUI)) {
@@ -65,7 +72,7 @@ void RenderSystem::render(EntityManager& eM) {
     }
     renderer->render();
     frame++;
-    saveRendererToImage();
+    // saveRendererToImage();
 }
 
 
