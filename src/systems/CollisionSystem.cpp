@@ -60,7 +60,7 @@ void CollisionSystem::update(EntityManager* eManager) {
                     TypesSet::match(TypesSet::EXPLOSIVE_PLAYER, typeA->type, typeB->type)) {
                     continue;
                 }
-                // std::cout << "Checking Collision for: " << typeA->type << " and " << typeB->type << std::endl;
+                std::cout << "Checking Collision for: " << typeA->type << " and " << typeB->type << std::endl;
                 if (checkCollision(transA, colA, transB, colB)) {
                     //std::cout << "Collision detected" << std::endl;
                     if (TypesSet::match(TypesSet::PLAYER_EXPERIENCE, typeA->type, typeB->type)) {

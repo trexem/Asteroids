@@ -5,7 +5,9 @@ std::array<FPair, 4> getCorners(const TransformComponent& tComp, const Collision
     const float rad = (tComp.rotDegrees + cComp.rotation) * DEG2RAD;
     const float c = cosf(rad);
     const float s = sinf(rad);
-    FPair pivot = getPivotFromRotationPoint(cComp.rotationPoint, cComp.width, cComp.height);
+    float w = cComp.shape == Shape::Rectangle ? cComp.width : cComp.radius;
+    float h = cComp.shape == Shape::Rectangle ? cComp.height : cComp.radius;
+    FPair pivot = getPivotFromRotationPoint(cComp.rotationPoint, w, h);
     const FPair worldPivot = {
         tComp.position.x + cComp.position.x + pivot.x,
         tComp.position.y + cComp.position.y + pivot.y,
