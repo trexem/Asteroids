@@ -58,7 +58,7 @@ void ExperienceSystem::update() {
                 const float normalizedDist = 1.0f - (dist / attractionRadius);
                 // std::cout << "Ship Position: " << playerTr->position.x << ", " << playerTr->position.y << std::endl;
                 // std::cout << "XP Position: " << xpTr.position.x << ", " << xpTr.position.y << std::endl;
-                xpPhys.velocity = stats->maxSpeed + (attractionRadius - dist) * 5.0;
+                xpPhys.velocity = stats->maxSpeed + 35.0;
                 // std::cout << "xp rotation and velocity is: " << xpTr.rotDegrees << ", " << xpPhys.velocity << std::endl;
                 eManager->setComponentData<PhysicsComponent>(xp, xpPhys);
                 eManager->setComponentData<TransformComponent>(xp, xpTr);

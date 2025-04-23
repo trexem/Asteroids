@@ -245,7 +245,7 @@ void Game::gameLoop() {
 		end = std::chrono::high_resolution_clock::now();
 		std::cout << "Waiting time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 		auto loopTimeEnd = std::chrono::high_resolution_clock::now();
-		std::cout << "LOOP time: " << std::chrono::duration_cast<std::chrono::microseconds>(loopTimeEnd - loopTimeStart).count() << " us\n";
+		std::cout << "*#*# LOOP time: " << std::chrono::duration_cast<std::chrono::microseconds>(loopTimeEnd - loopTimeStart).count() << " us #*#*\n";
 	}
 }
 
@@ -287,16 +287,18 @@ void Game::createShip(ShipType shipType) {
 	PlayerComponent shipPlayer;
 	shipPlayer.type = shipType;
 	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::PickupRadius)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::PickupRadius)] = 2;
+	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::PickupRadius)] = 8;
 	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::LaserGun)] = true;
 	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 0;
 	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::GravitySaws)] = true;
 	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::GravitySaws)] = 0;
 	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Rocket)] = true;
 	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Rocket)] = 0;
-	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Laser)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Laser)] = 0;
-	shipPlayer.currentXp = 0;
+	// shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Laser)] = true;
+	// shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Laser)] = 0;
+	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Explosives)] = true;
+	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Explosives)] = 0;
+	shipPlayer.currentXp = 100;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
 	// Movement
 	MovementComponent shipMovement;

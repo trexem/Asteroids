@@ -44,7 +44,7 @@ constexpr float abilitiesProjectileSpeed[static_cast<size_t>(ShipAbilities::Ship
     {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},  //LaserGun
     {      100,  100,  200,    200,   400,   400,   600,   600,   800,  1000},  //Rocket
     {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},  //Laser
-    {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},  //Explosives
+    {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},  //Explosives
     {      TAU,  TAU,  TAU,    TAU,   TAU,   TAU,   TAU,   TAU,   TAU,   TAU},  //GravitySaw
     {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000}
 };
@@ -53,8 +53,8 @@ constexpr float abilitiesDamage[static_cast<size_t>(ShipAbilities::ShipAbilities
     //Levels 0     1     2       3      4      5      6      7      8      9
     {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},  //LaserGun
     {       25,   25,   25,  36.5f, 36.5f, 36.5f,    50,    50, 62.5f,    75},  //Rocket
-    {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},
-    {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},
+    {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},  //Laser
+    {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},  //Explosives
     {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},
     {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40}
 };
@@ -74,7 +74,7 @@ constexpr double abilitiesLifeTime[static_cast<size_t>(ShipAbilities::ShipAbilit
     {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},  //LaserGun
     {     2.0f, 2.0f, 2.0f,   2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f},  //Rocket
     {     1.0f, 1.0f, 1.0f,   1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f},
-    {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},
+    {     2.0f, 2.0f, 2.0f,   2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f},
     {     2.0f, 2.0f, 2.0f,   2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f},  //GravitySaw
     {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0}   //PickUpRadius
 };

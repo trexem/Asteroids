@@ -5,8 +5,8 @@
 #include "abilities.h"
 #include "message.h"
 
-class DestroyRocketMessage : public Message {
+class ExplodeMessage : public Message {
 public:
     uint32_t id;
-    DestroyRocketMessage(uint32_t id) : id(id) {}
+    ExplodeMessage(uint32_t id) : id(id) {}
 };

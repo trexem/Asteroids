@@ -81,18 +81,18 @@ void LevelUpScreen::destroy(EntityManager* eManager) {
 
 void LevelUpScreen::handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) {
     handleHover(id1, msg->mousePos, nullptr);
-    handleHover(id2, msg->mousePos, nullptr);
-    handleHover(id3, msg->mousePos, nullptr);
+    if (options.size() > 1) handleHover(id2, msg->mousePos, nullptr);
+    if (options.size() > 2) handleHover(id3, msg->mousePos, nullptr);
 }
 
 void LevelUpScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
     handleClick(id1, msg->mousePos, [this]() {
         onContainerClick(0);
     });
-    handleClick(id2, msg->mousePos, [this]() {
+    if (options.size() > 1) handleClick(id2, msg->mousePos, [this]() {
         onContainerClick(1);
     });
-    handleClick(id3, msg->mousePos, [this]() {
+    if (options.size() > 2) handleClick(id3, msg->mousePos, [this]() {
         onContainerClick(2);
     });
 }

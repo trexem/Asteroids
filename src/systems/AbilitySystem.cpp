@@ -5,9 +5,9 @@ AbilitySystem::AbilitySystem(EntityManager* eManager, SDL_Renderer* renderer) : 
     MessageManager::getInstance().subscribe<AbilityMessage>(
         [this](std::shared_ptr<AbilityMessage> msg) { handleAbilityMessage(msg); }
     );
-    // Subscribe to DestroyRocketMessages
-    MessageManager::getInstance().subscribe<DestroyRocketMessage>(
-        [this](std::shared_ptr<DestroyRocketMessage> msg) { handleDestroyRocketMessage(msg); }
+    // Subscribe to ExplodeMessages
+    MessageManager::getInstance().subscribe<ExplodeMessage>(
+        [this](std::shared_ptr<ExplodeMessage> msg) { handleExplodeMessage(msg); }
     );
     explosionTexture.m_renderer = renderer;
     gravitySawTexture.m_renderer = renderer;
@@ -33,8 +33,12 @@ void AbilitySystem::handleAbilityMessage(std::shared_ptr<AbilityMessage> msg) {
         break;
     case ShipAbilities::GravitySaws:
         spawnGravitySaws(msg->eID);
+        break;
     case ShipAbilities::Laser:
         spawnLaser(msg->eID);
+        break;
+    case ShipAbilities::Explosives:
+        spawnExplosives(msg->eID);
     default:
         break;
     }
@@ -48,9 +52,9 @@ void AbilitySystem::spawnRocket(uint32_t eID) {
     spawnProjectile(eID, ShipAbilities::Rocket);
 }
 
-void AbilitySystem::handleDestroyRocketMessage(std::shared_ptr<DestroyRocketMessage> msg) {
+void AbilitySystem::handleExplodeMessage(std::shared_ptr<ExplodeMessage> msg) {
     TransformComponent* transComp = eManager->getComponentDataPtr<TransformComponent>(msg->id);
-    std::cout << "Handling DestroyRocketMessage for position: " << transComp->position << std::endl;
+    std::cout << "Handling ExplodeMessage for position: " << transComp->position << std::endl;
     rocketsDestroyed.push_back(transComp->position);
     eManager->destroyEntityLater(msg->id);
 }
@@ -109,8 +113,8 @@ void AbilitySystem::spawnLaser(uint32_t eID) {
     spawnProjectile(eID, ShipAbilities::Laser);
 }
 
-void AbilitySystem::spawnExplosive(uint32_t eID) {
-
+void AbilitySystem::spawnExplosives(uint32_t eID) {
+    spawnProjectile(eID, ShipAbilities::Explosives);
 }
 
 auto AbilitySystem::getPlayerComponents(uint32_t eID) {
@@ -200,7 +204,7 @@ void AbilitySystem::spawnProjectile(uint32_t eID, ShipAbilities ability) {
         } else if (ability == ShipAbilities::Rocket) {
             transComp.rotDegrees = (currentAngle + HALF_PI) * RAD2DEG;
         }
-
+        
         entity.add<TypeComponent>();
         entity.set<TypeComponent>(config.type);
 
@@ -237,7 +241,7 @@ FPair AbilitySystem::positionProjectile(int index, int total, const FPair& posSo
     case ShipAbilities::LaserGun:
         return positionLinearSpread(index, total, posSource, angleSource, whSource);
     case ShipAbilities::Rocket:
-        return positionRadialSpread(index, total, posSource, angleSource, whSource, HALF_PI);
+        return positionRadialSpread(index, total, posSource, angleSource, whSource);
     case ShipAbilities::GravitySaws:
         return positionRadialSpread(index, total, posSource, angleSource, whSource, -HALF_PI);
     case ShipAbilities::Explosives:
@@ -251,7 +255,7 @@ FPair AbilitySystem::positionProjectile(int index, int total, const FPair& posSo
 
 FPair AbilitySystem::positionLinearSpread(int index, int total, const FPair& posSource, const float& angleSource,
     const FPair& whSource, float angleOffset) {
-    double radians = angleSource * DEG2RAD;
+    double radians = angleSource * DEG2RAD + angleOffset;
     double sinRadians = sin(radians);
     double cosRadians = cos(radians);
     int laserWidth = g_shot_texture.getWidth();
@@ -276,7 +280,7 @@ FPair AbilitySystem::positionLinearSpread(int index, int total, const FPair& pos
 FPair AbilitySystem::positionRadialSpread(int index, int total, const FPair& posSource, const float& angleSource,
     const FPair& whSource, float angleOffset, float extraRadius) {
     float angleStep = TAU / total;
-    float startAngle = angleSource * DEG2RAD;
+    float startAngle = angleSource * DEG2RAD + angleOffset;
     float radius = std::max(whSource.x, whSource.y) + extraRadius;
     float angle = startAngle + (index * angleStep);
     float xOffset = radius * cos(angle);

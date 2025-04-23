@@ -11,9 +11,9 @@ void LifeTimeSystem::update(double dT) {
         //std::cout << "LifeTime for: " << eID << " is " << lifeTime.lifeTime << std::endl;
         if (lifeTime.lifeTime <= 0) {
             TypeComponent* type = eManager->getComponentDataPtr<TypeComponent>(eID);
-            if (type->type & EntityType::Rocket) {
+            if (type->type & EntityType::Rocket || type->type & EntityType::Explosive) {
                 //std::cout << "Destroying rocket after lifeTime: " << eID << std::endl;
-                MessageManager::getInstance().sendMessage(std::make_shared<DestroyRocketMessage>(eID));
+                MessageManager::getInstance().sendMessage(std::make_shared<ExplodeMessage>(eID));
             } else {
                 //std::cout << "Destroying explosion: " << eID << std::endl;
                 eManager->destroyEntityLater(eID);

@@ -41,6 +41,10 @@ void DamageSystem::handleCollisionMessage(std::shared_ptr<CollisionMessage> msg)
         uint32_t laser = (typeA.type & EntityType::Laser) ? entityA : entityB;
         uint32_t asteroid = (laser == entityA) ? entityB : entityA;
         handleAsteroidLaserCollision(laser, asteroid);
+    } else if(TypesSet::match(TypesSet::EXPLOSIVE_ASTEROID, typeA.type, typeB.type)) {
+        uint32_t explosive = (typeA.type & EntityType::Explosive) ? entityA : entityB;
+        uint32_t asteroid = (explosive == entityA) ? entityB : entityA;
+        handleAsteroidExplosiveCollision(explosive, asteroid);
     }
 }
 
@@ -51,7 +55,7 @@ void DamageSystem::handleAsteroidShotCollision(uint32_t shot, uint32_t asteroid)
     float lifeRemaining = asteroidHealth.health - shotDamage.damage;
     if (type->type & EntityType::Rocket) {
         std::cout << "Destroying rocket after collision" << std::endl;
-        MessageManager::getInstance().sendMessage(std::make_shared<DestroyRocketMessage>(shot));
+        MessageManager::getInstance().sendMessage(std::make_shared<ExplodeMessage>(shot));
     }
     if (lifeRemaining > 0) {
         // std::cout << "Destroying " << shot << std::endl;
@@ -122,6 +126,13 @@ void DamageSystem::handleAsteroidLaserCollision(uint32_t laser, uint32_t asteroi
         MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(asteroid, Animation::Damage));
     }
     return;
+}
+
+void DamageSystem::handleAsteroidExplosiveCollision(uint32_t explosive, uint32_t asteroid) {
+    eManager->addComponent(explosive, ComponentType::Follow);
+    FollowComponent follow;
+    follow.parentId = asteroid;
+    eManager->setComponentData(explosive, follow);
 }
 
 void DamageSystem::update(double dT) {

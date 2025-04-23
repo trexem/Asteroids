@@ -2,7 +2,7 @@
 
 #include "abilities.h"
 #include "AbilityMessage.h"
-#include "DestroyRocketMessage.h"
+#include "ExplodeMessage.h"
 #include "EntityHandle.h"
 #include "MessageManager.h"
 #include "System.h"
@@ -27,7 +27,7 @@ public:
     
 private:
     void handleAbilityMessage(std::shared_ptr<AbilityMessage> msg);
-    void handleDestroyRocketMessage(std::shared_ptr<DestroyRocketMessage> msg);
+    void handleExplodeMessage(std::shared_ptr<ExplodeMessage> msg);
     EntityHandle createProjectileEntity();
     void createExplosion(const FPair& pos);
     void spawnProjectile(uint32_t eID, ShipAbilities ability);
@@ -41,7 +41,7 @@ private:
     void spawnRocket(uint32_t eID);
     void spawnGravitySaws(uint32_t eID);
     void spawnLaser(uint32_t eID);
-    void spawnExplosive(uint32_t eID);
+    void spawnExplosives(uint32_t eID);
     EntityManager* eManager;
     std::vector<FPair> rocketsDestroyed;
     Texture explosionTexture, gravitySawTexture, laserTexture, explosiveTexture;

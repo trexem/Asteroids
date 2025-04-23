@@ -3,7 +3,7 @@
 #include "AnimationMessage.h"
 #include "CollisionMessage.h"
 #include "DestroyAsteroidMessage.h"
-#include "DestroyRocketMessage.h"
+#include "ExplodeMessage.h"
 #include "ExperienceSpawnMessage.h"
 #include "MessageManager.h"
 #include "System.h"
@@ -21,6 +21,7 @@ private:
     void handleAsteroidExplosionCollision(uint32_t explosion, uint32_t asteroid);
     void handleAsteroidSawCollision(uint32_t saw, uint32_t asteroid);
     void handleAsteroidLaserCollision(uint32_t laser, uint32_t asteroid);
+    void handleAsteroidExplosiveCollision(uint32_t explosive, uint32_t asteroid);
     EntityManager* eManager;
     const double EXPLOSION_COOLDOWN = 0.25f;
     const double LASER_COOLDOWN = 0.10f;
