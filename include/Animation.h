@@ -3,7 +3,7 @@
 #include <cstddef>
 
 const float BLINK_INTERVAL = 0.1f;
-const float BLINK_DURATION = .5f;
+const float BLINK_DURATION = .2f;
 
 enum class Animation : size_t {
     Damage,

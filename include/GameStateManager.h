@@ -5,6 +5,8 @@
 #include "MessageManager.h"
 #include "timer.hpp"
 
+#include <iostream>
+
 class GameStateManager {
 public:
     static GameStateManager& getInstance();

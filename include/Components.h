@@ -100,8 +100,6 @@ struct RenderComponent {
 struct HealthComponent {
     float health {1.0f};
     float maxHealth {1.0f};
-    double explosionCooldown {0.0f};
-    double laserCooldown {0.0f};
 };
 
 struct DamageComponent {
@@ -119,6 +117,9 @@ struct PlayerComponent {
     std::bitset<static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilities;
     std::array<double, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilityCooldowns{};
     std::array<unsigned int, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilityLevels{};
+    std::array<bool, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> isBursting{};
+    std::array<double, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> burstShotTimers{};
+    std::array<int, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> shotsRemainingInBurst{};
 };
 
 struct StatsComponent {

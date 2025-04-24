@@ -59,17 +59,19 @@ class TypesSet {
 public:
     inline static constexpr uint32_t PLAYER_EXPERIENCE = EntityType::Player | EntityType::Experience;
     inline static constexpr uint32_t PLAYER_ASTEROID = EntityType::Player | EntityType::Asteroid;
-    inline static constexpr uint32_t PLAYER_SHOT = EntityType::Player | EntityType::Shot;
     inline static constexpr uint32_t SHOT_ASTEROID = EntityType::Shot | EntityType::Asteroid;
     inline static constexpr uint32_t ROCKET_ASTEROID = EntityType::Rocket | EntityType::Asteroid;
     inline static constexpr uint32_t EXPLOSION_ASTEROID = EntityType::Explosion | EntityType::Asteroid;
     inline static constexpr uint32_t SAW_ASTEROID = EntityType::GravitySaw | EntityType::Asteroid;
     inline static constexpr uint32_t LASER_ASTEROID = EntityType::Laser | EntityType::Asteroid;
     inline static constexpr uint32_t EXPLOSIVE_ASTEROID = EntityType::Explosive | EntityType::Asteroid;
-    inline static constexpr uint32_t SAW_PLAYER = EntityType::GravitySaw | EntityType::Player;
-    inline static constexpr uint32_t LASER_PLAYER = EntityType::Laser | EntityType::Player;
-    inline static constexpr uint32_t EXPLOSIVE_PLAYER = EntityType::Explosive | EntityType::Player;
-    inline static constexpr uint32_t ROCKET_PLAYER = EntityType::Rocket | EntityType::Player;
+    inline static constexpr uint32_t PROJECTILES = EntityType::Explosion | EntityType::Rocket | EntityType::Shot |
+        EntityType::GravitySaw | EntityType::Laser | EntityType::Explosive;
+    inline static constexpr uint32_t PLAYER_PROJECTILES = PROJECTILES | EntityType::Player;
+    inline static constexpr uint32_t PICKUPS = EntityType::Experience;
+    inline static constexpr uint32_t PICKUPS_PROJECTILES = PROJECTILES | PICKUPS;
+    inline static constexpr uint32_t ENEMIES = EntityType::Asteroid;
+    inline static constexpr uint32_t PICKUPS_ENEMIES = ENEMIES | PICKUPS;
         
     static bool contains(uint32_t mask, EntityType type) {
         return (mask & type) != 0;
@@ -81,5 +83,14 @@ public:
 
     static bool sameType(EntityType mask, EntityType typeA, EntityType typeB) {
         return typeA == mask && typeB == mask;
+    }
+
+    static bool shouldIgnoreCollision(EntityType a, EntityType b) {
+        if (((TypesSet::PROJECTILES & a) && (TypesSet::PROJECTILES & b))) return true;
+        if (((TypesSet::PLAYER_PROJECTILES & a) && (TypesSet::PLAYER_PROJECTILES & b))) return true;
+        if (((TypesSet::PICKUPS_PROJECTILES & a) && (TypesSet::PICKUPS_PROJECTILES & b))) return true;
+        if (((TypesSet::PICKUPS & a) && (TypesSet::PICKUPS & b))) return true;
+        if (((TypesSet::PICKUPS_ENEMIES & a) && (TypesSet::PICKUPS_ENEMIES & b))) return true;
+        return false;
     }
 };

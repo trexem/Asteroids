@@ -131,16 +131,15 @@ void AbilitySystem::spawnProjectile(uint32_t eID, ShipAbilities ability) {
     const size_t abilityIndex = static_cast<size_t>(ability);
     
     auto [player, stats, transform, render] = getPlayerComponents(eID);
+    unsigned int level = player->abilityLevels[abilityIndex];
     const FPair playerPos = transform->position;
     const FPair playerWH = {render->texture->getWidth(), render->texture->getHeight()};
     
-    float speed = abilitiesProjectileSpeed[abilityIndex][player->abilityLevels[abilityIndex]] 
-        * stats->projectileSpeed;
-    float damage = abilitiesDamage[abilityIndex][player->abilityLevels[abilityIndex]] 
-        * stats->baseDamage;
-    int count = abilitiesProjectileCount[abilityIndex][player->abilityLevels[abilityIndex]] 
-        + stats->projectileCount;
-    float size = abilitiesSize[abilityIndex][player->abilityLevels[abilityIndex]] + stats->extraSize;
+    float speed = abilitiesProjectileSpeed[abilityIndex][level]  * stats->projectileSpeed;
+    float damage = abilitiesDamage[abilityIndex][level] * stats->baseDamage;
+    int count = player->isBursting[abilityIndex] ? 1 :
+        abilitiesProjectileCount[abilityIndex][level] + stats->projectileCount;
+    float size = abilitiesSize[abilityIndex][level] + stats->extraSize;
     
     RenderComponent textureComp = {config.texture, size};
     DamageComponent damageComp = {damage};
@@ -155,7 +154,7 @@ void AbilitySystem::spawnProjectile(uint32_t eID, ShipAbilities ability) {
     }
     LifeTimeComponent lifeComp;
     if (config.hasLifetime) {
-        lifeComp.lifeTime = abilitiesLifeTime[abilityIndex][player->abilityLevels[abilityIndex]];
+        lifeComp.lifeTime = abilitiesLifeTime[abilityIndex][level];
     }
     PhysicsComponent physComp;
     if (config.accelerates) {

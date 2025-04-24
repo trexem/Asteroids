@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __ENTITY_MANAGER_H_
-#define __ENTITY_MANAGER_H_
 
 #include <algorithm>
 #include <bitset>
@@ -22,11 +20,13 @@ public:
     const bool entityExists(uint32_t entityID) const {
         return entityID < maxEntities && entityComponentMasks[entityID].any();
     }
+    std::mutex& getEntityMutex(uint32_t entityID);
 
     void addComponent(uint32_t entityID, ComponentType type);
     void addComponents(uint32_t entityID, const std::vector<ComponentType>& types);
     void removeComponent(uint32_t entityID, ComponentType type);
     void removeComponents(uint32_t entityID, const std::vector<ComponentType>& types);
+
 
     template <typename T>
     void setComponentData(uint32_t entityID, const T& componentData) {
@@ -134,9 +134,9 @@ private:
     std::vector<uint32_t> entities;
     std::unordered_set<uint32_t> destroyedEntities;
     std::unordered_set<uint32_t> toDestroy;
+    std::vector<std::unique_ptr<std::mutex>> entityMutexes;
+    std::mutex globalMutex;
     std::mutex toDestroyMutex;
     
     std::vector<std::vector<std::shared_ptr<void>>> componentPools;
 };
-
-#endif // !__ENTITY_MANAGER_H_

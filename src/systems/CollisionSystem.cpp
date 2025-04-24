@@ -51,26 +51,22 @@ void CollisionSystem::update(EntityManager* eManager) {
                 CollisionComponent colB = eManager->getComponentData<CollisionComponent>(b);
                 TypeComponent* typeB = eManager->getComponentDataPtr<TypeComponent>(b);
                 if (!typeB) continue;
-                if (TypesSet::sameType(EntityType::Shot, typeA->type, typeB->type) || 
-                    TypesSet::match(TypesSet::PLAYER_SHOT, typeA->type, typeB->type) ||
-                    TypesSet::sameType(EntityType::Experience, typeA->type, typeB->type) ||
-                    TypesSet::match(TypesSet::SAW_PLAYER, typeA->type, typeB->type) ||
-                    TypesSet::match(TypesSet::LASER_PLAYER, typeA->type, typeB->type) ||
-                    TypesSet::match(TypesSet::ROCKET_PLAYER, typeA->type, typeB->type) ||
-                    TypesSet::match(TypesSet::EXPLOSIVE_PLAYER, typeA->type, typeB->type)) {
+                EntityType tA = typeA->type;
+                EntityType tB = typeB->type;
+                if (TypesSet::shouldIgnoreCollision(tA, tB)) {
                     continue;
                 }
-                std::cout << "Checking Collision for: " << typeA->type << " and " << typeB->type << std::endl;
+                std::cout << "Checking Collision for: " << tA << " and " << tB << std::endl;
                 if (checkCollision(transA, colA, transB, colB)) {
-                    //std::cout << "Collision detected" << std::endl;
-                    if (TypesSet::match(TypesSet::PLAYER_EXPERIENCE, typeA->type, typeB->type)) {
+                    std::cout << "Collision detected" << std::endl;
+                    if (TypesSet::match(TypesSet::PLAYER_EXPERIENCE, tA, tB)) {
                         //std::cout << "Player Experience Collision detected" << std::endl;
                         ExperienceComponent* xp = eManager->getComponentDataPtr<ExperienceComponent>(b);
                         auto msg = std::make_shared<ExperiencePickupMessage>(a, xp->xp);
                         eManager->destroyEntityLater(b);
                         MessageManager::getInstance().sendMessage(msg);
                         continue;
-                    } else if (TypesSet::sameType(EntityType::Asteroid, typeA->type, typeB->type)) {
+                    } else if (TypesSet::sameType(EntityType::Asteroid, tA, tB)) {
                         std::vector<uint32_t> ids;
                         ids.push_back(a);
                         ids.push_back(b);

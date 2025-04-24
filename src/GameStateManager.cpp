@@ -6,6 +6,7 @@ GameStateManager& GameStateManager::getInstance() {
 }
 
 void GameStateManager::setState(GameState newState) {
+    std::cout << "Setting state to: " << newState << std::endl;
     if (state != newState) {
         state = newState;
         if (state != GameState::Playing) {

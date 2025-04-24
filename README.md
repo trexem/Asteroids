@@ -40,36 +40,8 @@ After it finishes downloading and `cmake` stops working you will have to choose 
 ## TODO
 ### Audio
  - [ ] Implement it
-### Components
- - [X] TransformComponent 
- - [X] PhysicsComponent (dx, dy, speed)
- - [X] CollisionComponent (hitbox, isTrigger)
- - [X] RenderComponent (texture, size)
- - [X] HealthComponent (hp, maxHp)
- - [X] DamageComponent (damageAmount)
- - [X] PlayerComponent (input tracking)
- - [X] StatsComponent (fireRate, projectileType)
- - [X] MovementComponent (behaviorType: PLAYER, ENEMY, ASTEROID)
- - [X] TypeComponent (EntityType)
- - [X] ExperienceComponent (how much xp will give)
- - [X] AnimationComponent (render different textures for one entity)
- - [X] GUIComponent (for GUI/HUD components)
- - [X] LifeTimeComponent (for projectiles/lifespan)
- - [X] ExperienceComponent (points on destruction)
- - [ ] AIComponent (for enemies with patterns)
- - [ ] SpawnerComponent (controls enemy/asteroid waves)
- ### Systems
- - [X] AbilitySystem (spawns bullets)
- - [X] AnimationSystem
- - [X] AsteroidSystem (might modify to SpawnSystem or handle that here)
- - [X] CollisionSystem (detects & sends collision messages)
- - [X] DamageSystem (resolves collision messages)
- - [X] ExperienceSystem (handles experience entities)
- - [X] GUISystem (handles screen creations and overlays)
- - [X] InputSystem (handles all inputs and sends iput messages)
- - [X] MovementSystem (updates position based on behavior)
- - [X] PlayerSystem (handles inputs and abilities for players)
- - [X] RenderSystem (renders all objects)
+### Systems
+ - [X] AsteroidSystem REFACTOR for better angle
  - [ ] EnemyAISystem (moves enemies based on AIComponent)
  - [ ] SpawnSystem (handles waves of enemies & asteroids)
  - [ ] PowerUpSystem (applies power-ups)
@@ -77,8 +49,12 @@ After it finishes downloading and `cmake` stops working you will have to choose 
 ### Abilities
  - [X] LaserGun
  - [X] RocketLauncher
- - [ ] Laser
- - [ ] Explosives
+ - [X] Laser
+ - [X] Explosives
  - [X] GravitySaws
  - [X] PickupRadius
- - [ ] ideas on more abilities
+ - [ ] PasiveAbilities
+### Screens
+ - [ ] PlayingScreen, add healthbar for player.
+ - [ ] GameOverScreen
+ - [ ] Settings

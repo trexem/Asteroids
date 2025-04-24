@@ -4,6 +4,10 @@ EntityManager::EntityManager(size_t t_maxEntities) : maxEntities{t_maxEntities} 
     entities.reserve(maxEntities);
     entityComponentMasks.resize(maxEntities);
     componentPools.resize(static_cast<size_t>(ComponentType::Count));
+    entityMutexes.resize(maxEntities);
+    for (auto& mutex : entityMutexes) {
+        mutex = std::make_unique<std::mutex>();
+    }
 }
 
 EntityManager::~EntityManager() {
@@ -38,6 +42,7 @@ uint32_t EntityManager::createEntity() {
 }
 
 void EntityManager::destroyEntity(uint32_t entityID) {
+    std::scoped_lock lock(*entityMutexes[entityID], globalMutex);
     if (entityExists(entityID)) {
         // std::cout << "Destroying Entity " << entityID << std::endl;
         freeTexturePtr(entityID);
@@ -56,6 +61,7 @@ void EntityManager::destroyEntity(uint32_t entityID) {
 }
 
 void EntityManager::addComponent(uint32_t entityID, ComponentType type) {
+    std::scoped_lock lock(*entityMutexes[entityID]);
     assert(entityID < maxEntities);
     // Add TypeComponent, if it's not there already, with default type
     if (!hasComponent<TypeComponent>(entityID)) {
@@ -108,6 +114,11 @@ void EntityManager::removeComponents(uint32_t entityID, const std::vector<Compon
     for (const ComponentType type : types) {
         removeComponent(entityID, type);
     }
+}
+
+std::mutex& EntityManager::getEntityMutex(uint32_t entityID) {
+    assert(entityID < maxEntities);
+    return *entityMutexes[entityID];
 }
 
 std::vector<uint32_t> EntityManager::getEntitiesWithComponent(ComponentType type) {

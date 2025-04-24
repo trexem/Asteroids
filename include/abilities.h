@@ -87,3 +87,7 @@ constexpr std::array<const char*, static_cast<size_t>(ShipAbilities::ShipAbiliti
     "data/img/gravitySawIcon.bmp",
     "data/img/pickupRangeIcon.bmp"
 };
+
+constexpr std::array<bool, static_cast<size_t>(ShipAbilities::ShipAbilitiesCount)> abilityBursts = {
+    false, false, false, true, false, false
+};

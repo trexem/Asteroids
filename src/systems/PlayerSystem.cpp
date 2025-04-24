@@ -117,16 +117,36 @@ void PlayerSystem::updateMovement(uint32_t eID) {
 void PlayerSystem::updateAbilities(uint32_t eID, double dT) {
     PlayerComponent player = eManager->getComponentData<PlayerComponent>(eID);
     StatsComponent stats = eManager->getComponentData<StatsComponent>(eID);
+    constexpr double burstInterval = 0.25;
+
     for (size_t i = 0; i < static_cast<size_t>(ShipAbilities::ShipAbilitiesCount); i++) {
         ShipAbilities ability = static_cast<ShipAbilities>(i);
+        int level = player.abilityLevels[i];
+        
+        if (!player.abilities.test(i) || level < 0 || level > 10) continue;
 
-        if (player.abilities.test(i)) {
-            int level = player.abilityLevels[static_cast<size_t>(ability)];
-            if (level >= 0 && level < 10) {
-                double cooldown = abilitiesCooldowns[i][level];
-                cooldown *= (1 - stats.fireSpeed);
-                player.abilityCooldowns[static_cast<size_t>(ability)] += dT;
-                if (player.abilityCooldowns[static_cast<size_t>(ability)] > cooldown) {
+        double cooldown = abilitiesCooldowns[i][level] * (1 - stats.fireSpeed);
+        if (player.isBursting[i]) {
+            player.burstShotTimers[i] += dT;
+            if (player.burstShotTimers[i] >= burstInterval) {
+                auto msg = std::make_shared<AbilityMessage>(eID, ability);
+                MessageManager::getInstance().sendMessage(msg);
+                player.burstShotTimers[i] = 0.0;
+                player.shotsRemainingInBurst[i]--;
+
+                if (player.shotsRemainingInBurst[i] <= 0) {
+                    player.isBursting[i] = false;
+                    player.abilityCooldowns[i] = 0.0;
+                }
+            }
+        } else {
+            player.abilityCooldowns[static_cast<size_t>(ability)] += dT;
+            if (player.abilityCooldowns[static_cast<size_t>(ability)] > cooldown) {
+                if (abilityBursts[i]) {
+                    player.isBursting[i] = true;
+                    player.burstShotTimers[i] = burstInterval;
+                    player.shotsRemainingInBurst[i] = abilitiesProjectileCount[i][level] + stats.projectileCount;
+                } else {
                     auto msg = std::make_shared<AbilityMessage>(eID, ability);
                     MessageManager::getInstance().sendMessage(msg);
                     player.abilityCooldowns[static_cast<size_t>(ability)] = 0;

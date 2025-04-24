@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-DamageSystem::DamageSystem(EntityManager* eManager) : eManager(eManager) {
+DamageSystem::DamageSystem(EntityManager* eM) : eManager(eM) {
     MessageManager::getInstance().subscribe<CollisionMessage>(
         [this](std::shared_ptr<CollisionMessage> msg) { handleCollisionMessage(msg); }
     );
@@ -18,132 +18,148 @@ void DamageSystem::handleCollisionMessage(std::shared_ptr<CollisionMessage> msg)
 
     TypeComponent typeA = eManager->getComponentData<TypeComponent>(entityA);
     TypeComponent typeB = eManager->getComponentData<TypeComponent>(entityB);
-    // std::cout << "Collision types: " << static_cast<int>(typeA.type) << " & " << static_cast<int>(typeB.type) << std::endl;
-    std::unordered_set<EntityType> entitiesSet = {typeA.type, typeB.type};
+    if (typeA.type & typeB.type) return;
+    DamageContext ctx;
+
     if (TypesSet::match(TypesSet::SHOT_ASTEROID, typeA.type, typeB.type) ||
         TypesSet::match(TypesSet::ROCKET_ASTEROID, typeA.type, typeB.type)) {
-        uint32_t shot = (typeA.type & EntityType::Shot || typeA.type & EntityType::Rocket) ? entityA : entityB;
-        uint32_t asteroid = (shot == entityA) ? entityB : entityA;
-        handleAsteroidShotCollision(shot, asteroid);
+        ctx.source = typeA.type & (EntityType::Shot | typeA.type & EntityType::Rocket) ? entityA : entityB;
+        ctx.target = ctx.source == entityA ? entityB : entityA;
+        ctx.sourceType = ctx.source == entityA ? typeA.type : typeB.type;
+        ctx.targetType = ctx.target == entityA ? typeA.type : typeB.type;
+        ctx.damage = eManager->getComponentData<DamageComponent>(ctx.source).damage;
+        ctx.cooldownDuration = 0;
+        ctx.destroySource = true;
+        ctx.destroyTarget = false;
+        ctx.animation = Animation::Damage;
+        applyDamage(ctx);
     } else if (TypesSet::match(TypesSet::PLAYER_ASTEROID, typeA.type, typeB.type)) {
-        uint32_t player = (typeA.type == EntityType::Player) ? entityA : entityB;
-        uint32_t asteroid = (player == entityA) ? entityB : entityA;
-        handleAsteroidShipCollision(player, asteroid);
-    } else if (TypesSet::match(TypesSet::EXPLOSION_ASTEROID, typeA.type, typeB.type)) {
-        uint32_t explosion = (typeA.type & EntityType::Explosion) ? entityA : entityB;
-        uint32_t asteroid = (explosion == entityA) ? entityB : entityA;
-        handleAsteroidExplosionCollision(explosion, asteroid);
-    } else if (TypesSet::match(TypesSet::SAW_ASTEROID, typeA.type, typeB.type)) {
-        uint32_t saw = (typeA.type & EntityType::GravitySaw) ? entityA : entityB;
-        uint32_t asteroid = (saw == entityA) ? entityB : entityA;
-        handleAsteroidSawCollision(saw, asteroid);
-    } else if(TypesSet::match(TypesSet::LASER_ASTEROID, typeA.type, typeB.type)) {
-        uint32_t laser = (typeA.type & EntityType::Laser) ? entityA : entityB;
-        uint32_t asteroid = (laser == entityA) ? entityB : entityA;
-        handleAsteroidLaserCollision(laser, asteroid);
+        ctx.source = typeA.type & EntityType::Asteroid ? entityA : entityB;
+        ctx.target = ctx.source == entityA ? entityB : entityA;
+        ctx.sourceType = ctx.source == entityA ? typeA.type : typeB.type;
+        ctx.targetType = ctx.target == entityA ? typeA.type : typeB.type;
+        ctx.damage = eManager->getComponentData<DamageComponent>(ctx.source).damage;
+        ctx.cooldownDuration = DAMAGE_COOLDOWN;
+        ctx.destroySource = false;
+        ctx.destroyTarget = false;
+        ctx.animation = Animation::Damage;
+        applyDamage(ctx);
     } else if(TypesSet::match(TypesSet::EXPLOSIVE_ASTEROID, typeA.type, typeB.type)) {
         uint32_t explosive = (typeA.type & EntityType::Explosive) ? entityA : entityB;
         uint32_t asteroid = (explosive == entityA) ? entityB : entityA;
-        handleAsteroidExplosiveCollision(explosive, asteroid);
-    }
-}
-
-void DamageSystem::handleAsteroidShotCollision(uint32_t shot, uint32_t asteroid) {
-    DamageComponent shotDamage = eManager->getComponentData<DamageComponent>(shot);
-    HealthComponent asteroidHealth = eManager->getComponentData<HealthComponent>(asteroid);
-    TypeComponent* type = eManager->getComponentDataPtr<TypeComponent>(shot);
-    float lifeRemaining = asteroidHealth.health - shotDamage.damage;
-    if (type->type & EntityType::Rocket) {
-        std::cout << "Destroying rocket after collision" << std::endl;
-        MessageManager::getInstance().sendMessage(std::make_shared<ExplodeMessage>(shot));
-    }
-    if (lifeRemaining > 0) {
-        // std::cout << "Destroying " << shot << std::endl;
-        eManager->destroyEntityLater(shot);
-        asteroidHealth.health = lifeRemaining;
-        eManager->setComponentData<HealthComponent>(asteroid, asteroidHealth);
-        MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(asteroid, Animation::Damage));
-    } else if (lifeRemaining < 0) {
-        // std::cout << "Destroying " << asteroid << std::endl;
-        MessageManager::getInstance().sendMessage(std::make_shared<DestroyAsteroidMessage>(asteroid));
-        shotDamage.damage = -lifeRemaining;
-        eManager->setComponentData<DamageComponent>(shot, shotDamage);
+        eManager->addComponent(explosive, ComponentType::Follow);
+        FollowComponent follow;
+        follow.parentId = asteroid;
+        eManager->setComponentData(explosive, follow);
     } else {
-        // std::cout << "Destroying " << asteroid << " & " << shot << std::endl;
-        eManager->destroyEntityLater(shot);
-        MessageManager::getInstance().sendMessage(std::make_shared<DestroyAsteroidMessage>(asteroid));
+        ctx.target = typeA.type & EntityType::Asteroid ? entityA : entityB;
+        ctx.source = ctx.target == entityA ? entityB : entityA;
+        ctx.sourceType = ctx.source == entityA ? typeA.type : typeB.type;
+        ctx.targetType = ctx.target == entityA ? typeA.type : typeB.type;
+        ctx.damage = eManager->getComponentData<DamageComponent>(ctx.source).damage;
+        ctx.cooldownDuration = DAMAGE_COOLDOWN;
+        ctx.destroySource = false;
+        ctx.destroyTarget = false;
+        ctx.animation = Animation::Damage;
+        applyDamage(ctx);
     }
 }
 
-void DamageSystem::handleAsteroidExplosionCollision(uint32_t explosion, uint32_t asteroid) {
-    float damage = eManager->getComponentDataPtr<DamageComponent>(explosion)->damage;
-    HealthComponent asteroidHealth = eManager->getComponentData<HealthComponent>(asteroid);
-    if (asteroidHealth.explosionCooldown > 0) return;
-    float lifeRemaining = asteroidHealth.health - damage;
-    asteroidHealth.health = lifeRemaining;
-    asteroidHealth.explosionCooldown = EXPLOSION_COOLDOWN;
-    eManager->setComponentData<HealthComponent>(asteroid, asteroidHealth);
-    if (lifeRemaining < 0) {
-        MessageManager::getInstance().sendMessage(std::make_shared<DestroyAsteroidMessage>(asteroid));
+void DamageSystem::applyDamage(const DamageContext& ctx) {
+    std::scoped_lock lock(eManager->getEntityMutex(ctx.target), 
+                         eManager->getEntityMutex(ctx.source));
+    if (eManager->isMarkedForDestruction(ctx.source) || eManager->isMarkedForDestruction(ctx.target)) {
+        return;
+    }
+    auto targetIt = entitiesDamageCooldown.find(ctx.target);
+    if (targetIt != entitiesDamageCooldown.end()) {
+        auto sourceIt = targetIt->second.find(ctx.source);
+        if (sourceIt != targetIt->second.end() && sourceIt->second > 0) {
+            return; //Still on cooldown
+        }
+    }
+
+    HealthComponent healthComp = eManager->getComponentData<HealthComponent>(ctx.target);
+    healthComp.health -= ctx.damage;
+    eManager->setComponentData(ctx.target, healthComp);
+    entitiesDamageCooldown[ctx.target][ctx.source] = ctx.cooldownDuration;
+    std::cout << "applying damage for target: " << ctx.targetType << " from source: " << ctx.sourceType << std::endl;
+    if (healthComp.health <= 0) {
+        if (ctx.targetType & EntityType::Asteroid) {
+            MessageManager::getInstance().sendMessage(
+                std::make_shared<DestroyAsteroidMessage>(ctx.target));
+        } else if (ctx.targetType & EntityType::Player) {
+            GameStateManager::getInstance().setState(GameState::GameOver);
+        }
     } else {
-        MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(asteroid, Animation::Damage));
+        MessageManager::getInstance().sendMessage(
+            std::make_shared<AnimationMessage>(ctx.target, ctx.animation));
     }
-    return;
-}
 
-void DamageSystem::handleAsteroidShipCollision(uint32_t ship, uint32_t asteroid) {
-    // std::cout << "Handling Asteroid&Ship Collision" << std::endl;
-    MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(ship, Animation::Damage));
-}
-
-void DamageSystem::handleAsteroidSawCollision(uint32_t saw, uint32_t asteroid) {
-    float damage = eManager->getComponentDataPtr<DamageComponent>(saw)->damage;
-    HealthComponent asteroidHealth = eManager->getComponentData<HealthComponent>(asteroid);
-    if (asteroidHealth.explosionCooldown > 0) return;
-    float lifeRemaining = asteroidHealth.health - damage;
-    asteroidHealth.health = lifeRemaining;
-    asteroidHealth.explosionCooldown = EXPLOSION_COOLDOWN;
-    eManager->setComponentData<HealthComponent>(asteroid, asteroidHealth);
-    if (lifeRemaining < 0) {
-        MessageManager::getInstance().sendMessage(std::make_shared<DestroyAsteroidMessage>(asteroid));
-    } else {
-        MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(asteroid, Animation::Damage));
+    if (ctx.destroySource) {
+        if (ctx.sourceType & EntityType::Rocket) {
+            MessageManager::getInstance().sendMessage(
+                std::make_shared<ExplodeMessage>(ctx.source));
+        } else {
+            DamageComponent damageC = eManager->getComponentData<DamageComponent>(ctx.source);
+            if (healthComp.health > 0) {
+                eManager->destroyEntityLater(ctx.source);
+            } else if (healthComp.health <= 0) {
+                damageC.damage = -healthComp.health;
+                eManager->setComponentData(ctx.source, damageC);
+            }
+        }
     }
-    return;
-}
-
-void DamageSystem::handleAsteroidLaserCollision(uint32_t laser, uint32_t asteroid) {
-    float damage = eManager->getComponentDataPtr<DamageComponent>(laser)->damage;
-    HealthComponent asteroidHealth = eManager->getComponentData<HealthComponent>(asteroid);
-    if (asteroidHealth.laserCooldown > 0) return;
-    float lifeRemaining = asteroidHealth.health - damage;
-    asteroidHealth.health = lifeRemaining;
-    asteroidHealth.laserCooldown = LASER_COOLDOWN;
-    eManager->setComponentData<HealthComponent>(asteroid, asteroidHealth);
-    if (lifeRemaining < 0) {
-        MessageManager::getInstance().sendMessage(std::make_shared<DestroyAsteroidMessage>(asteroid));
-    } else {
-        MessageManager::getInstance().sendMessage(std::make_shared<AnimationMessage>(asteroid, Animation::Damage));
-    }
-    return;
-}
-
-void DamageSystem::handleAsteroidExplosiveCollision(uint32_t explosive, uint32_t asteroid) {
-    eManager->addComponent(explosive, ComponentType::Follow);
-    FollowComponent follow;
-    follow.parentId = asteroid;
-    eManager->setComponentData(explosive, follow);
 }
 
 void DamageSystem::update(double dT) {
-    for (uint32_t eID : eManager->getEntitiesWithComponent(ComponentType::Health)) {
-        HealthComponent healthComp = eManager->getComponentData<HealthComponent>(eID);
-        if (healthComp.explosionCooldown >= 0) {
-            healthComp.explosionCooldown -= dT;
+    cleanupDeadEntities();
+    // Update all cooldowns
+    for (auto& [target, sources] : entitiesDamageCooldown) {
+        for (auto& [source, cooldown] : sources) {
+            if (cooldown > 0) {
+                cooldown -= dT;
+                if (cooldown <= 0) {
+                    // Mark for removal (can't erase here during iteration)
+                    cooldown = -1.0f;
+                }
+            }
         }
-        if (healthComp.laserCooldown >= 0) {
-            healthComp.laserCooldown -= dT;
+        
+        // Remove expired cooldowns
+        for (auto it = sources.begin(); it != sources.end(); ) {
+            if (it->second <= 0) {
+                it = sources.erase(it);
+            } else {
+                ++it;
+            }
         }
-        eManager->setComponentData(eID, healthComp);
+    }
+
+    // Clean up empty target entries
+    for (auto it = entitiesDamageCooldown.begin(); it != entitiesDamageCooldown.end(); ) {
+        if (it->second.empty()) {
+            it = entitiesDamageCooldown.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
+void DamageSystem::cleanupDeadEntities() {
+    for (auto targetIt = entitiesDamageCooldown.begin(); targetIt != entitiesDamageCooldown.end(); ) {
+        if (eManager->isMarkedForDestruction(targetIt->first) || !eManager->entityExists(targetIt->first)) {
+            targetIt = entitiesDamageCooldown.erase(targetIt);
+        } else {
+            // Check all sources for this target
+            for (auto sourceIt = targetIt->second.begin(); sourceIt != targetIt->second.end(); ) {
+                if (eManager->isMarkedForDestruction(sourceIt->first) || !eManager->entityExists(sourceIt->first)) {
+                    sourceIt = targetIt->second.erase(sourceIt);
+                } else {
+                    ++sourceIt;
+                }
+            }
+            ++targetIt;
+        }
     }
 }
