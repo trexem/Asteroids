@@ -1,6 +1,6 @@
 #include "LevelUpContainer.h"
 
-LevelUpContainer::LevelUpContainer(EntityManager* eManager, ShipAbilities ability, std::string text, FPair pos, SDL_Renderer* renderer) {
+LevelUpContainer::LevelUpContainer(EntityManager* eManager, AbilityChoice choice, std::string text, FPair pos, SDL_Renderer* renderer) {
     abilityIcon.m_renderer = renderer;
     abilityText.m_renderer = renderer;
     abilityContainer.m_renderer = renderer;
@@ -13,7 +13,8 @@ LevelUpContainer::LevelUpContainer(EntityManager* eManager, ShipAbilities abilit
     
 
     abilityText.loadFromText(text, Colors::White, Fonts::Body);
-    abilityIcon.loadFromFile(abilityIconLocation[static_cast<size_t>(ability)]);
+    abilityIcon.loadFromFile(choice.type == AbilityType::Weapon ?
+         weaponIconLocation[choice.index] : passiveIconLocation[choice.index]);
     abilityContainer.createEmptyTexture(GUI::CONTAINER_WIDTH, GUI::CONTAINER_HEIGHT);
     SDL_SetRenderTarget(renderer, abilityContainer.getTexture());
     SDL_SetRenderDrawColor(renderer, Colors::Black.r, Colors::Black.g, Colors::Black.b, Colors::Black.a);

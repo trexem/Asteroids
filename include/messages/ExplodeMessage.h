@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "abilities.h"
+#include "weaponAbilities.h"
 #include "message.h"
 
 class ExplodeMessage : public Message {

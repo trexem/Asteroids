@@ -119,11 +119,11 @@ void PlayerSystem::updateAbilities(uint32_t eID, double dT) {
     StatsComponent stats = eManager->getComponentData<StatsComponent>(eID);
     constexpr double burstInterval = 0.25;
 
-    for (size_t i = 0; i < static_cast<size_t>(ShipAbilities::ShipAbilitiesCount); i++) {
-        ShipAbilities ability = static_cast<ShipAbilities>(i);
-        int level = player.abilityLevels[i];
+    for (size_t i = 0; i < static_cast<size_t>(WeaponAbilities::WeaponAbilitiesCount); i++) {
+        WeaponAbilities ability = static_cast<WeaponAbilities>(i);
+        int level = player.weaponLevels[i];
         
-        if (!player.abilities.test(i) || level < 0 || level > 10) continue;
+        if (!player.ownedWeapons.test(i) || level < 0 || level > 10) continue;
 
         double cooldown = abilitiesCooldowns[i][level] * (1 - stats.fireSpeed);
         if (player.isBursting[i]) {
@@ -136,12 +136,12 @@ void PlayerSystem::updateAbilities(uint32_t eID, double dT) {
 
                 if (player.shotsRemainingInBurst[i] <= 0) {
                     player.isBursting[i] = false;
-                    player.abilityCooldowns[i] = 0.0;
+                    player.weaponCooldowns[i] = 0.0;
                 }
             }
         } else {
-            player.abilityCooldowns[static_cast<size_t>(ability)] += dT;
-            if (player.abilityCooldowns[static_cast<size_t>(ability)] > cooldown) {
+            player.weaponCooldowns[static_cast<size_t>(ability)] += dT;
+            if (player.weaponCooldowns[static_cast<size_t>(ability)] > cooldown) {
                 if (abilityBursts[i]) {
                     player.isBursting[i] = true;
                     player.burstShotTimers[i] = burstInterval;
@@ -149,7 +149,7 @@ void PlayerSystem::updateAbilities(uint32_t eID, double dT) {
                 } else {
                     auto msg = std::make_shared<AbilityMessage>(eID, ability);
                     MessageManager::getInstance().sendMessage(msg);
-                    player.abilityCooldowns[static_cast<size_t>(ability)] = 0;
+                    player.weaponCooldowns[static_cast<size_t>(ability)] = 0;
                 }
             }
         }
@@ -157,9 +157,9 @@ void PlayerSystem::updateAbilities(uint32_t eID, double dT) {
     eManager->setComponentData<PlayerComponent>(eID, player);
 }
 
-void PlayerSystem::addAbility(uint32_t eID, ShipAbilities ability) {
+void PlayerSystem::addAbility(uint32_t eID, WeaponAbilities ability) {
     PlayerComponent player = eManager->getComponentData<PlayerComponent>(eID);
-    player.abilities[static_cast<size_t>(ability)] = true;
+    player.ownedWeapons[static_cast<size_t>(ability)] = true;
     eManager->setComponentData<PlayerComponent>(eID, player);
 }
 
@@ -173,23 +173,69 @@ void PlayerSystem::handleExperiencePickupMessage(std::shared_ptr<ExperiencePicku
         GameStateManager::getInstance().setState(GameState::LevelUp);
     }
     eManager->setComponentData<PlayerComponent>(msg->playerID, playerComp);
-    
 }
 
 void PlayerSystem::handleLevelUpMessage(std::shared_ptr<LevelUpMessage> msg) {
-    size_t ability = static_cast<size_t>(msg->ability);
+    size_t ability = msg->choice.index;
     uint32_t player = eManager->getEntitiesWithComponent(ComponentType::Player).at(0);
     PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(player);
-    if (playerComp.abilities[ability]) {
-        playerComp.abilityLevels[ability]++;
-    }
-    else {
-        playerComp.abilities[ability] = true;
-    }
-    if (msg->ability == ShipAbilities::PickupRadius) {
-        StatsComponent stats = eManager->getComponentData<StatsComponent>(player);
-        stats.collectionRadius = abilitiesSize[ability][playerComp.abilityLevels[ability]];
-        eManager->setComponentData<StatsComponent>(player, stats);
+    if (msg->choice.type == AbilityType::Passive) {
+        if (playerComp.ownedPassives[ability]) {
+            playerComp.passiveLevels[ability]++;
+        } else {
+            playerComp.ownedPassives[ability] = true;
+            playerComp.ownedPassivesCount++;
+        }
+        levelUpPassive(player, ability, playerComp.passiveLevels[ability]);
+    } else if (msg->choice.type == AbilityType::Weapon) {
+        if (playerComp.ownedWeapons[ability]) {
+            playerComp.weaponLevels[ability]++;
+        }
+        else {
+            playerComp.ownedWeapons[ability] = true;
+            playerComp.ownedWeaponsCount++;
+        }
     }
     eManager->setComponentData<PlayerComponent>(player, playerComp);
+}
+
+void PlayerSystem::levelUpPassive(uint32_t player, size_t passive, uint8_t level) {
+    StatsComponent stats = eManager->getComponentData<StatsComponent>(player);
+    const float value = passiveValues[passive][level];
+    switch (passive) {
+        case static_cast<size_t>(PassiveAbilities::PickupRadius):
+            stats.collectionRadius = value;
+            break;
+        case static_cast<size_t>(PassiveAbilities::CooldownReduction):
+            stats.fireSpeed = value;
+            break;
+        case static_cast<size_t>(PassiveAbilities::Armor):
+            stats.armor = value;
+            break;
+        case static_cast<size_t>(PassiveAbilities::MaxHealth):
+            stats.maxHealth = SHIP_BASE_HEALTH + value;
+            break;
+        case static_cast<size_t>(PassiveAbilities::HealthRegen):
+            stats.healthRegen = value;
+            break;
+        case static_cast<size_t>(PassiveAbilities::MovementSpeed):
+            stats.maxSpeed = static_cast<float>(SHIP_TOP_SPEED * value);
+            stats.minSpeed = static_cast<float>(SHIP_MIN_SPEED * value);
+            break;
+        case static_cast<size_t>(PassiveAbilities::ProjectileCount):
+            stats.projectileCount = value;
+            break;
+        case static_cast<size_t>(PassiveAbilities::Size):
+            stats.extraSize = value;
+            break;
+        case static_cast<size_t>(PassiveAbilities::Damage):
+            stats.baseDamage = value;
+            break;
+            case static_cast<size_t>(PassiveAbilities::ProjectileSpeed):
+            stats.projectileSpeed = value;
+            break;
+        default:
+            break;
+    }
+    eManager->setComponentData<StatsComponent>(player, stats);
 }

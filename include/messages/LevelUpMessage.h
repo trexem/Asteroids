@@ -1,10 +1,11 @@
 #pragma once
 
 #include "message.h"
-#include "abilities.h"
+#include "passiveAbilities.h"
+#include "weaponAbilities.h"
 
 class LevelUpMessage : public Message {
 public:
-	ShipAbilities ability;
-	LevelUpMessage(ShipAbilities a) : ability(a) {}
+	AbilityChoice choice;
+	LevelUpMessage(AbilityChoice c) : choice(c) {}
 };

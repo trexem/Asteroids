@@ -1,28 +1,59 @@
 #include "Components.h"
 
-std::vector<ShipAbilities> getRandomAbilityChoices(const PlayerComponent& player) {
-    std::vector<ShipAbilities> availableAbilities;
+std::vector<AbilityChoice> getRandomAbilityChoices(const PlayerComponent& player) {
+    std::vector<AbilityChoice> availableAbilities;
 
-    for (size_t i = 0; i < static_cast<size_t>(ShipAbilities::ShipAbilitiesCount); ++i) {
-        if (player.abilityLevels[i] < 9) {
-            availableAbilities.push_back(static_cast<ShipAbilities>(i));
+    auto addAbilityOptions = [&](AbilityType type, const auto& ownedArray, uint8_t ownedCount,
+        const auto& levelsArray, const auto& maxLevels) {
+        for (size_t i = 0; i < ownedArray.size(); i++) {
+            if (ownedArray[i] && levelsArray[i] < maxLevels[i]) {
+                availableAbilities.push_back({type, i});
+            } else if (!ownedArray[i] && ownedCount < 3) {
+                availableAbilities.push_back({type, i});
+            }
         }
-    }
+    };
+
+    addAbilityOptions(
+        AbilityType::Weapon,
+        player.ownedWeapons,
+        player.ownedWeaponsCount,
+        player.weaponLevels,
+        maxWeaponLevel
+    );
+
+    addAbilityOptions(
+        AbilityType::Passive,
+        player.ownedPassives,
+        player.ownedPassivesCount,
+        player.passiveLevels,
+        maxPassiveLevel
+    );
 
     std::shuffle(availableAbilities.begin(), availableAbilities.end(), std::mt19937{std::random_device{}()});
 
     // Return up to 3
     size_t count = std::min<size_t>(3, availableAbilities.size());
-    return std::vector<ShipAbilities>(availableAbilities.begin(), availableAbilities.begin() + count);
+    return std::vector<AbilityChoice>(availableAbilities.begin(), availableAbilities.begin() + count);
 }
 
-std::string getNextUpgradeText(const PlayerComponent& player, ShipAbilities ability) {
-    size_t index = static_cast<size_t>(ability);
-    size_t level = player.abilityLevels[index];
-    bool isActive = player.abilities[index];
-    level = isActive ? level + 1 : level;
-    // Clamp to max level
-    level = std::min(level, size_t(9));
+std::string getNextUpgradeText(const PlayerComponent& player, const AbilityChoice& choice) {
+    const size_t index = choice.index;
+    uint8_t level;
+    std::string text;
 
-    return abilityUpgradeTexts[index][level];
+    if (choice.type == AbilityType::Weapon) {
+        bool isActive = player.ownedWeapons[index];
+        level = player.weaponLevels[index];
+        level = isActive ? level + 1 : level;
+        level = std::min(level, maxWeaponLevel[index]);
+        text = weaponUpgradeTexts[index][level];
+    } else {
+        bool isActive = player.ownedPassives[index];
+        level = player.passiveLevels[index];
+        level = isActive ? level + 1 : level;
+        level = std::min(level, maxPassiveLevel[index]);
+        text = passiveUpgradeTexts[index][level];
+    }
+    return text;
 }

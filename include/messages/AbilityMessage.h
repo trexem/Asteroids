@@ -2,12 +2,12 @@
 
 #include <cstdint>
 
-#include "abilities.h"
+#include "weaponAbilities.h"
 #include "message.h"
 
 class AbilityMessage : public Message {
 public:
     uint32_t eID;
-    ShipAbilities ability;
-    AbilityMessage(uint32_t eID, ShipAbilities ability) : eID(eID), ability(ability) {}
+    WeaponAbilities ability;
+    AbilityMessage(uint32_t eID, WeaponAbilities ability) : eID(eID), ability(ability) {}
 };

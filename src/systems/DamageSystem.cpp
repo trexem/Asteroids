@@ -11,19 +11,20 @@ DamageSystem::DamageSystem(EntityManager* eM) : eManager(eM) {
 void DamageSystem::handleCollisionMessage(std::shared_ptr<CollisionMessage> msg) {
     uint32_t entityA = msg->entityID.at(0);
     uint32_t entityB = msg->entityID.at(1);
-    // std::cout << "Collision between: " << entityA << " & " << entityB << std::endl;
+    std::cout << "Collision between: " << entityA << " & " << entityB << std::endl;
     if (eManager->isMarkedForDestruction(entityA) || eManager->isMarkedForDestruction(entityB)) {
         return;
     }
-
+    
     TypeComponent typeA = eManager->getComponentData<TypeComponent>(entityA);
     TypeComponent typeB = eManager->getComponentData<TypeComponent>(entityB);
     if (typeA.type & typeB.type) return;
     DamageContext ctx;
+    std::cout << "of types: " << typeA.type << " & " << typeB.type << std::endl;
 
     if (TypesSet::match(TypesSet::SHOT_ASTEROID, typeA.type, typeB.type) ||
         TypesSet::match(TypesSet::ROCKET_ASTEROID, typeA.type, typeB.type)) {
-        ctx.source = typeA.type & (EntityType::Shot | typeA.type & EntityType::Rocket) ? entityA : entityB;
+        ctx.source = (typeA.type & EntityType::Shot | typeA.type & EntityType::Rocket) > 0 ? entityA : entityB;
         ctx.target = ctx.source == entityA ? entityB : entityA;
         ctx.sourceType = ctx.source == entityA ? typeA.type : typeB.type;
         ctx.targetType = ctx.target == entityA ? typeA.type : typeB.type;

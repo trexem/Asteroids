@@ -17,7 +17,7 @@ public:
 
     LevelUpContainer(
         EntityManager* eManager,
-        ShipAbilities ability,
+        AbilityChoice choice,
         std::string text,
         FPair pos,
         SDL_Renderer* renderer

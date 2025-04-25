@@ -21,23 +21,26 @@ AbilitySystem::AbilitySystem(EntityManager* eManager, SDL_Renderer* renderer) : 
 
 AbilitySystem::~AbilitySystem() {
     explosionTexture.free();
+    gravitySawTexture.free();
+    explosiveTexture.free();
+    laserTexture.free();
 }
 
 void AbilitySystem::handleAbilityMessage(std::shared_ptr<AbilityMessage> msg) {
     switch (msg->ability) {
-    case ShipAbilities::LaserGun:
+    case WeaponAbilities::LaserGun:
         spawnLaserGun(msg->eID);
         break;
-    case ShipAbilities::Rocket:
+    case WeaponAbilities::Rocket:
         spawnRocket(msg->eID);
         break;
-    case ShipAbilities::GravitySaws:
+    case WeaponAbilities::GravitySaws:
         spawnGravitySaws(msg->eID);
         break;
-    case ShipAbilities::Laser:
+    case WeaponAbilities::Laser:
         spawnLaser(msg->eID);
         break;
-    case ShipAbilities::Explosives:
+    case WeaponAbilities::Explosives:
         spawnExplosives(msg->eID);
     default:
         break;
@@ -45,11 +48,11 @@ void AbilitySystem::handleAbilityMessage(std::shared_ptr<AbilityMessage> msg) {
 }
 
 void AbilitySystem::spawnLaserGun(uint32_t eID) {
-    spawnProjectile(eID, ShipAbilities::LaserGun);
+    spawnProjectile(eID, WeaponAbilities::LaserGun);
 }
 
 void AbilitySystem::spawnRocket(uint32_t eID) {
-    spawnProjectile(eID, ShipAbilities::Rocket);
+    spawnProjectile(eID, WeaponAbilities::Rocket);
 }
 
 void AbilitySystem::handleExplodeMessage(std::shared_ptr<ExplodeMessage> msg) {
@@ -70,7 +73,7 @@ void AbilitySystem::createExplosion(const FPair& pos) {
     uint32_t playerID = eManager->getEntitiesWithComponent(ComponentType::Player).at(0);
     PlayerComponent* playerComp = eManager->getComponentDataPtr<PlayerComponent>(playerID);
     StatsComponent* statsComp = eManager->getComponentDataPtr<StatsComponent>(playerID);
-    size_t ability = static_cast<size_t>(ShipAbilities::Rocket);
+    size_t ability = static_cast<size_t>(WeaponAbilities::Rocket);
     std::cout << "Creating explosion at: " << pos << std::endl;
     uint32_t eID = eManager->createEntity();
     TransformComponent transComp;
@@ -81,14 +84,14 @@ void AbilitySystem::createExplosion(const FPair& pos) {
     DamageComponent damageComp;
     PhysicsComponent physComp;
     rendComp.texture = &explosionTexture;
-    rendComp.size = abilitiesSize[ability][playerComp->abilityLevels[ability]] + statsComp->extraSize + 1;
+    rendComp.size = abilitiesSize[ability][playerComp->weaponLevels[ability]] * statsComp->extraSize + 1;
     float w = explosionTexture.getWidth() * rendComp.size;
     float h = explosionTexture.getHeight() * rendComp.size;
     transComp.position = {pos.x - w / 2, pos.y - h / 2};
     colComp.shape = Shape::Circle;
     colComp.radius = std::max(w, h);
-    lifeComp.lifeTime = abilitiesLifeTime[ability][playerComp->abilityLevels[ability]];
-    damageComp.damage = abilitiesDamage[ability][playerComp->abilityLevels[ability]];
+    lifeComp.lifeTime = abilitiesLifeTime[ability][playerComp->weaponLevels[ability]];
+    damageComp.damage = abilitiesDamage[ability][playerComp->weaponLevels[ability]] * statsComp->baseDamage;
     eManager->addComponent(eID, ComponentType::Transform);
     eManager->addComponent(eID, ComponentType::Render);
     eManager->addComponent(eID, ComponentType::Collision);
@@ -106,15 +109,15 @@ void AbilitySystem::createExplosion(const FPair& pos) {
 }
 
 void AbilitySystem::spawnGravitySaws(uint32_t eID) {
-    spawnProjectile(eID, ShipAbilities::GravitySaws);
+    spawnProjectile(eID, WeaponAbilities::GravitySaws);
 }
 
 void AbilitySystem::spawnLaser(uint32_t eID) {
-    spawnProjectile(eID, ShipAbilities::Laser);
+    spawnProjectile(eID, WeaponAbilities::Laser);
 }
 
 void AbilitySystem::spawnExplosives(uint32_t eID) {
-    spawnProjectile(eID, ShipAbilities::Explosives);
+    spawnProjectile(eID, WeaponAbilities::Explosives);
 }
 
 auto AbilitySystem::getPlayerComponents(uint32_t eID) {
@@ -126,12 +129,12 @@ auto AbilitySystem::getPlayerComponents(uint32_t eID) {
     );
 }
 
-void AbilitySystem::spawnProjectile(uint32_t eID, ShipAbilities ability) {
+void AbilitySystem::spawnProjectile(uint32_t eID, WeaponAbilities ability) {
     const auto& config = abilityConfigs[ability];
     const size_t abilityIndex = static_cast<size_t>(ability);
     
     auto [player, stats, transform, render] = getPlayerComponents(eID);
-    unsigned int level = player->abilityLevels[abilityIndex];
+    unsigned int level = player->weaponLevels[abilityIndex];
     const FPair playerPos = transform->position;
     const FPair playerWH = {render->texture->getWidth(), render->texture->getHeight()};
     
@@ -139,7 +142,7 @@ void AbilitySystem::spawnProjectile(uint32_t eID, ShipAbilities ability) {
     float damage = abilitiesDamage[abilityIndex][level] * stats->baseDamage;
     int count = player->isBursting[abilityIndex] ? 1 :
         abilitiesProjectileCount[abilityIndex][level] + stats->projectileCount;
-    float size = abilitiesSize[abilityIndex][level] + stats->extraSize;
+    float size = abilitiesSize[abilityIndex][level] * stats->extraSize;
     
     RenderComponent textureComp = {config.texture, size};
     DamageComponent damageComp = {damage};
@@ -174,7 +177,7 @@ void AbilitySystem::spawnProjectile(uint32_t eID, ShipAbilities ability) {
         transComp.position = pos;
         transComp.rotDegrees = transform->rotDegrees;
         
-        if (ability == ShipAbilities::GravitySaws) {
+        if (ability == WeaponAbilities::GravitySaws) {
             entity.add<OrbitComponent>();
             physComp.velocity = 0;
             OrbitComponent orbit;
@@ -183,7 +186,7 @@ void AbilitySystem::spawnProjectile(uint32_t eID, ShipAbilities ability) {
             orbit.radius = std::max(playerWH.x, playerWH.y) + 100;
             orbit.angle = currentAngle - PI / 2;
             entity.set<OrbitComponent>(orbit);
-        } else if (ability == ShipAbilities::Laser) {
+        } else if (ability == WeaponAbilities::Laser) {
             textureComp.isStretched = true;
             textureComp.exactSize = {size * laserTexture.getWidth(), size * 250.0f};
             textureComp.texture->rotationPoint = RotationPoint::BottomCenter;
@@ -200,7 +203,7 @@ void AbilitySystem::spawnProjectile(uint32_t eID, ShipAbilities ability) {
                 render->texture->getHeight() / 2.0f
             };
             entity.set<FollowComponent>(follow);
-        } else if (ability == ShipAbilities::Rocket) {
+        } else if (ability == WeaponAbilities::Rocket) {
             transComp.rotDegrees = (currentAngle + HALF_PI) * RAD2DEG;
         }
         
@@ -234,18 +237,18 @@ EntityHandle AbilitySystem::createProjectileEntity() {
 }
 
 FPair AbilitySystem::positionProjectile(int index, int total, const FPair& posSource, const float& angleSource,
-                    const FPair& whSource, ShipAbilities ability
+                    const FPair& whSource, WeaponAbilities ability
 ) {
     switch (ability) {
-    case ShipAbilities::LaserGun:
+    case WeaponAbilities::LaserGun:
         return positionLinearSpread(index, total, posSource, angleSource, whSource);
-    case ShipAbilities::Rocket:
+    case WeaponAbilities::Rocket:
         return positionRadialSpread(index, total, posSource, angleSource, whSource);
-    case ShipAbilities::GravitySaws:
+    case WeaponAbilities::GravitySaws:
         return positionRadialSpread(index, total, posSource, angleSource, whSource, -HALF_PI);
-    case ShipAbilities::Explosives:
+    case WeaponAbilities::Explosives:
         return positionLinearSpread(index, total, posSource, angleSource, whSource, PI);
-    case ShipAbilities::Laser:
+    case WeaponAbilities::Laser:
         return positionLinearSpread(index, total, posSource, angleSource, whSource);
     default:
         return posSource;

@@ -286,18 +286,18 @@ void Game::createShip(ShipType shipType) {
 	// Player
 	PlayerComponent shipPlayer;
 	shipPlayer.type = shipType;
-	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::PickupRadius)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::PickupRadius)] = 8;
-	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::LaserGun)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::LaserGun)] = 0;
-	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::GravitySaws)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::GravitySaws)] = 0;
-	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Rocket)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Rocket)] = 0;
-	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Laser)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Laser)] = 0;
-	shipPlayer.abilities[static_cast<size_t>(ShipAbilities::Explosives)] = true;
-	shipPlayer.abilityLevels[static_cast<size_t>(ShipAbilities::Explosives)] = 7;
+	shipPlayer.ownedPassives[static_cast<size_t>(PassiveAbilities::PickupRadius)] = true;
+	shipPlayer.passiveLevels[static_cast<size_t>(PassiveAbilities::PickupRadius)] = 8;
+	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::LaserGun)] = true;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::LaserGun)] = 9;
+	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::GravitySaws)] = true;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::GravitySaws)] = 9;
+	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Rocket)] = true;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Rocket)] = 9;
+	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Laser)] = true;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Laser)] = 9;
+	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Explosives)] = true;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Explosives)] = 9;
 	shipPlayer.currentXp = 100;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
 	// Movement
@@ -313,8 +313,8 @@ void Game::createShip(ShipType shipType) {
 	entityManager.setComponentData<TypeComponent>(ship, type);
 	//Health
 	HealthComponent health;
-	health.health = 100.0f;
-	health.maxHealth = 100.0f;
+	health.health = SHIP_BASE_HEALTH;
+	health.maxHealth = SHIP_BASE_HEALTH;
 	entityManager.setComponentData<HealthComponent>(ship, health);
 	//Animation
 	AnimationComponent anim;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "abilities.h"
+#include "weaponAbilities.h"
 #include "AbilityMessage.h"
 #include "ExplodeMessage.h"
 #include "EntityHandle.h"
@@ -30,9 +30,9 @@ private:
     void handleExplodeMessage(std::shared_ptr<ExplodeMessage> msg);
     EntityHandle createProjectileEntity();
     void createExplosion(const FPair& pos);
-    void spawnProjectile(uint32_t eID, ShipAbilities ability);
+    void spawnProjectile(uint32_t eID, WeaponAbilities ability);
     FPair positionProjectile(int index, int total, const FPair& posSource, const float& angleSource,
-        const FPair& whSource, ShipAbilities ability);
+        const FPair& whSource, WeaponAbilities ability);
     FPair positionLinearSpread(int index, int total, const FPair& posSource, const float& angleSource,
         const FPair& whSource, float angleOffset = 0.0f);
     FPair positionRadialSpread(int index, int total, const FPair& posSource, const float& angleSource,
@@ -47,28 +47,28 @@ private:
     Texture explosionTexture, gravitySawTexture, laserTexture, explosiveTexture;
     FPair laserSize;
 
-    std::unordered_map<ShipAbilities, ProjectileConfig> abilityConfigs = {
-        {ShipAbilities::LaserGun, {
+    std::unordered_map<WeaponAbilities, ProjectileConfig> abilityConfigs = {
+        {WeaponAbilities::LaserGun, {
             .type = EntityType::Shot,
             .texture = &g_shot_texture
         }},
-        {ShipAbilities::Rocket, {
+        {WeaponAbilities::Rocket, {
             .type = EntityType::Rocket,
             .texture = &g_rocket_texture,
             .hasLifetime = true,
             .accelerates = true
         }},
-        {ShipAbilities::Laser, {
+        {WeaponAbilities::Laser, {
             .type = EntityType::Laser,
             .texture = &laserTexture,
             .hasLifetime = true
         }},
-        {ShipAbilities::Explosives, {
+        {WeaponAbilities::Explosives, {
             .type = EntityType::Explosive,
             .texture = &explosiveTexture,
             .hasLifetime = true
         }},
-        {ShipAbilities::GravitySaws, {
+        {WeaponAbilities::GravitySaws, {
             .type = EntityType::GravitySaw,
             .texture = &gravitySawTexture,
             .shape = Shape::Circle,

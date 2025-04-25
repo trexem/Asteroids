@@ -18,11 +18,12 @@ public:
 
     void updateMovement(uint32_t eID);
     void updateAbilities(uint32_t eID, double dT);
-    void addAbility(uint32_t eID, ShipAbilities ability);
+    void addAbility(uint32_t eID, WeaponAbilities ability);
 
 private:
     void handleKeyboardInput(std::shared_ptr<KeyboardMessage> msg);
     void handleExperiencePickupMessage(std::shared_ptr<ExperiencePickupMessage> msg);
     void handleLevelUpMessage(std::shared_ptr<LevelUpMessage> msg);
+    void levelUpPassive(uint32_t player, size_t pasive, uint8_t level);
     EntityManager* eManager;
 };

@@ -14,7 +14,7 @@ class LevelUpScreen : public Screen {
     Texture container3;
     uint32_t id1, id2, id3;
     std::vector<std::unique_ptr<LevelUpContainer>> lvlUpContainers;
-    std::vector<ShipAbilities> options;
+    std::vector<AbilityChoice> options;
 
     void handleMouseHover(std::shared_ptr<MouseMotionMessage> msg);
     void handleMouseClick(std::shared_ptr<ClickMessage> msg);
