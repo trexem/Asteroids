@@ -7,7 +7,9 @@
 
 enum class AbilityType {
     Weapon,
-    Passive
+    Passive,
+    Money,
+    Health
 };
 
 struct AbilityChoice {

@@ -55,6 +55,9 @@ void RenderSystem::render(EntityManager& eM) {
             // for (int i = 0; i < 3; i++) {
             //     renderer->drawDebugLine(corners[i].x, corners[i].y, corners[i+1].x, corners[i+1].y, Colors::Experience);
             // }
+
+            renderer->drawDebugLine(0, SCREEN_CENTER.y, SCREEN_WIDTH, SCREEN_CENTER.y, Colors::Red);
+            renderer->drawDebugLine(SCREEN_CENTER.x, 0, SCREEN_CENTER.x, SCREEN_HEIGHT, Colors::Red);
         }
     }
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::GUI)) {

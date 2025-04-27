@@ -9,4 +9,5 @@ public:
     static constexpr SDL_Color Red         = {255, 0, 0, 255};
     static constexpr SDL_Color Transparent = {0, 0, 0, 0};
     static constexpr SDL_Color Experience  = {0, 240, 32, 255};
+    static constexpr SDL_Color Health      = {30, 122, 184, 255};
 };

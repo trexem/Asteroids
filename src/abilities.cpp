@@ -48,12 +48,16 @@ std::string getNextUpgradeText(const PlayerComponent& player, const AbilityChoic
         level = isActive ? level + 1 : level;
         level = std::min(level, maxWeaponLevel[index]);
         text = weaponUpgradeTexts[index][level];
-    } else {
+    } else if (choice.type == AbilityType::Passive) {
         bool isActive = player.ownedPassives[index];
         level = player.passiveLevels[index];
         level = isActive ? level + 1 : level;
         level = std::min(level, maxPassiveLevel[index]);
         text = passiveUpgradeTexts[index][level];
+    } else if (choice.type == AbilityType::Money) {
+        text = "+50 money";
+    } else if (choice.type == AbilityType::Health) {
+        text = "+50 health";
     }
     return text;
 }

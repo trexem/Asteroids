@@ -46,7 +46,7 @@ constexpr float passiveValues[static_cast<size_t>(PassiveAbilities::PassiveAbili
     {1, 2, 3, 4, 5},
 
     //Size (multiplier)
-    {1.01f, 1.05f, 1.1f, 1.15f, 1.2f, 1.25f},
+    {1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.75f},
 
     //Damage (multiplier)
     {1.05f, 1.1f, 1.2f, 1.35f, 1.5f, 2.0f},
@@ -65,10 +65,10 @@ constexpr uint8_t maxPassiveLevel[static_cast<size_t>(PassiveAbilities::PassiveA
     4,  // ProjectileCount
     5,  // Size
     5,  // Damage
-    9   // ProjectileSpeed
+    5   // ProjectileSpeed
 };
 
-constexpr std::array<const char*, static_cast<size_t>(PassiveAbilities::PassiveAbilitiesCount)> passiveIconLocation = {
+constexpr std::array<const char*, static_cast<size_t>(PassiveAbilities::PassiveAbilitiesCount) + 2> passiveIconLocation = {
     "data/img/pickupRangeIcon.bmp",
     "data/img/cooldownReductionIcon.bmp",
     "data/img/armorIcon.bmp",
@@ -79,4 +79,6 @@ constexpr std::array<const char*, static_cast<size_t>(PassiveAbilities::PassiveA
     "data/img/sizeIcon.bmp",
     "data/img/damageIcon.bmp",
     "data/img/projectileSpeedIcon.bmp",
+    "data/img/moneyIcon.bmp",
+    "data/img/healthIcon.bmp"
 };

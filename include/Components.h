@@ -165,6 +165,7 @@ struct TypeComponent {
 
 struct ExperienceComponent {
     float xp {50.0f};
+    bool isPickedUp {false};
 };
 
 struct AnimationComponent {

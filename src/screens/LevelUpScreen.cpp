@@ -28,7 +28,11 @@ void LevelUpScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     for (uint32_t player : players) {
         PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(player);
         options = getRandomAbilityChoices(playerComp);
-        auto count = options.size();
+        if (options.size() == 0) {
+            options.push_back({AbilityType::Money, static_cast<size_t>(PassiveAbilities::PassiveAbilitiesCount)});
+            options.push_back({AbilityType::Health, static_cast<size_t>(PassiveAbilities::PassiveAbilitiesCount) + 1});
+        }
+        size_t count = options.size();
         for (int i = 0; i < count; i++) {
             if (count == 3) {
                 pos.x = SCREEN_WIDTH * .15625f + i * (GUI::CONTAINER_WIDTH + GUI::CONTAINER_GAP);

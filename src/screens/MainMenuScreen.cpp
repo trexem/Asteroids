@@ -90,6 +90,9 @@ void MainMenuScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
     handleClick(playID, msg->mousePos, [this]() {
         onPlayClick();
     });
+    handleClick(quitID, msg->mousePos, [this]() {
+        GameStateManager::getInstance().setState(GameState::Quit);
+    });
 }
 
 void MainMenuScreen::onPlayClick() {

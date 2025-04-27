@@ -265,10 +265,12 @@ void Game::createShip(ShipType shipType) {
 	TransformComponent shipTransform;
 	shipTransform.position.x = SCREEN_WIDTH / 2;
 	shipTransform.position.y = SCREEN_HEIGHT / 2;
-	entityManager.setComponentData<TransformComponent>(ship, shipTransform);
 	//Render
 	RenderComponent shipTexture = RenderComponent(renderSystem->getRenderer(), g_ship_surface);
 	entityManager.setComponentData<RenderComponent>(ship, shipTexture);
+	shipTransform.position.x -= g_ship_surface.getWidth() / 2;
+	shipTransform.position.y -= g_ship_surface.getHeight() / 2;
+	entityManager.setComponentData<TransformComponent>(ship, shipTransform);
 	// Stats
 	StatsComponent shipStats;
 	shipStats.maxSpeed = SHIP_TOP_SPEED;
@@ -288,16 +290,17 @@ void Game::createShip(ShipType shipType) {
 	shipPlayer.type = shipType;
 	shipPlayer.ownedPassives[static_cast<size_t>(PassiveAbilities::PickupRadius)] = true;
 	shipPlayer.passiveLevels[static_cast<size_t>(PassiveAbilities::PickupRadius)] = 8;
-	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::LaserGun)] = true;
-	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::LaserGun)] = 9;
+	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::LaserGun)] = true;
+	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::LaserGun)] = 9;
 	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::GravitySaws)] = true;
-	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::GravitySaws)] = 9;
-	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Rocket)] = true;
-	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Rocket)] = 9;
-	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Laser)] = true;
-	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Laser)] = 9;
-	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Explosives)] = true;
-	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Explosives)] = 9;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::GravitySaws)] = 1;
+	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Rocket)] = true;
+	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Rocket)] = 9;
+	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Laser)] = true;
+	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Laser)] = 9;
+	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Explosives)] = true;
+	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Explosives)] = 9;
+	shipPlayer.ownedWeaponsCount = 3;
 	shipPlayer.currentXp = 100;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
 	// Movement

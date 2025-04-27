@@ -183,7 +183,7 @@ void AbilitySystem::spawnProjectile(uint32_t eID, WeaponAbilities ability) {
             OrbitComponent orbit;
             orbit.parentId = eID;
             orbit.rotationSpeed = speed;
-            orbit.radius = std::max(playerWH.x, playerWH.y) + 100;
+            orbit.radius = (std::max(playerWH.x, playerWH.y) + 100) * size;
             orbit.angle = currentAngle - PI / 2;
             entity.set<OrbitComponent>(orbit);
         } else if (ability == WeaponAbilities::Laser) {

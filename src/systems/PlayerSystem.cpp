@@ -195,12 +195,23 @@ void PlayerSystem::handleLevelUpMessage(std::shared_ptr<LevelUpMessage> msg) {
             playerComp.ownedWeapons[ability] = true;
             playerComp.ownedWeaponsCount++;
         }
+    } else if (msg->choice.type == AbilityType::Money) {
+        // #TODO add money to gameStats manager 
+    } else if (msg->choice.type == AbilityType::Health) {
+        HealthComponent hComp = eManager->getComponentData<HealthComponent>(player);
+        float maxHealth = eManager->getComponentDataPtr<StatsComponent>(player)->maxHealth;
+        hComp.health += 50.0f;
+        if (hComp.health > maxHealth) {
+            hComp.health = maxHealth;
+        }
+        eManager->setComponentData(player, hComp);
     }
     eManager->setComponentData<PlayerComponent>(player, playerComp);
 }
 
 void PlayerSystem::levelUpPassive(uint32_t player, size_t passive, uint8_t level) {
     StatsComponent stats = eManager->getComponentData<StatsComponent>(player);
+    HealthComponent hComp = eManager->getComponentData<HealthComponent>(player);
     const float value = passiveValues[passive][level];
     switch (passive) {
         case static_cast<size_t>(PassiveAbilities::PickupRadius):
@@ -214,6 +225,9 @@ void PlayerSystem::levelUpPassive(uint32_t player, size_t passive, uint8_t level
             break;
         case static_cast<size_t>(PassiveAbilities::MaxHealth):
             stats.maxHealth = SHIP_BASE_HEALTH + value;
+            hComp.maxHealth = stats.maxHealth;
+            hComp.health += value;
+            eManager->setComponentData(player, hComp);
             break;
         case static_cast<size_t>(PassiveAbilities::HealthRegen):
             stats.healthRegen = value;

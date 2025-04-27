@@ -47,19 +47,23 @@ void ExperienceSystem::update() {
         for (uint32_t xp : experiences) {
             TransformComponent xpTr = eManager->getComponentData<TransformComponent>(xp);
             PhysicsComponent xpPhys = eManager->getComponentData<PhysicsComponent>(xp);
+            ExperienceComponent xpComp = eManager->getComponentData<ExperienceComponent>(xp);
+            if (xpComp.isPickedUp) {
+                xpTr.rotDegrees = xpTr.position.angleTowards(playerTr->position) * RAD2DEG;
+                eManager->setComponentData<TransformComponent>(xp, xpTr);
+                continue;
+            }
             SDL_FRect xpRect = {xpTr.position.x, xpTr.position.y,
                 experienceTexture.getWidth(), experienceTexture.getHeight() };
             float distSq = getSquaredDistanceBetweenCenters(playerRect, xpRect);
-            // std::cout << "Calculating for xpID: " << xp << std::endl;
-            // std::cout << "Distance and collectionRadius is: " << dist << ", " << stats->collectionRadius << std::endl;
             if (distSq <= attractionRadius * attractionRadius) {
                 const float dist = sqrtf(distSq);
                 xpTr.rotDegrees = xpTr.position.angleTowards(playerTr->position) * RAD2DEG;
                 const float normalizedDist = 1.0f - (dist / attractionRadius);
-                // std::cout << "Ship Position: " << playerTr->position.x << ", " << playerTr->position.y << std::endl;
-                // std::cout << "XP Position: " << xpTr.position.x << ", " << xpTr.position.y << std::endl;
-                xpPhys.velocity = stats->maxSpeed + 35.0;
-                // std::cout << "xp rotation and velocity is: " << xpTr.rotDegrees << ", " << xpPhys.velocity << std::endl;
+                xpPhys.velocity = stats->maxSpeed + 35.0f;
+                xpPhys.acceleration = 1000.0f;
+                xpComp.isPickedUp = true;
+                eManager->setComponentData<ExperienceComponent>(xp, xpComp);
                 eManager->setComponentData<PhysicsComponent>(xp, xpPhys);
                 eManager->setComponentData<TransformComponent>(xp, xpTr);
             }

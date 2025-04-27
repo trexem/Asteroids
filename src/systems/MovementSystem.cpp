@@ -58,7 +58,7 @@ void MovementSystem::updatePlayer(EntityManager* eMgr, double dT, uint32_t eID) 
         transComp.position.x += physComp->speed.x * dT;
         transComp.position.y += physComp->speed.y * dT;
     }
-    camera->position.x = transComp.position.x - SCREEN_CENTER.x;
-    camera->position.y = transComp.position.y - SCREEN_CENTER.y;
+    camera->position.x = transComp.position.x - SCREEN_CENTER.x + g_ship_surface.getWidth() /2 ;
+    camera->position.y = transComp.position.y - SCREEN_CENTER.y + g_ship_surface.getHeight() /2 ;
     eMgr->setComponentData<TransformComponent>(eID, transComp);
 }
