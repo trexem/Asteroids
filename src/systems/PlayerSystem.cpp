@@ -231,6 +231,8 @@ void PlayerSystem::levelUpPassive(uint32_t player, size_t passive, uint8_t level
             break;
         case static_cast<size_t>(PassiveAbilities::HealthRegen):
             stats.healthRegen = value;
+            hComp.regen = value;
+            eManager->setComponentData(player, hComp);
             break;
         case static_cast<size_t>(PassiveAbilities::MovementSpeed):
             stats.maxSpeed = static_cast<float>(SHIP_TOP_SPEED * value);

@@ -109,6 +109,7 @@ struct RenderComponent {
 struct HealthComponent {
     float health {1.0f};
     float maxHealth {1.0f};
+    float regen {0.0f};
 };
 
 struct DamageComponent {

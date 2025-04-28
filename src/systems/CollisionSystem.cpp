@@ -56,9 +56,9 @@ void CollisionSystem::update(EntityManager* eManager) {
                 if (TypesSet::shouldIgnoreCollision(tA, tB)) {
                     continue;
                 }
-                std::cout << "Checking Collision for: " << tA << " and " << tB << std::endl;
+                // std::cout << "Checking Collision for: " << tA << " and " << tB << std::endl;
                 if (checkCollision(transA, colA, transB, colB)) {
-                    std::cout << "Collision detected" << std::endl;
+                    // std::cout << "Collision detected" << std::endl;
                     if (TypesSet::match(TypesSet::PLAYER_EXPERIENCE, tA, tB)) {
                         //std::cout << "Player Experience Collision detected" << std::endl;
                         ExperienceComponent* xp = eManager->getComponentDataPtr<ExperienceComponent>(b);

@@ -2,6 +2,7 @@
 
 #include "ClickMessage.h"
 #include "EntityManager.h"
+#include "EntityHandle.h"
 #include "GameStateManager.h"
 #include "MessageManager.h"
 #include "MouseMotionMessage.h"

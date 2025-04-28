@@ -15,3 +15,4 @@
 #include "LifeTimeSystem.h"
 #include "OrbitSystem.h"
 #include "FollowSystem.h"
+#include "HealthSystem.h"

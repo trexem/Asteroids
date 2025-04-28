@@ -63,6 +63,7 @@ private:
 	std::unique_ptr<LifeTimeSystem> lifeTimeSystem;
 	std::unique_ptr<OrbitSystem> orbitSystem;
 	std::unique_ptr<FollowSystem> followSystem;
+	std::unique_ptr<HealthSystem> healthSystem;
 	Camera camera;
 	Uint32 last_tick = 0, tick = 0;
 	SDL_Event e; //event to catch keypresses

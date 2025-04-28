@@ -14,10 +14,8 @@ float getSquaredDistanceBetweenCenters(const SDL_FRect& rect1, const SDL_FRect& 
 }
 
 float getSquaredDistanceBetweenCircles(const FPair& pos1, const float& radius1, const FPair& pos2, const float& radius2) {
-    std::cout << "Pos1: " << pos1 << " & Pos2: " << pos2 << std::endl;
     FPair center1 = pos1 + radius1;
     FPair center2 = pos2 + radius2;
-    std::cout << "Center1: " << center1 << " & Center2: " << center2 << std::endl;
     float dx = center2.x - center1.x;
     float dy = center2.y - center1.y;
 

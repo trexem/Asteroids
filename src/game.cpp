@@ -17,6 +17,7 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	lifeTimeSystem = std::make_unique<LifeTimeSystem>(&entityManager);
 	orbitSystem = std::make_unique<OrbitSystem>(&entityManager);
 	followSystem = std::make_unique<FollowSystem>();
+	healthSystem = std::make_unique<HealthSystem>();
 }
 
 Game::~Game() {
@@ -212,6 +213,7 @@ void Game::gameLoop() {
 			xpSystem->update();
 			end = std::chrono::high_resolution_clock::now();
 			std::cout << "xpSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			healthSystem->update(&entityManager, timeStep);
 		}
 		//animations
 		start = std::chrono::high_resolution_clock::now();
