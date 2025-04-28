@@ -153,7 +153,7 @@ void AbilitySystem::spawnProjectile(uint32_t eID, WeaponAbilities ability) {
         colComp.width = wh.x;
         colComp.height = wh.y;
     } else if (colComp.shape == Shape::Circle) {
-        colComp.radius = std::max(wh.x, wh.y);
+        colComp.radius = std::max(wh.x / 2.0f, wh.y / 2.0f);
     }
     LifeTimeComponent lifeComp;
     if (config.hasLifetime) {

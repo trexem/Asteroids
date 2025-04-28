@@ -35,3 +35,36 @@ void Renderer::drawDebugLine(float x1, float y1, float x2, float y2, SDL_Color c
 	SDL_RenderLine(&*m_renderer, x1, y1, x2, y2);
 	SDL_SetRenderDrawColor(&*m_renderer, 0, 0, 0, 255);
 }
+
+void Renderer::drawDebugCircle(float centerX, float centerY, float radius, SDL_Color color, int segments) {
+	SDL_SetRenderDrawColor(&*m_renderer, color.r, color.g, color.b, color.a);
+	float theta = TAU / float(segments);
+    float c = cosf(theta); // pre-calculate the sine and cosine
+    float s = sinf(theta);
+    float x = radius; // start at angle = 0
+    float y = 0;
+
+    float startX = centerX + x;
+    float startY = centerY + y;
+    float prevX = startX;
+    float prevY = startY;
+
+    for (int i = 1; i <= segments; i++) {
+        // apply the rotation matrix
+        float t = x;
+        x = c * x - s * y;
+        y = s * t + c * y;
+
+        float newX = centerX + x;
+        float newY = centerY + y;
+
+        SDL_RenderLine(&*m_renderer, prevX, prevY, newX, newY);
+
+        prevX = newX;
+        prevY = newY;
+    }
+
+    // Close the circle
+    SDL_RenderLine(&*m_renderer, prevX, prevY, startX, startY);
+	SDL_SetRenderDrawColor(&*m_renderer, 0, 0, 0, 255);
+}

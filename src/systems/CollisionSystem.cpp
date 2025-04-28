@@ -56,9 +56,9 @@ void CollisionSystem::update(EntityManager* eManager) {
                 if (TypesSet::shouldIgnoreCollision(tA, tB)) {
                     continue;
                 }
-                std::cout << "Checking Collision for: " << tA << " and " << tB << std::endl;
+                // std::cout << "Checking Collision for: " << tA << " and " << tB << std::endl;
                 if (checkCollision(transA, colA, transB, colB)) {
-                    std::cout << "Collision detected" << std::endl;
+                    // std::cout << "Collision detected" << std::endl;
                     if (TypesSet::match(TypesSet::PLAYER_EXPERIENCE, tA, tB)) {
                         //std::cout << "Player Experience Collision detected" << std::endl;
                         ExperienceComponent* xp = eManager->getComponentDataPtr<ExperienceComponent>(b);
@@ -103,9 +103,7 @@ bool CollisionSystem::checkCollision(
         colB.width,
         colB.height
     };
-    // std::cout << "Combined radius: " << combinedRadius << std::endl;
     const float distSq = getSquaredDistanceBetweenCenters(rectA, rectB);
-    // std::cout << "distSq: " << distSq << std::endl;
     
     // Precise shape-specific checks
     if (colA.shape == Shape::Circle && 
@@ -118,28 +116,12 @@ bool CollisionSystem::checkCollision(
         if (colA.shape == Shape::Circle) {
             return checkCircleOBB(colA, transA, colB, transB);
         }
-        return checkCircleOBB(colB, transB, colA, transB);
+        return checkCircleOBB(colB, transB, colA, transA);
     } else {
         auto cornersA = getCorners(transA, colA);
         auto cornersB = getCorners(transB, colB);
         return checkOBBCollision(cornersA, cornersB);
     }
-}
-
-bool CollisionSystem::checkCircleRect(
-    const CollisionComponent& circle, const SDL_FRect& circleRect,
-    const CollisionComponent& rect, const SDL_FRect& rectRect
-) {
-    // Find closest point on rectangle to circle center
-    float closestX = std::clamp(circleRect.x, rectRect.x, rectRect.x + rectRect.w);
-    float closestY = std::clamp(circleRect.y, rectRect.y, rectRect.y + rectRect.h);
-
-    // Calculate distance
-    float dx = circleRect.x - closestX;
-    float dy = circleRect.y - closestY;
-    float distSq = dx*dx + dy*dy;
-
-    return distSq <= circle.radius * circle.radius;
 }
 
 bool CollisionSystem::checkOBBCollision(
@@ -197,42 +179,40 @@ bool CollisionSystem::checkCircleOBB(
         circleTrans.position.y + circle.position.y + circle.radius
     };
     
-    // Find closest point on OBB to circle center
-    FPair closest = circleCenter;
-    
     // For each edge of OBB, project circle center onto edge
     float minDistSq = INFINITY;
+
+    auto squaredDistance = [](const FPair& a, const FPair& b) -> float {
+        float dx = a.x - b.x;
+        float dy = a.y - b.y;
+        return dx * dx + dy * dy;
+    };
+
+    auto closestPointOnEdge = [](const FPair& a, const FPair& b, const FPair& point) -> FPair {
+        FPair ab = {b.x - a.x, b.y - a.y};
+        float abLengthSq = ab.x * ab.x + ab.y * ab.y;
+        if (abLengthSq == 0.0f) return a;
+
+        FPair ap = {point.x - a.x, point.y - a.y};
+        float projection = (ap.x * ab.x + ap.y * ab.y) / abLengthSq;
+        projection = std::clamp(projection, 0.0f, 1.0f);
+
+        return {
+            a.x + projection * ab.x,
+            a.y + projection * ab.y
+        };
+    };
     
     // Check against each edge of OBB
     for (int i = 0; i < 4; i++) {
         int j = (i + 1) % 4;
-        FPair edge = {obbCorners[j].x - obbCorners[i].x, obbCorners[j].y - obbCorners[i].y};
-        float edgeLengthSq = edge.x * edge.x + edge.y * edge.y;
-        
-        if (edgeLengthSq == 0.0f) continue;
-        
-        // Project circle center onto edge
-        FPair toCenter = {circleCenter.x - obbCorners[i].x, circleCenter.y - obbCorners[i].y};
-        float projection = (toCenter.x * edge.x + toCenter.y * edge.y) / edgeLengthSq;
-        projection = std::clamp(projection, 0.0f, 1.0f);
-        
-        FPair pointOnEdge = {
-            obbCorners[i].x + projection * edge.x,
-            obbCorners[i].y + projection * edge.y
-        };
-        
-        float distSq = (pointOnEdge.x - circleCenter.x) * (pointOnEdge.x - circleCenter.x) +
-                       (pointOnEdge.y - circleCenter.y) * (pointOnEdge.y - circleCenter.y);
-        
+        FPair pointOnEdge = closestPointOnEdge(obbCorners[i], obbCorners[j], circleCenter);
+        float distSq = squaredDistance(circleCenter, pointOnEdge);
         if (distSq < minDistSq) {
             minDistSq = distSq;
-            closest = pointOnEdge;
         }
     }
     
-    // Check distance to closest point
-    float distSq = (closest.x - circleCenter.x) * (closest.x - circleCenter.x) +
-                   (closest.y - circleCenter.y) * (closest.y - circleCenter.y);
     
-    return distSq <= (circle.radius * circle.radius);
+    return minDistSq <= (circle.radius * circle.radius);
 }

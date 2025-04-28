@@ -133,7 +133,7 @@ bool Game::loadMedia() {
 }
 
 void Game::start() {
-	createShip(ShipType::TANK);
+	createShip(ShipType::FREE_MOVE);
 	counted_frames = 0;
 	asteroidSystem = std::make_unique<AsteroidSystem>(&entityManager, renderSystem->getRenderer());
 	asteroidSystem->generateAsteroids(&entityManager, 0.0);

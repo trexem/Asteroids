@@ -14,8 +14,6 @@ public:
     void update(EntityManager* eManager);
     bool checkCollision(const TransformComponent& transA, const CollisionComponent& colA,
                         const TransformComponent& transB, const CollisionComponent& colB);
-    bool checkCircleRect(const CollisionComponent& circle, const SDL_FRect& circleRect,
-        const CollisionComponent& rect, const SDL_FRect& rectRect);
     bool checkOBBCollision(
         const std::array<FPair, 4>& cornersA,
         const std::array<FPair, 4>& cornersB

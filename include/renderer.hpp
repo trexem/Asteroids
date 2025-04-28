@@ -1,5 +1,7 @@
 #pragma once
 
+#include "utils.hpp"
+
 #include <iostream>
 #include <memory>
 #include <SDL3/SDL.h>
@@ -21,6 +23,7 @@ public:
 	void render(void);
 	void drawDebugRect(const SDL_FRect& rect, SDL_Color color);
 	void drawDebugLine(float x1, float y1, float x2, float y2, SDL_Color color);
+	void drawDebugCircle(float centerX, float centerY, float radius, SDL_Color color, int segments = 20);
 private:
 	std::unique_ptr<SDL_Renderer, SDL_Renderer_Deleter> m_renderer;
 };
