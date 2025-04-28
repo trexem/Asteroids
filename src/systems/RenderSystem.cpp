@@ -11,9 +11,8 @@ SDL_Renderer* RenderSystem::getRenderer() {
 
 void RenderSystem::render(EntityManager& eM) {
     renderer->clear();
-    renderer->drawDebugLine(0, SCREEN_CENTER.y, SCREEN_WIDTH, SCREEN_CENTER.y, Colors::Red);
-    renderer->drawDebugLine(SCREEN_CENTER.x, 0, SCREEN_CENTER.x, SCREEN_HEIGHT, Colors::Red);
-    const SDL_Color debugColor = Colors::Experience;
+    // renderer->drawDebugLine(0, SCREEN_CENTER.y, SCREEN_WIDTH, SCREEN_CENTER.y, Colors::Red);
+    // renderer->drawDebugLine(SCREEN_CENTER.x, 0, SCREEN_CENTER.x, SCREEN_HEIGHT, Colors::Red);
     // std::cout << "Rendering frame: " << frame << std::endl;
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::Render)) {
         if (eM.isMarkedForDestruction(eID)) continue;
@@ -50,23 +49,22 @@ void RenderSystem::render(EntityManager& eM) {
                 );
             }
             // Debug oriented bounding box (no circles though)
-            if (cComp.shape == Shape::Rectangle) {
-                TransformComponent a = trComp;
-                a.position = position;
-                auto corners = getCorners(a, cComp);
-                renderer->drawDebugLine(corners[3].x, corners[3].y, corners[0].x, corners[0].y, Colors::Experience);
-                for (int i = 0; i < 3; i++) {
-                    renderer->drawDebugLine(corners[i].x, corners[i].y, corners[i+1].x, corners[i+1].y, Colors::Experience);
-                }
-            } else if (cComp.shape == Shape::Circle) {
-                TransformComponent a = trComp;
-                FPair circleCenter = {
-                    a.position.x + cComp.position.x + cComp.radius - camera->position.x,
-                    a.position.y + cComp.position.y + cComp.radius - camera->position.y
-                };
-                renderer->drawDebugCircle(circleCenter.x, circleCenter.y, cComp.radius, Colors::Experience);
-            }
-
+            // if (cComp.shape == Shape::Rectangle) {
+            //     TransformComponent a = trComp;
+            //     a.position = position;
+            //     auto corners = getCorners(a, cComp);
+            //     renderer->drawDebugLine(corners[3].x, corners[3].y, corners[0].x, corners[0].y, Colors::Experience);
+            //     for (int i = 0; i < 3; i++) {
+            //         renderer->drawDebugLine(corners[i].x, corners[i].y, corners[i+1].x, corners[i+1].y, Colors::Experience);
+            //     }
+            // } else if (cComp.shape == Shape::Circle) {
+            //     TransformComponent a = trComp;
+            //     FPair circleCenter = {
+            //         a.position.x + cComp.position.x + cComp.radius - camera->position.x,
+            //         a.position.y + cComp.position.y + cComp.radius - camera->position.y
+            //     };
+            //     renderer->drawDebugCircle(circleCenter.x, circleCenter.y, cComp.radius, Colors::Experience);
+            // }
         }
     }
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::GUI)) {

@@ -33,6 +33,7 @@ public:
 	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, SDL_FlipMode t_flip, float t_scale = 1.0f);
 	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, SDL_FlipMode t_flip, FPair size);
 	void setAlphaMod(int alpha);
+	void colorMod(const SDL_Color& color);
 
 	float getWidth();
 	float getHeight();

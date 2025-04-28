@@ -139,3 +139,7 @@ void Texture::createEmptyTexture(int w, int h) {
 SDL_Texture* Texture::getTexture() {
 	return m_texture;
 }
+
+void Texture::colorMod(const SDL_Color& color) {
+	SDL_SetTextureColorMod(m_texture, color.r, color.g, color.b);
+}

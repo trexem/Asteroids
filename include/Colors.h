@@ -10,4 +10,5 @@ public:
     static constexpr SDL_Color Transparent = {0, 0, 0, 0};
     static constexpr SDL_Color Experience  = {0, 240, 32, 255};
     static constexpr SDL_Color Health      = {30, 122, 184, 255};
+    static constexpr SDL_Color Asteroid    = {112, 68, 17, 255};
 };

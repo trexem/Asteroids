@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <iomanip>
+#include <iostream>
 #include <SDL3/SDL.h>
 #include <sstream>
 #include <string>
@@ -29,6 +30,7 @@ constexpr float RAD2DEG = 180.0f / PI;
 extern Pos g_screen_center;
 
 float getSquaredDistanceBetweenCenters(const SDL_FRect& rect1, const SDL_FRect& rect2);
+float getSquaredDistanceBetweenCircles(const FPair& pos1, const float& radius1, const FPair& pos2, const float& radius2);
 float calculateCenteredX(int w);
 FPair calculateCenters(float x, float y, float w, float h);
 std::string formatTimeMMSS(Uint32 seconds);

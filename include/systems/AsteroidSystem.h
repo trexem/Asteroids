@@ -5,6 +5,7 @@
 #include <time.h>
 
 #include "AsteroidAsteroidCollisionMessage.h"
+#include "Colors.h"
 #include "DestroyAsteroidMessage.h"
 #include "ExperienceSpawnMessage.h"
 #include "MessageManager.h"

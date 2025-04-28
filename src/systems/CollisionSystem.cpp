@@ -56,9 +56,9 @@ void CollisionSystem::update(EntityManager* eManager) {
                 if (TypesSet::shouldIgnoreCollision(tA, tB)) {
                     continue;
                 }
-                // std::cout << "Checking Collision for: " << tA << " and " << tB << std::endl;
+                std::cout << "Checking Collision for: " << tA << " and " << tB << std::endl;
                 if (checkCollision(transA, colA, transB, colB)) {
-                    // std::cout << "Collision detected" << std::endl;
+                    std::cout << "Collision detected" << std::endl;
                     if (TypesSet::match(TypesSet::PLAYER_EXPERIENCE, tA, tB)) {
                         //std::cout << "Player Experience Collision detected" << std::endl;
                         ExperienceComponent* xp = eManager->getComponentDataPtr<ExperienceComponent>(b);
@@ -89,28 +89,13 @@ bool CollisionSystem::checkCollision(
     const TransformComponent& transA, const CollisionComponent& colA,
     const TransformComponent& transB, const CollisionComponent& colB
 ) {
-    // Convert both to SDL_FRect for SDL's collision check
-    const SDL_FRect rectA = {
-        transA.position.x + colA.position.x,
-        transA.position.y + colA.position.y,
-        colA.width,
-        colA.height
-    };
-    
-    const SDL_FRect rectB = {
-        transB.position.x + colB.position.x,
-        transB.position.y + colB.position.y,
-        colB.width,
-        colB.height
-    };
-    const float distSq = getSquaredDistanceBetweenCenters(rectA, rectB);
-    
     // Precise shape-specific checks
     if (colA.shape == Shape::Circle && 
         colB.shape == Shape::Circle) {
         // Circle-circle
-        const float actualRadius = colA.radius + colB.radius;
-        return distSq <= actualRadius * actualRadius;
+        float distSq = getSquaredDistanceBetweenCircles(transA.position, colA.radius, transB.position, colB.radius);
+        const float combinedRadius  = colA.radius + colB.radius;
+        return distSq <= combinedRadius  * combinedRadius ;
     }
     else if (colA.shape == Shape::Circle || colB.shape == Shape::Circle) {
         if (colA.shape == Shape::Circle) {
