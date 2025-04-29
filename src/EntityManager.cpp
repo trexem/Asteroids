@@ -28,7 +28,7 @@ uint32_t EntityManager::createEntity() {
         }
         entities.push_back(newEntityID);
         entityCount++;
-        // std::cout << "Entity created: " << newEntityID << std::endl;
+        std::cout << "Entity created: " << newEntityID << std::endl;
         for (size_t i = 0; i < static_cast<size_t>(ComponentType::Count); ++i) {
             if (entityComponentMasks[newEntityID][i]) {
                 // If this prints something bad is happening. entityComponentMasks for this newEntity should be empty
@@ -44,7 +44,7 @@ uint32_t EntityManager::createEntity() {
 void EntityManager::destroyEntity(uint32_t entityID) {
     std::scoped_lock lock(*entityMutexes[entityID], globalMutex);
     if (entityExists(entityID)) {
-        // std::cout << "Destroying Entity " << entityID << std::endl;
+        std::cout << "Destroying Entity " << entityID << std::endl;
         freeTexturePtr(entityID);
         entities.erase(std::remove(entities.begin(), entities.end(), entityID), entities.end());
         
@@ -56,7 +56,7 @@ void EntityManager::destroyEntity(uint32_t entityID) {
         }
         destroyedEntities.insert(entityID);
         entityCount--;
-        // std::cout << "Entity destroyed: " << entityID << std::endl;
+        std::cout << "Entity destroyed: " << entityID << std::endl;
     }
 }
 
@@ -168,6 +168,7 @@ void EntityManager::clear() {
     for (uint32_t eID : toDestroy) {
         destroyEntity(eID);
     }
+    toDestroy.clear();
 }
 
 bool EntityManager::isDestroyed(uint32_t id) const {
@@ -190,4 +191,12 @@ void EntityManager::applyPendindDestructions() {
         destroyEntity(id);
     }
     toDestroy.clear();
+}
+
+void EntityManager::clearGameEntities() {
+    std::vector<uint32_t> toDestroy = entities;
+    for (uint32_t e : toDestroy) {
+        if (hasComponent<GUIComponent>(e)) continue;
+        destroyEntity(e);
+    }
 }

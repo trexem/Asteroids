@@ -1,10 +1,6 @@
 #include "MainMenuScreen.h"
 
 MainMenuScreen::~MainMenuScreen() {
-    // std::cout << "Destroying MainMenuScreen textures\n";
-    // playTexture.free();
-    // settingsTexture.free();
-    // quitTexture.free();
 }
 
 void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
@@ -13,7 +9,7 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     quitTexture.m_renderer = renderer;
     playTexture.loadFromText("Play", Colors::White, Fonts::Title);
     settingsTexture.loadFromText("Settings", Colors::White, Fonts::Title);
-    quitTexture.loadFromText("Exit", Colors::White, Fonts::Title);
+    quitTexture.loadFromText("Exit Game", Colors::White, Fonts::Title);
     
     TypeComponent type = EntityType::GUI;
     TransformComponent trComp;
@@ -77,7 +73,6 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
 }
 
 void MainMenuScreen::destroy(EntityManager* eManager) {
-    std::cout << "Destroying MainMenuScreen resources...\n";
     eManager->destroyEntityLater(playID);
     eManager->destroyEntityLater(settingsID);
     eManager->destroyEntityLater(quitID);
@@ -99,7 +94,7 @@ void MainMenuScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
 }
 
 void MainMenuScreen::onPlayClick() {
-    GameStateManager::getInstance().setState(GameState::Playing);
+    GameStateManager::getInstance().setState(GameState::Restart);
 }
 
 void MainMenuScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {

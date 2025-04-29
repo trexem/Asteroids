@@ -198,3 +198,8 @@ void AsteroidSystem::handleDestroyAsteroidMessage(std::shared_ptr<DestroyAsteroi
 	asteroids.erase(msg->id);
 	eManager->destroyEntityLater(msg->id);
 }
+
+void AsteroidSystem::restart(EntityManager* eManager) {
+	asteroidCount = 0;
+	asteroids.clear();
+}

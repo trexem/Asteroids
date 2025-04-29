@@ -16,6 +16,7 @@ public:
     EntityManager(size_t t_maxEntities);
     ~EntityManager();
     void clear();
+    void clearGameEntities();
     uint32_t createEntity();
     const bool entityExists(uint32_t entityID) const {
         return entityID < maxEntities && entityComponentMasks[entityID].any();

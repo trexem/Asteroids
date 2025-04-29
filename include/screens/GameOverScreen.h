@@ -1,12 +1,15 @@
 #pragma once
 
+#include "Colors.h"
+#include "Fonts.h"
 #include "Screen.h"
 #include "texture.hpp"
 
 class GameOverScreen : public Screen {
-    SDL_Texture* playTexture = nullptr;
-    SDL_Texture* settingsTexture = nullptr;
-    SDL_Texture* quitTexture = nullptr;
+    Texture restartTexture = nullptr;
+    Texture mainMenuTexture = nullptr;
+    Texture quitTexture = nullptr;
+    uint32_t restartID, mmID, quitID;
 
     void handleMouseHover(std::shared_ptr<MouseMotionMessage> msg);
     void handleMouseClick(std::shared_ptr<ClickMessage> msg);

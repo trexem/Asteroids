@@ -2,12 +2,6 @@
 
 GUISystem::GUISystem(EntityManager* eM, SDL_Renderer* renderer) 
     : eManager(eM), renderer(renderer) {
-    // std::cout << "GUISystem subscribing to: " << typeid(KeyboardMessage).name() 
-    // << " (" << typeid(KeyboardMessage).hash_code() << ")" << std::endl;
-    // Subscribe to GameStateMessage
-    // MessageManager::getInstance().subscribe<GameStateMessage>(
-    //     [this](std::shared_ptr<GameStateMessage> msg) { updateState(); }
-    // );
 }
 
 GUISystem::~GUISystem() {
@@ -37,9 +31,6 @@ void GUISystem::update() {
 
 void GUISystem::updateState() {
     GameState state = GameStateManager::getInstance().getState();
-    // std::cout << "received state: " << int(state) << std::endl;
-    // std::cout << "Current state: " << int(currentGameState) << std::endl;
-    // If state has changed, update UI
     if (state != currentGameState) {    
         changeScreen(state);
     }

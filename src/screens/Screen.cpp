@@ -39,6 +39,8 @@ Screen::~Screen() {
 }
 
 void Screen::handleHover(uint32_t eID, FPair pos, std::function<void()> callback) {
+    if (!eManager->entityExists(eID)) return;
+    
     CollisionComponent colComp = eManager->getComponentData<CollisionComponent>(eID);
     TransformComponent trComp = eManager->getComponentData<TransformComponent>(eID);
     RenderComponent render = eManager->getComponentData<RenderComponent>(eID);

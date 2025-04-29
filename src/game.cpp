@@ -146,8 +146,12 @@ void Game::start() {
 }
 
 void Game::restart() {
+	entityManager.clearGameEntities();
+	counted_frames = 0;
 	createShip(ShipType::TANK);
+	asteroidSystem->restart(&entityManager);
 	asteroidSystem->generateAsteroids(&entityManager, 0.0);
+	GameStateManager::getInstance().setState(GameState::Playing);
 }
 
 void Game::gameLoop() {
@@ -220,6 +224,9 @@ void Game::gameLoop() {
 		animationSystem->update(timeStep);
 		end = std::chrono::high_resolution_clock::now();
 		std::cout << "animationSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+		if (GameStateManager::getInstance().getState() == GameState::Restart) {
+			restart();
+		}
 		//GUI
 		start = std::chrono::high_resolution_clock::now();
 		guiSystem->update();

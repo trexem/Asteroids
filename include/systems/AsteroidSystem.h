@@ -24,6 +24,7 @@ public:
     AsteroidSystem(EntityManager* eManager, SDL_Renderer* renderer);
     void update(EntityManager* eManager, double timePassed);
     void generateAsteroids(EntityManager* eManager, double timePassed);
+    void restart(EntityManager* eManager);
 
 private:
     void generateSingleAsteroid(EntityManager* eManager, int lvl);

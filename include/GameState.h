@@ -10,6 +10,7 @@ enum class GameState {
     Paused,
     Settings,
     GameOver,
+    Restart,
     Quit
 };
 
