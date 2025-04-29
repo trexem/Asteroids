@@ -169,7 +169,7 @@ void PlayerSystem::handleExperiencePickupMessage(std::shared_ptr<ExperiencePicku
     if (playerComp.currentXp >= playerComp.xpToNextLevel) {
         playerComp.level++;
         playerComp.currentXp -= playerComp.xpToNextLevel;
-        playerComp.xpToNextLevel = 100 + playerComp.level * 50;
+        playerComp.xpToNextLevel = 50 + playerComp.level * 50;
         GameStateManager::getInstance().setState(GameState::LevelUp);
     }
     eManager->setComponentData<PlayerComponent>(msg->playerID, playerComp);

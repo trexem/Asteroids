@@ -42,7 +42,10 @@ void AsteroidSystem::generateSingleAsteroid(EntityManager* eManager, int lvl) {
 		// Asteroid Transform
 		TransformComponent astTransform;
 		astTransform.position = generatePosition(eManager);
-		astTransform.rotDegrees = static_cast<double>(rand()) / RAND_MAX * 360 - 180; //Angle between 180 and -180
+		uint32_t player = eManager->getEntitiesWithComponent(ComponentType::Player)[0];
+		FPair playerPos = eManager->getComponentDataPtr<TransformComponent>(player)->position;
+		astTransform.rotDegrees = static_cast<double>(rand()) / RAND_MAX * 45 
+		+ astTransform.position.angleTowards(playerPos) * RAD2DEG; //Angle between 180 and -180
 		eManager->setComponentData<TransformComponent>(asteroid, astTransform);
 		// Asteroid Physics
 		PhysicsComponent astPhys;
@@ -58,8 +61,8 @@ void AsteroidSystem::generateSingleAsteroid(EntityManager* eManager, int lvl) {
 		eManager->setComponentData<TypeComponent>(asteroid, type);
 		//Health
 		HealthComponent health;
-		health.health = 100.0f;
-		health.maxHealth = 100.0f;
+		health.health = ASTEROID_BASE_HEALTH * lvl;
+		health.maxHealth = ASTEROID_BASE_HEALTH * lvl;
 		eManager->setComponentData<HealthComponent>(asteroid, health);
 		//Animation
 		AnimationComponent anim;
@@ -120,42 +123,71 @@ FPair AsteroidSystem::generatePosition(EntityManager* eManager) {
 
 void AsteroidSystem::handleAsteroidAsteroidCollision(std::shared_ptr<AsteroidAsteroidCollisionMessage> msg) {
 	const uint32_t a = msg->entityID[0];
-	const uint32_t b = msg->entityID[1];
-	PhysicsComponent pA = eManager->getComponentData<PhysicsComponent>(a);
-	PhysicsComponent pB = eManager->getComponentData<PhysicsComponent>(b);
-	TransformComponent tA = eManager->getComponentData<TransformComponent>(a);
-	TransformComponent tB = eManager->getComponentData<TransformComponent>(b);
-	CollisionComponent cA = eManager->getComponentData<CollisionComponent>(a);
-	CollisionComponent cB = eManager->getComponentData<CollisionComponent>(b);
-	// std::cout << "EntityA: " << a << " " << tA.position << std::endl;
-	// std::cout << "EntityB: " << b << " " << tB.position << std::endl;
-	FPair centerA = calculateCenters(tA.position.x, tA.position.y, cA.width, cA.height);
-	FPair centerB = calculateCenters(tB.position.x, tB.position.y, cB.width, cB.height);
+    const uint32_t b = msg->entityID[1];
+    
+    // Get components by reference to avoid copies
+    PhysicsComponent pA = eManager->getComponentData<PhysicsComponent>(a);
+    PhysicsComponent pB = eManager->getComponentData<PhysicsComponent>(b);
+    TransformComponent tA = eManager->getComponentData<TransformComponent>(a);
+    TransformComponent tB = eManager->getComponentData<TransformComponent>(b);
+    const auto& cA = eManager->getComponentData<CollisionComponent>(a);
+    const auto& cB = eManager->getComponentData<CollisionComponent>(b);
 
+    // Calculate centers (assuming position is center)
+    FPair centerA = tA.position - cA.radius;
+    FPair centerB = tB.position - cB.radius;
+    
+	// Collision normal (points from A to B)
 	FPair normal = centerB - centerA;
+	float distance = normal.length();
 	normal.normalize();
-	FPair relativeVel(pB.velocity * normal.x - pA.velocity * normal.x,
-		pB.velocity * normal.y - pA.velocity * normal.y);
-	// Calculate impulse (knockback strength)
-	const float restitution = 1.0f; // "Bounciness" factor (0-1)
-	const float knockbackMultiplier = 0.5f; // Extra push force
-	float impulse = (1.0f + restitution) * (relativeVel.x + relativeVel.y) * knockbackMultiplier;
 
-	pA.velocity = -pA.velocity - impulse * normal.x;
-	pB.velocity = -pB.velocity + impulse * normal.y;
+	// Position correction first
+	const float minSeparation = cA.radius + cB.radius;
+	if (distance < minSeparation) {
+		float correctionDepth = minSeparation - distance;
+		FPair correction = normal * correctionDepth * 0.5f;
+		tA.position -= correction;
+		tB.position += correction;
+		distance = minSeparation; // Update distance after correction
+	}
 
-	const float separationForce = 0.50f;
-	tA.position.x -= normal.x * separationForce;
-	tA.position.y -= normal.y * separationForce;
-	tB.position.x += normal.x * separationForce;
-	tB.position.y += normal.y * separationForce;
-	// std::cout << "EntityA: " << a << " new position " << tA.position << std::endl;
-	// std::cout << "EntityB: " << b << " new position " << tB.position << std::endl;
+	float radA = tA.rotDegrees * DEG2RAD;
+	float radB = tB.rotDegrees * DEG2RAD;
+
+	// Calculate direction vectors
+	FPair dirA(cosf(radA), sinf(radA));
+	dirA *= pA.velocity;
+	FPair dirB(cosf(radB), sinf(radB));
+	dirB *= pB.velocity;
+	FPair vAn = dirA.project(normal);
+	FPair vAt = dirA.reject(normal);
 	
-	eManager->setComponentData<PhysicsComponent>(a, pA);
-	eManager->setComponentData<PhysicsComponent>(b, pB);
-	eManager->setComponentData<TransformComponent>(a, tA);
-	eManager->setComponentData<TransformComponent>(b, tB);
+	FPair vBn = dirB.project(normal);
+	FPair vBt = dirB.reject(normal);
+
+	float uAn = vAn.dot(normal);
+	float uBn = vBn.dot(normal);
+	
+	float combinedMass = pA.mass + pB.mass;
+	float new_uAn = (uAn * (pA.mass - pB.mass) + 2 * pB.mass * uBn) / combinedMass;
+	float new_uBn = (uBn * (pB.mass - pA.mass) + 2 * pA.mass * uAn) / combinedMass;
+
+	FPair new_vAn = normal * new_uAn;
+	FPair new_vBn = normal * new_uBn;
+
+	dirA = new_vAn + vAt;
+	dirB = new_vBn + vBt;
+	tA.rotDegrees = atan2f(dirA.x, dirA.y) * RAD2DEG;
+	tB.rotDegrees = atan2f(dirB.x, dirB.y) * RAD2DEG;
+	pA.velocity = dirA.length();
+	pB.velocity = dirB.length();
+
+   	// Update components
+	eManager->setComponentData(a, pA);
+	eManager->setComponentData(b, pB);
+	eManager->setComponentData(a, tA);
+	eManager->setComponentData(b, tB);
 }
 
 void AsteroidSystem::handleDestroyAsteroidMessage(std::shared_ptr<DestroyAsteroidMessage> msg) {

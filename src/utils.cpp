@@ -65,6 +65,12 @@ SDL_FPoint getPivotFromRotationPoint(RotationPoint rp, int w, int h) {
         x = 0.f;
         y = 0.f;
     }
-
     return SDL_FPoint{ x, y };
+}
+
+float lerpAngle(float a, float b, float t) {
+    float difference = std::fmod(b - a, 360.0f);
+    if (difference > 180.0f) difference -= 360.0f;
+    if (difference < -180.0f) difference += 360.0f;
+    return a + difference * t;
 }

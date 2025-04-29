@@ -8,5 +8,6 @@
 class ExplodeMessage : public Message {
 public:
     uint32_t id;
-    ExplodeMessage(uint32_t id) : id(id) {}
+    WeaponAbilities source;
+    ExplodeMessage(uint32_t id, WeaponAbilities s) : id(id), source(s) {}
 };

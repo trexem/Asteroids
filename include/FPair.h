@@ -52,6 +52,26 @@ public:
         return result.normalize();
     }
 
+    float dot(const FPair& rhs) const { return x * rhs.x + y * rhs.y; }
+    float cross(const FPair& rhs) const { return x * rhs.y - y * rhs.x; }
+
+    void clamp(float maxLength) {
+        float len = length();
+        if (len > maxLength) {
+            x = (x / len) * maxLength;
+            y = (y / len) * maxLength;
+        }
+    }
+
+    FPair project(const FPair& normal) const {
+        float dot = this->dot(normal);
+        return normal * dot;
+    }
+    
+    FPair reject(const FPair& normal) const {
+        return *this - project(normal);
+    }
+
     ~FPair() = default;
     float angleTowards(FPair p) {
         return atan2(p.x - x, y - p.y);

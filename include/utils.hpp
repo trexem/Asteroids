@@ -33,6 +33,7 @@ float getSquaredDistanceBetweenCenters(const SDL_FRect& rect1, const SDL_FRect& 
 float getSquaredDistanceBetweenCircles(const FPair& pos1, const float& radius1, const FPair& pos2, const float& radius2);
 float calculateCenteredX(int w);
 FPair calculateCenters(float x, float y, float w, float h);
+float lerpAngle(float a, float b, float t);
 std::string formatTimeMMSS(Uint32 seconds);
 
 struct pair_hash {

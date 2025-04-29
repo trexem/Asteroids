@@ -13,9 +13,11 @@
 #include "timer.hpp"
 #include "utils.hpp"
 
-constexpr int MAX_ASTEROIDS = 30;
+constexpr int MAX_ASTEROIDS = 50;
 constexpr float OUTER_RADIUS = 1.0f; // Factor for spawn distance
 constexpr float ANGLE_BIAS_STRENGTH = PI; // 90degree bias
+constexpr float ASTEROID_BASE_HEALTH = 50.0f;
+constexpr float ASTEROID_MAX_SPEED = 150.0f;
 
 class AsteroidSystem : public System {
 public:

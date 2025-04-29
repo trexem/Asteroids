@@ -18,8 +18,16 @@ struct ProjectileConfig {
     bool accelerates = false;
 };
 
+struct ExplosionConfig {
+    FPair pos;
+    WeaponAbilities source;
+};
+
+
 class AbilitySystem : public System {
 public:
+    static constexpr double EXPLOSION_LIFETIME = 0.5;
+
     AbilitySystem(EntityManager* eManager, SDL_Renderer* renderer);
     ~AbilitySystem();
     auto getPlayerComponents(uint32_t eID);
@@ -29,7 +37,7 @@ private:
     void handleAbilityMessage(std::shared_ptr<AbilityMessage> msg);
     void handleExplodeMessage(std::shared_ptr<ExplodeMessage> msg);
     EntityHandle createProjectileEntity();
-    void createExplosion(const FPair& pos);
+    void createExplosion(const ExplosionConfig& pos);
     void spawnProjectile(uint32_t eID, WeaponAbilities ability);
     FPair positionProjectile(int index, int total, const FPair& posSource, const float& angleSource,
         const FPair& whSource, WeaponAbilities ability);
@@ -43,7 +51,7 @@ private:
     void spawnLaser(uint32_t eID);
     void spawnExplosives(uint32_t eID);
     EntityManager* eManager;
-    std::vector<FPair> rocketsDestroyed;
+    std::vector<ExplosionConfig> explosions;
     Texture explosionTexture, gravitySawTexture, laserTexture, explosiveTexture;
     FPair laserSize;
 

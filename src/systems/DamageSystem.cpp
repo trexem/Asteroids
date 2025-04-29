@@ -101,7 +101,7 @@ void DamageSystem::applyDamage(const DamageContext& ctx) {
     if (ctx.destroySource) {
         if (ctx.sourceType & EntityType::Rocket) {
             MessageManager::getInstance().sendMessage(
-                std::make_shared<ExplodeMessage>(ctx.source));
+                std::make_shared<ExplodeMessage>(ctx.source, WeaponAbilities::Rocket));
         } else {
             DamageComponent damageC = eManager->getComponentData<DamageComponent>(ctx.source);
             if (healthComp.health > 0) {

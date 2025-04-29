@@ -57,24 +57,23 @@ void AbilitySystem::spawnRocket(uint32_t eID) {
 
 void AbilitySystem::handleExplodeMessage(std::shared_ptr<ExplodeMessage> msg) {
     TransformComponent* transComp = eManager->getComponentDataPtr<TransformComponent>(msg->id);
-    std::cout << "Handling ExplodeMessage for position: " << transComp->position << std::endl;
-    rocketsDestroyed.push_back(transComp->position);
+    explosions.push_back({transComp->position, msg->source});
     eManager->destroyEntityLater(msg->id);
 }
 
 void AbilitySystem::update() {
-    for (const FPair& pos : rocketsDestroyed) {
-        createExplosion(pos);
+    for (int i = 0; i < explosions.size(); i++) {
+        createExplosion(explosions[i]);
     }
-    rocketsDestroyed.clear();
+    explosions.clear();
 }
 
-void AbilitySystem::createExplosion(const FPair& pos) {
+void AbilitySystem::createExplosion(const ExplosionConfig& exp) {
     uint32_t playerID = eManager->getEntitiesWithComponent(ComponentType::Player).at(0);
     PlayerComponent* playerComp = eManager->getComponentDataPtr<PlayerComponent>(playerID);
     StatsComponent* statsComp = eManager->getComponentDataPtr<StatsComponent>(playerID);
-    size_t ability = static_cast<size_t>(WeaponAbilities::Rocket);
-    std::cout << "Creating explosion at: " << pos << std::endl;
+    size_t ability = static_cast<size_t>(exp.source);
+    std::cout << "Creating explosion at: " << exp.pos << std::endl;
     uint32_t eID = eManager->createEntity();
     TransformComponent transComp;
     RenderComponent rendComp;
@@ -87,10 +86,10 @@ void AbilitySystem::createExplosion(const FPair& pos) {
     rendComp.size = abilitiesSize[ability][playerComp->weaponLevels[ability]] * statsComp->extraSize + 1;
     float w = explosionTexture.getWidth() * rendComp.size;
     float h = explosionTexture.getHeight() * rendComp.size;
-    transComp.position = {pos.x - w / 2, pos.y - h / 2};
+    transComp.position = {exp.pos.x - w / 2, exp.pos.y - h / 2};
     colComp.shape = Shape::Circle;
     colComp.radius = std::max(w, h);
-    lifeComp.lifeTime = abilitiesLifeTime[ability][playerComp->weaponLevels[ability]];
+    lifeComp.lifeTime = EXPLOSION_LIFETIME;
     damageComp.damage = abilitiesDamage[ability][playerComp->weaponLevels[ability]] * statsComp->baseDamage;
     eManager->addComponent(eID, ComponentType::Transform);
     eManager->addComponent(eID, ComponentType::Render);
@@ -145,7 +144,7 @@ void AbilitySystem::spawnProjectile(uint32_t eID, WeaponAbilities ability) {
     float size = abilitiesSize[abilityIndex][level] * stats->extraSize;
     
     RenderComponent textureComp = {config.texture, size};
-    DamageComponent damageComp = {damage};
+    DamageComponent damageComp = {ability == WeaponAbilities::Explosives ? 0 : damage};
     CollisionComponent colComp;
     colComp.shape = config.shape;
     FPair wh = {config.texture->getWidth() * size, config.texture->getHeight() * size};

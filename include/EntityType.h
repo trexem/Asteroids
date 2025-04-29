@@ -86,6 +86,7 @@ public:
     }
 
     static bool shouldIgnoreCollision(EntityType a, EntityType b) {
+        if ((a & TypesSet::ENEMIES) && (b & TypesSet::ENEMIES)) return false;
         if (((TypesSet::PROJECTILES & a) && (TypesSet::PROJECTILES & b))) return true;
         if (((TypesSet::PLAYER_PROJECTILES & a) && (TypesSet::PLAYER_PROJECTILES & b))) return true;
         if (((TypesSet::PICKUPS_PROJECTILES & a) && (TypesSet::PICKUPS_PROJECTILES & b))) return true;
