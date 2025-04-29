@@ -8,12 +8,13 @@
 #include "Colors.h"
 #include "DestroyAsteroidMessage.h"
 #include "ExperienceSpawnMessage.h"
+#include "GameStateManager.h"
 #include "MessageManager.h"
 #include "System.h"
 #include "timer.hpp"
 #include "utils.hpp"
 
-constexpr int MAX_ASTEROIDS = 50;
+constexpr int MAX_ASTEROIDS = 100;
 constexpr float OUTER_RADIUS = 1.0f; // Factor for spawn distance
 constexpr float ANGLE_BIAS_STRENGTH = PI; // 90degree bias
 constexpr float ASTEROID_BASE_HEALTH = 50.0f;
@@ -35,5 +36,6 @@ private:
     EntityManager* eManager;
     SDL_Renderer* renderer;
     uint32_t asteroidCount {0};
+    Uint32 previousT{1};
     std::unordered_set<uint32_t> asteroids;
 };
