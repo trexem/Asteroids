@@ -1,0 +1,7 @@
+This software uses the libsdl-org/SDL library (https://github.com/libsdl-org/SDL) 
+Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
+Used under Zlib License
+
+This software uses the nlohmann/json library (https://github.com/nlohmann/json) 
+Copyright (c) 2013-2023 Niels Lohmann
+Used under MIT License

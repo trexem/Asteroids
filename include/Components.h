@@ -8,6 +8,7 @@
 #include "Animation.h"
 #include "EntityType.h"
 #include "FPair.h"
+#include "MetaStats.hpp"
 #include "texture.hpp"
 
 const int SHIP_TOP_SPEED = 500; //TOP speed of ship, must be lower than the speed of shot
@@ -49,12 +50,6 @@ enum MoveState {
     TURN_RIGHT,
 
     MoveStateCount
-};
-
-enum ShipType {
-    TANK,
-    FREE_MOVE,
-
 };
 
 enum class Shape {
