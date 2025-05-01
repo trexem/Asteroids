@@ -7,6 +7,7 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	pause = false;
 	last_tick = 0;
 	tick = 0;
+	GameStatsManager::instance().load("data/stats.json");
 	inputSystem = std::make_unique<InputSystem>();
 	playerSystem = std::make_unique<PlayerSystem>(&entityManager);
 	physicsSystem = std::make_unique<PhysicsSystem>();
@@ -86,7 +87,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 				success = false;
 			} else {
 				guiSystem = std::make_unique<GUISystem>(&entityManager, renderSystem->getRenderer());
-				xpSystem = std::make_unique<ExperienceSystem>(&entityManager, renderSystem->getRenderer());
+				pickupsSystem = std::make_unique<PickupsSystem>(&entityManager, renderSystem->getRenderer());
 				abilitySystem = std::make_unique<AbilitySystem>(&entityManager, renderSystem->getRenderer());
 				g_shot_texture.m_renderer = renderSystem->getRenderer();
 				g_rocket_texture.m_renderer = renderSystem->getRenderer();
@@ -141,7 +142,7 @@ void Game::start() {
 	//start fps timer
 	fps_timer.start();
 	//Initialize srand with time so it-s always different
-	srand(time(NULL));
+	srand(time(0));
 	GameStateManager::getInstance().setState(GameState::MainMenu);
 }
 
@@ -212,11 +213,11 @@ void Game::gameLoop() {
 			abilitySystem->update();
 			end = std::chrono::high_resolution_clock::now();
 			std::cout << "abilitySystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-			//Update Experience
+			//Update Pickups
 			start = std::chrono::high_resolution_clock::now();
-			xpSystem->update();
+			pickupsSystem->update();
 			end = std::chrono::high_resolution_clock::now();
-			std::cout << "xpSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			std::cout << "pickupsSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			healthSystem->update(&entityManager, timeStep);
 		}
 		//animations

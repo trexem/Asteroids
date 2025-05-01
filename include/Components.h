@@ -33,7 +33,7 @@ enum class ComponentType {
     Type,
     Animation,
     GUI,
-    Experience,
+    Pickup,
     LifeTime,
     Orbit,
     Follow,
@@ -159,8 +159,8 @@ struct TypeComponent {
     TypeComponent(EntityType t) : type(t) {}
 };
 
-struct ExperienceComponent {
-    float xp {10.0f};
+struct PickupComponent {
+    float value {10.0f};
     bool isPickedUp {false};
 };
 

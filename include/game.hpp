@@ -59,7 +59,7 @@ private:
 	std::unique_ptr<AnimationSystem> animationSystem;
 	std::unique_ptr<AsteroidSystem> asteroidSystem;
 	std::unique_ptr<RenderSystem> renderSystem;
-	std::unique_ptr<ExperienceSystem> xpSystem;
+	std::unique_ptr<PickupsSystem> pickupsSystem;
 	std::unique_ptr<LifeTimeSystem> lifeTimeSystem;
 	std::unique_ptr<OrbitSystem> orbitSystem;
 	std::unique_ptr<FollowSystem> followSystem;

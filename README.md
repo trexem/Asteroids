@@ -53,8 +53,16 @@ After it finishes downloading and `cmake` stops working you will have to choose 
  - [X] Explosives
  - [X] GravitySaws
  - [X] PickupRadius
- - [ ] PasiveAbilities
+ - [X] PasiveAbilities
+ - [ ] TeslaCoil
 ### Screens
- - [ ] PlayingScreen, add healthbar for player.
- - [ ] GameOverScreen
+ - [X] PlayingScreen, add gold display.
+ - [ ] GameOverScreen, add gold and kills display.
  - [ ] Settings
+ - [ ] Upgrade Store
+### Assets
+ - [ ] Gold texture
+ - [ ] Make it look good
+### Upgrades
+ - [ ] Implement them
+ 

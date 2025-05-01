@@ -11,14 +11,30 @@ enum class ShipType {
 enum class UpgradeType {
     SPEED,
     DAMAGE,
-    FIRE_RATE,
+    FireRate,
     PROJECTILE_COUNT,
     EXPERIENCE,
-    GOLD,
+    GoldProb,
+    GoldValue,
     COLLECTION_RADIUS,
     HEALTH_REGEN,
     MAX_HEALTH,
     ARMOR,
+    UpgradesCount
+};
+
+constexpr float upgradesValues[static_cast<size_t>(UpgradeType::UpgradesCount)][10] {
+    {}, //Speed
+    {}, //Damage
+    {}, //Fire rate
+    {}, //Projectile Count
+    { 0.0f, 0.025f, 0.05f, 0.075f,  0.1f, 0.13f, 0.16f,  0.2f, 0.25f,   0.5f}, //Experience
+    { 1.0f,   2.0f,  3.0f,   4.0f,  5.0f,  6.0f,  7.0f,  8.0f,  9.0f,  10.0f}, //GoldProb
+    { 0.0f, 0.025f, 0.05f, 0.075f,  0.1f, 0.13f, 0.16f,  0.2f, 0.25f,   0.5f}, //GoldValue
+    {}, //Collection Radius
+    {}, //Health Regen
+    {}, //Max Health
+    {}, //Armor
 };
 
 inline const std::unordered_map<ShipType, std::string> shipTypeNames = {
@@ -34,10 +50,11 @@ inline const std::unordered_map<std::string, ShipType> shipTypeString = {
 inline const std::unordered_map<UpgradeType, std::string> upgradeTypeNames = {
     {UpgradeType::SPEED, "SPEED"},
     {UpgradeType::DAMAGE, "DAMAGE"},
-    {UpgradeType::FIRE_RATE, "FIRE_RATE"},
+    {UpgradeType::FireRate, "FireRate"},
     {UpgradeType::PROJECTILE_COUNT, "PROJECTILE_COUNT"},
     {UpgradeType::EXPERIENCE, "EXPERIENCE"},
-    {UpgradeType::GOLD, "GOLD"},
+    {UpgradeType::GoldProb, "GoldProb"},
+    {UpgradeType::GoldValue, "GoldValue"},
     {UpgradeType::COLLECTION_RADIUS, "COLLECTION_RADIUS"},
     {UpgradeType::HEALTH_REGEN, "HEALTH_REGEN"},
     {UpgradeType::MAX_HEALTH, "MAX_HEALTH"},
@@ -47,10 +64,11 @@ inline const std::unordered_map<UpgradeType, std::string> upgradeTypeNames = {
 inline const std::unordered_map<std::string, UpgradeType> upgradeTypeString = {
     {"SPEED", UpgradeType::SPEED},
     {"DAMAGE", UpgradeType::DAMAGE},
-    {"FIRE_RATE", UpgradeType::FIRE_RATE},
+    {"FireRate", UpgradeType::FireRate},
     {"PROJECTILE_COUNT", UpgradeType::PROJECTILE_COUNT},
     {"EXPERIENCE", UpgradeType::EXPERIENCE},
-    {"GOLD", UpgradeType::GOLD},
+    {"GoldProb", UpgradeType::GoldProb},
+    {"GoldValue", UpgradeType::GoldValue},
     {"COLLECTION_RADIUS", UpgradeType::COLLECTION_RADIUS},
     {"HEALTH_REGEN", UpgradeType::HEALTH_REGEN},
     {"MAX_HEALTH", UpgradeType::MAX_HEALTH},

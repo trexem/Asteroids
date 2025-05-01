@@ -22,17 +22,19 @@ void MovementSystem::update(EntityManager* eMgr, double dT) {
                 transComp.position.x += physComp->velocity * dT * sin(radians);
                 transComp.position.y -= physComp->velocity * dT * cos(radians);
             }
-            if (transComp.position.x > (playerTransform->position.x + SCREEN_WIDTH * 3)
-                || transComp.position.x < playerTransform->position.x - SCREEN_WIDTH * 2
-                || transComp.position.y > playerTransform->position.y + SCREEN_HEIGHT * 3 
-                || transComp.position.y < playerTransform->position.y - SCREEN_HEIGHT * 2) {
-                TypeComponent* type = eMgr->getComponentDataPtr<TypeComponent>(eID);
-                if (type->type & EntityType::Asteroid) {
-                    MessageManager::getInstance().sendMessage(std::make_shared<DestroyAsteroidMessage>(eID));
+            TypeComponent* type = eMgr->getComponentDataPtr<TypeComponent>(eID);
+            if (TypesSet::shouldDestroyIfFar(type->type)) {
+                if (transComp.position.x > (playerTransform->position.x + SCREEN_WIDTH * 3)
+                    || transComp.position.x < playerTransform->position.x - SCREEN_WIDTH * 2
+                    || transComp.position.y > playerTransform->position.y + SCREEN_HEIGHT * 3 
+                    || transComp.position.y < playerTransform->position.y - SCREEN_HEIGHT * 2) {
+                    if (type->type & EntityType::Asteroid) {
+                        MessageManager::getInstance().sendMessage(std::make_shared<DestroyAsteroidMessage>(eID, false));
+                        continue;
+                    }
+                    eMgr->destroyEntityLater(eID);
                     continue;
                 }
-                eMgr->destroyEntityLater(eID);
-                continue;
             }
             eMgr->setComponentData<TransformComponent>(eID, transComp);
         }

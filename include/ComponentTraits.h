@@ -55,8 +55,8 @@ template <> struct ComponentTraits<GUIComponent> {
     static constexpr ComponentType type = ComponentType::GUI;
 };
 
-template <> struct ComponentTraits<ExperienceComponent> {
-    static constexpr ComponentType type = ComponentType::Experience;
+template <> struct ComponentTraits<PickupComponent> {
+    static constexpr ComponentType type = ComponentType::Pickup;
 };
 
 template <> struct ComponentTraits<LifeTimeComponent> {

@@ -56,7 +56,7 @@ namespace GameSave {
         }
     };
 
-    bool saveStatsToFile(const std::string& path, MetaStats& stats) {
+    inline bool saveStatsToFile(const std::string& path, MetaStats& stats) {
         std::ofstream file(path, std::ios::binary);
         if (!file) return false;
         json j = stats.toJson();
@@ -64,7 +64,7 @@ namespace GameSave {
         return true;
     }
 
-    bool loadStatsFromFile(const std::string& path, MetaStats& stats) {
+    inline bool loadStatsFromFile(const std::string& path, MetaStats& stats) {
         std::ifstream file(path, std::ios::binary);
         if (!file) return false;
         std::string encrypted((std::istreambuf_iterator<char>(file)), {});

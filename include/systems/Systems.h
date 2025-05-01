@@ -11,7 +11,7 @@
 #include "DamageSystem.h"
 #include "AnimationSystem.h"
 #include "AsteroidSystem.h"
-#include "ExperienceSystem.h"
+#include "PickupsSystem.h"
 #include "LifeTimeSystem.h"
 #include "OrbitSystem.h"
 #include "FollowSystem.h"

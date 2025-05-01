@@ -8,5 +8,6 @@
 class DestroyAsteroidMessage : public Message {
 public:
     uint32_t id;
-    DestroyAsteroidMessage(uint32_t id) : id(id) {}
+    bool playerDestroyed;
+    DestroyAsteroidMessage(uint32_t id, bool pD = true) : id(id), playerDestroyed(pD) {}
 };

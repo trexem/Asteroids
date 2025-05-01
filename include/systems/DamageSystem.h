@@ -4,7 +4,7 @@
 #include "CollisionMessage.h"
 #include "DestroyAsteroidMessage.h"
 #include "ExplodeMessage.h"
-#include "ExperienceSpawnMessage.h"
+#include "PickupsSpawnMessage.h"
 #include "GameStateManager.h"
 #include "MessageManager.h"
 #include "System.h"

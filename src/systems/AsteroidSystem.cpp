@@ -17,7 +17,6 @@ void AsteroidSystem::update(EntityManager* eManager, double timePassed) {
 
 void AsteroidSystem::generateAsteroids(EntityManager* eManager, double timePassed) {
     // insert logic with timing
-    srand(time(NULL));
     int lvl = 1;
 	const Uint32& time = GameStateManager::getInstance().getGameTimeSeconds();
 	if (time % 2 == 0 && previousT != time) {
@@ -196,9 +195,15 @@ void AsteroidSystem::handleAsteroidAsteroidCollision(std::shared_ptr<AsteroidAst
 
 void AsteroidSystem::handleDestroyAsteroidMessage(std::shared_ptr<DestroyAsteroidMessage> msg) {
 	TransformComponent* trComp = eManager->getComponentDataPtr<TransformComponent>(msg->id);
-	FPair center = { trComp->position.x + g_asteroid_big_surface.getWidth() / 2,
-		trComp->position.y + g_asteroid_big_surface.getHeight() / 2 };
-	MessageManager::getInstance().sendMessage(std::make_shared<ExperienceSpawnMessage>(center, 1));
+	if (msg->playerDestroyed) {
+		FPair center = { trComp->position.x + g_asteroid_big_surface.getWidth() / 2,
+			trComp->position.y + g_asteroid_big_surface.getHeight() / 2 };
+		int goldProbLevel = GameStatsManager::instance().getStats().upgrades[UpgradeType::GoldProb];
+		float goldProb = upgradesValues[static_cast<size_t>(UpgradeType::GoldProb)][goldProbLevel];
+		int randomChance = rand() % 100;
+		MessageManager::getInstance().sendMessage(std::make_shared<PickupsSpawnMessage>(center, 1, 
+			randomChance < goldProb ? EntityType::Gold : EntityType::Experience ));
+	}
 	asteroids.erase(msg->id);
 	eManager->destroyEntityLater(msg->id);
 }

@@ -61,8 +61,8 @@ void CollisionSystem::update(EntityManager* eManager) {
                     // std::cout << "Collision detected" << std::endl;
                     if (TypesSet::match(TypesSet::PLAYER_EXPERIENCE, tA, tB)) {
                         //std::cout << "Player Experience Collision detected" << std::endl;
-                        ExperienceComponent* xp = eManager->getComponentDataPtr<ExperienceComponent>(b);
-                        auto msg = std::make_shared<ExperiencePickupMessage>(a, xp->xp);
+                        PickupComponent* xp = eManager->getComponentDataPtr<PickupComponent>(b);
+                        auto msg = std::make_shared<ExperiencePickupMessage>(a, xp->value);
                         eManager->destroyEntityLater(b);
                         MessageManager::getInstance().sendMessage(msg);
                         continue;

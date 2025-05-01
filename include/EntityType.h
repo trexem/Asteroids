@@ -18,7 +18,8 @@ enum EntityType : uint32_t {
     Explosion       = 1 << 7,
     GravitySaw      = 1 << 8,
     Laser           = 1 << 9,
-    Explosive       = 1 << 10
+    Explosive       = 1 << 10,
+    Gold            = 1 << 11,
 };
 
 inline const std::unordered_map<EntityType, std::string> EntityTypeNames = {
@@ -33,6 +34,7 @@ inline const std::unordered_map<EntityType, std::string> EntityTypeNames = {
     {EntityType::GravitySaw,"GravitySaw"},
     {EntityType::Laser,     "Laser"},
     {EntityType::Explosive, "Explosive"},
+    {EntityType::Gold,      "Gold"},
 };
 
 inline std::string getEntityTypeName(EntityType type) {
@@ -68,7 +70,7 @@ public:
     inline static constexpr uint32_t PROJECTILES = EntityType::Explosion | EntityType::Rocket | EntityType::Shot |
         EntityType::GravitySaw | EntityType::Laser | EntityType::Explosive;
     inline static constexpr uint32_t PLAYER_PROJECTILES = PROJECTILES | EntityType::Player;
-    inline static constexpr uint32_t PICKUPS = EntityType::Experience;
+    inline static constexpr uint32_t PICKUPS = EntityType::Experience | EntityType::Gold;
     inline static constexpr uint32_t PICKUPS_PROJECTILES = PROJECTILES | PICKUPS;
     inline static constexpr uint32_t ENEMIES = EntityType::Asteroid;
     inline static constexpr uint32_t PICKUPS_ENEMIES = ENEMIES | PICKUPS;
@@ -93,5 +95,10 @@ public:
         if (((TypesSet::PICKUPS & a) && (TypesSet::PICKUPS & b))) return true;
         if (((TypesSet::PICKUPS_ENEMIES & a) && (TypesSet::PICKUPS_ENEMIES & b))) return true;
         return false;
+    }
+
+    static bool shouldDestroyIfFar(EntityType a) {
+        if (a & TypesSet::PICKUPS) return false;
+        return true;
     }
 };

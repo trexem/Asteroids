@@ -14,6 +14,13 @@ void RenderSystem::render(EntityManager& eM) {
     // renderer->drawDebugLine(0, SCREEN_CENTER.y, SCREEN_WIDTH, SCREEN_CENTER.y, Colors::Red);
     // renderer->drawDebugLine(SCREEN_CENTER.x, 0, SCREEN_CENTER.x, SCREEN_HEIGHT, Colors::Red);
     // std::cout << "Rendering frame: " << frame << std::endl;
+    const float margin = 64.0f;
+    const SDL_FRect cameraView = {
+        camera->position.x - margin,
+        camera->position.y - margin,
+        SCREEN_WIDTH + 2 * margin,
+        SCREEN_HEIGHT + 2 * margin
+    };
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::Render)) {
         if (eM.isMarkedForDestruction(eID)) continue;
         if (! eM.hasComponent<GUIComponent>(eID)) {
@@ -25,6 +32,15 @@ void RenderSystem::render(EntityManager& eM) {
             position.y = trComp.position.y - camera->position.y;
             const int w = rComp.isStretched ? rComp.exactSize.x : rComp.texture->getWidth();
             const int h = rComp.isStretched ? rComp.exactSize.y : rComp.texture->getHeight();
+
+            // Check if the entity is outside the camera view (with margin)
+            if (trComp.position.x + w < cameraView.x || 
+                trComp.position.x > cameraView.x + cameraView.w ||
+                trComp.position.y + h < cameraView.y || 
+                trComp.position.y > cameraView.y + cameraView.h) {
+                continue; // Skip rendering
+            }
+            
             SDL_FPoint pivot = getPivotFromRotationPoint(
                 rComp.texture->rotationPoint, w, h);
             if (rComp.isStretched) {
