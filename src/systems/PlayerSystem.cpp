@@ -1,7 +1,6 @@
 #include "PlayerSystem.h"
 
 PlayerSystem::PlayerSystem(EntityManager* eManager) : eManager(eManager) {
-    std::cout << " PlayerSystem Subscribing to: ";
     // Subscribe to KeyboardMessages
     MessageManager::getInstance().subscribe<KeyboardMessage>(
         [this](std::shared_ptr<KeyboardMessage> msg) { handleKeyboardInput(msg); }

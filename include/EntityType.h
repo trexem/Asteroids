@@ -20,6 +20,7 @@ enum EntityType : uint32_t {
     Laser           = 1 << 9,
     Explosive       = 1 << 10,
     Gold            = 1 << 11,
+    Background      = 1 << 12,
 };
 
 inline const std::unordered_map<EntityType, std::string> EntityTypeNames = {
@@ -99,6 +100,7 @@ public:
 
     static bool shouldDestroyIfFar(EntityType a) {
         if (a & TypesSet::PICKUPS) return false;
+        if (a & EntityType::Background) return false;
         return true;
     }
 };

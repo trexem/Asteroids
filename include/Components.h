@@ -37,6 +37,7 @@ enum class ComponentType {
     LifeTime,
     Orbit,
     Follow,
+    Background,
 
     Count
 };
@@ -195,6 +196,12 @@ struct FollowComponent {
     FPair offsetPosition {0.0f};
     double offsetAngle {0.0f};
     float radius {0.0f};
+};
+
+struct BackgroundComponent {
+    float parallaxFactor = 0.5;
+
+    BackgroundComponent(float f) : parallaxFactor(f) {}
 };
 
 std::vector<AbilityChoice> getRandomAbilityChoices(const PlayerComponent& player);

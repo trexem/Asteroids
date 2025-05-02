@@ -16,3 +16,4 @@
 #include "OrbitSystem.h"
 #include "FollowSystem.h"
 #include "HealthSystem.h"
+#include "BackgroundSystem.h"

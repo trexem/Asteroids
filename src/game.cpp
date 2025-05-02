@@ -89,6 +89,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 				guiSystem = std::make_unique<GUISystem>(&entityManager, renderSystem->getRenderer());
 				pickupsSystem = std::make_unique<PickupsSystem>(&entityManager, renderSystem->getRenderer());
 				abilitySystem = std::make_unique<AbilitySystem>(&entityManager, renderSystem->getRenderer());
+				bgSystem = std::make_unique<BackgroundSystem>(entityManager, renderSystem->getRenderer());
 				g_shot_texture.m_renderer = renderSystem->getRenderer();
 				g_rocket_texture.m_renderer = renderSystem->getRenderer();
 				//init SDL_ttf
@@ -118,7 +119,7 @@ bool Game::loadMedia() {
 		printf("Failed to load rocket texture");
 		success = false;
 	}
-	if (!g_particle_surface.loadFromFile("data/img/ship_particle.bmp")) {
+	if (!g_particle_surface.loadFromFile("data/img/star1.bmp")) {
 		printf("Failed to load ship particle texture");
 		success = false;
 	}
@@ -219,6 +220,7 @@ void Game::gameLoop() {
 			end = std::chrono::high_resolution_clock::now();
 			std::cout << "pickupsSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			healthSystem->update(&entityManager, timeStep);
+			bgSystem->update(entityManager);
 		}
 		//animations
 		start = std::chrono::high_resolution_clock::now();

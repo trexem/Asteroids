@@ -26,7 +26,7 @@ void RenderSystem::render(EntityManager& eM) {
         if (! eM.hasComponent<GUIComponent>(eID)) {
             RenderComponent rComp = eM.getComponentData<RenderComponent>(eID);
             TransformComponent trComp = eM.getComponentData<TransformComponent>(eID);
-            CollisionComponent cComp = eM.getComponentData<CollisionComponent>(eID);
+            // CollisionComponent* cComp = eM.getComponentDataPtr<CollisionComponent>(eID);
             FPair position;
             position.x = trComp.position.x - camera->position.x;
             position.y = trComp.position.y - camera->position.y;

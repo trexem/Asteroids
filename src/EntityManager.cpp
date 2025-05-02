@@ -196,7 +196,7 @@ void EntityManager::applyPendindDestructions() {
 void EntityManager::clearGameEntities() {
     std::vector<uint32_t> toDestroy = entities;
     for (uint32_t e : toDestroy) {
-        if (hasComponent<GUIComponent>(e)) continue;
+        if (hasComponent<GUIComponent>(e) || hasComponent<BackgroundComponent>(e)) continue;
         destroyEntity(e);
     }
 }

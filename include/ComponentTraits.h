@@ -70,3 +70,7 @@ template <> struct ComponentTraits<OrbitComponent> {
 template <> struct ComponentTraits<FollowComponent> {
     static constexpr ComponentType type = ComponentType::Follow;
 };
+
+template <> struct ComponentTraits<BackgroundComponent> {
+    static constexpr ComponentType type = ComponentType::Background;
+};
