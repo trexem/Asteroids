@@ -3,7 +3,7 @@
 #include <iostream>
 
 AnimationSystem::AnimationSystem(EntityManager* eManager) : eManager(eManager) {
-    MessageManager::getInstance().subscribe<AnimationMessage>(
+    MessageManager::instance().subscribe<AnimationMessage>(
         [this](std::shared_ptr<AnimationMessage> msg) { handleAnimationMessage(msg); }
     );
 }

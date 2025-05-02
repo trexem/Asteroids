@@ -1,14 +1,15 @@
 #include "PlayerSystem.h"
+#include "GameSessionManager.h"
 
 PlayerSystem::PlayerSystem(EntityManager* eManager) : eManager(eManager) {
     // Subscribe to KeyboardMessages
-    MessageManager::getInstance().subscribe<KeyboardMessage>(
+    MessageManager::instance().subscribe<KeyboardMessage>(
         [this](std::shared_ptr<KeyboardMessage> msg) { handleKeyboardInput(msg); }
     );
-    MessageManager::getInstance().subscribe<ExperiencePickupMessage>(
-        [this](std::shared_ptr<ExperiencePickupMessage> msg) { handleExperiencePickupMessage(msg); }
+    MessageManager::instance().subscribe<PickupPickedMessage>(
+        [this](std::shared_ptr<PickupPickedMessage> msg) { handlePickupPickedMessage(msg); }
     );
-    MessageManager::getInstance().subscribe<LevelUpMessage>(
+    MessageManager::instance().subscribe<LevelUpMessage>(
         [this](std::shared_ptr<LevelUpMessage> msg) { handleLevelUpMessage(msg);  }
     );
 }
@@ -129,7 +130,7 @@ void PlayerSystem::updateAbilities(uint32_t eID, double dT) {
             player.burstShotTimers[i] += dT;
             if (player.burstShotTimers[i] >= burstInterval) {
                 auto msg = std::make_shared<AbilityMessage>(eID, ability);
-                MessageManager::getInstance().sendMessage(msg);
+                MessageManager::instance().sendMessage(msg);
                 player.burstShotTimers[i] = 0.0;
                 player.shotsRemainingInBurst[i]--;
 
@@ -147,7 +148,7 @@ void PlayerSystem::updateAbilities(uint32_t eID, double dT) {
                     player.shotsRemainingInBurst[i] = abilitiesProjectileCount[i][level] + stats.projectileCount;
                 } else {
                     auto msg = std::make_shared<AbilityMessage>(eID, ability);
-                    MessageManager::getInstance().sendMessage(msg);
+                    MessageManager::instance().sendMessage(msg);
                     player.weaponCooldowns[static_cast<size_t>(ability)] = 0;
                 }
             }
@@ -162,16 +163,20 @@ void PlayerSystem::addAbility(uint32_t eID, WeaponAbilities ability) {
     eManager->setComponentData<PlayerComponent>(eID, player);
 }
 
-void PlayerSystem::handleExperiencePickupMessage(std::shared_ptr<ExperiencePickupMessage> msg) {
-    PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(msg->playerID);
-    playerComp.currentXp += msg->amount;
-    if (playerComp.currentXp >= playerComp.xpToNextLevel) {
-        playerComp.level++;
-        playerComp.currentXp -= playerComp.xpToNextLevel;
-        playerComp.xpToNextLevel = 50 + playerComp.level * 50;
-        GameStateManager::getInstance().setState(GameState::LevelUp);
+void PlayerSystem::handlePickupPickedMessage(std::shared_ptr<PickupPickedMessage> msg) {
+    if (msg->type & EntityType::Experience) {
+        PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(msg->playerID);
+        playerComp.currentXp += msg->amount;
+        if (playerComp.currentXp >= playerComp.xpToNextLevel) {
+            playerComp.level++;
+            playerComp.currentXp -= playerComp.xpToNextLevel;
+            playerComp.xpToNextLevel = 50 + playerComp.level * 50;
+            GameStateManager::instance().setState(GameState::LevelUp);
+        }
+        eManager->setComponentData<PlayerComponent>(msg->playerID, playerComp);
+    } else if (msg->type & EntityType::Gold) {
+        GameSessionManager::instance().getStats().gold += msg->amount;
     }
-    eManager->setComponentData<PlayerComponent>(msg->playerID, playerComp);
 }
 
 void PlayerSystem::handleLevelUpMessage(std::shared_ptr<LevelUpMessage> msg) {

@@ -1,12 +1,8 @@
 #pragma once
 
-#include "Colors.h"
-#include "EntityHandle.h"
-#include "Fonts.h"
-#include "GUI.h"
 #include "Screen.h"
-#include "texture.hpp"
-#include "utils.hpp"
+
+class Texture;
 
 class PlayingScreen : public Screen {
     Texture xpContainerTexture;
@@ -17,8 +13,11 @@ class PlayingScreen : public Screen {
     Texture pauseTexture;
     Texture healthBarTexture;
     Texture currentHealthTexture;
+    Texture goldTexture;
+    Texture enemiesTexture;
     uint32_t xpContainerID, currentXpID, abilitiesContainersID;
     uint32_t timeID, levelID, pauseID, healthBarID, currentHealthID;
+    uint32_t goldID, enemiesID, lastGold, lastEnemies; 
     Uint32 currentSeconds{0};
     int previousXp, previousLvl;
     float previousHealth;

@@ -1,4 +1,10 @@
+#include "ClickMessage.h"
+#include "EntityHandle.h"
+#include "EntityManager.h"
 #include "GameOverScreen.h"
+#include "GameStateManager.h"
+#include "GameStatsManager.h"
+#include "MouseMotionMessage.h"
 
 void GameOverScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     restartTexture.m_renderer = renderer;
@@ -89,13 +95,13 @@ void GameOverScreen::handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) {
 
 void GameOverScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
     handleClick(restartID, msg->mousePos, [this]() {
-        GameStateManager::getInstance().setState(GameState::Restart);
+        GameStateManager::instance().setState(GameState::Restart);
     });
     handleClick(mmID, msg->mousePos, [this]() {
-        GameStateManager::getInstance().setState(GameState::MainMenu);
+        GameStateManager::instance().setState(GameState::MainMenu);
     });
     handleClick(quitID, msg->mousePos, [this]() {
-        GameStateManager::getInstance().setState(GameState::Quit);
+        GameStateManager::instance().setState(GameState::Quit);
     });
 }
 

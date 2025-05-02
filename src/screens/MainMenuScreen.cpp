@@ -1,4 +1,12 @@
+#include "ClickMessage.h"
+#include "Colors.h"
+#include "EntityHandle.h"
+#include "EntityManager.h"
+#include "Fonts.h"
+#include "GameStateManager.h"
+#include "GameStatsManager.h"
 #include "MainMenuScreen.h"
+#include "MouseMotionMessage.h"
 
 MainMenuScreen::~MainMenuScreen() {
 }
@@ -7,9 +15,13 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     playTexture.m_renderer = renderer;
     settingsTexture.m_renderer = renderer;
     quitTexture.m_renderer = renderer;
+    goldTexture.m_renderer = renderer;
     playTexture.loadFromText("Play", Colors::White, Fonts::Title);
     settingsTexture.loadFromText("Settings", Colors::White, Fonts::Title);
     quitTexture.loadFromText("Exit Game", Colors::White, Fonts::Title);
+    std::ostringstream goldText;
+    goldText << "gold: " << GameStatsManager::instance().getStats().coins;
+    goldTexture.loadFromText(goldText.str(), Colors::White, Fonts::Body);
     
     TypeComponent type = EntityType::GUI;
     TransformComponent trComp;
@@ -70,6 +82,19 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.set<RenderComponent>(textureComp);
     eHandle.set<GUIComponent>(guiComp);
     eHandle.set<CollisionComponent>(colComp);
+    //Global gold
+    goldID = eManager->createEntity();
+    eHandle.id = goldID;
+    eHandle.add<RenderComponent>();
+    eHandle.add<TypeComponent>();
+    eHandle.add<GUIComponent>();
+    trComp.position.x = SCREEN_WIDTH - goldTexture.getWidth() - 10.0f;
+    trComp.position.y = SCREEN_HEIGHT - goldTexture.getHeight() - 10.0f;
+    textureComp.texture = &goldTexture;
+    eHandle.set<TransformComponent>(trComp);
+    eHandle.set<TypeComponent>(type);
+    eHandle.set<RenderComponent>(textureComp);
+    eHandle.set<GUIComponent>(guiComp);
 }
 
 void MainMenuScreen::destroy(EntityManager* eManager) {
@@ -89,12 +114,12 @@ void MainMenuScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
         onPlayClick();
     });
     handleClick(quitID, msg->mousePos, [this]() {
-        GameStateManager::getInstance().setState(GameState::Quit);
+        GameStateManager::instance().setState(GameState::Quit);
     });
 }
 
 void MainMenuScreen::onPlayClick() {
-    GameStateManager::getInstance().setState(GameState::Restart);
+    GameStateManager::instance().setState(GameState::Restart);
 }
 
 void MainMenuScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {

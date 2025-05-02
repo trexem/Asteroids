@@ -1,17 +1,15 @@
 #pragma once
 
-#include "ClickMessage.h"
-#include "EntityManager.h"
-#include "EntityHandle.h"
-#include "GameStateManager.h"
-#include "MessageManager.h"
-#include "MouseMotionMessage.h"
-
 #include <cstdint>
 #include <functional>
 #include <memory>
 #include <SDL3/SDL.h>
 #include <unordered_set>
+
+class ClickMessage;
+class EntityManager;
+class MouseMotionMessage;
+class FPair;
 
 class Screen : public std::enable_shared_from_this<Screen> {
     std::unordered_set<uint32_t> hoveredEntities;

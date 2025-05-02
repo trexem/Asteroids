@@ -38,17 +38,9 @@ inline const std::unordered_map<EntityType, std::string> EntityTypeNames = {
     {EntityType::Gold,      "Gold"},
 };
 
-inline std::string getEntityTypeName(EntityType type) {
-    if (auto it = EntityTypeNames.find(type); it != EntityTypeNames.end()) {
-        return it->second;
-    }
-    return "Unknown";
-}
+std::string getEntityTypeName(EntityType type);
 
-inline std::ostream& operator<<(std::ostream& os, EntityType type) {
-    os << getEntityTypeName(type); // or getEntityTypePosition(type)
-    return os;
-}
+std::ostream& operator<<(std::ostream& os, EntityType type);
 
 constexpr EntityType operator|(EntityType a, EntityType b) {
     return static_cast<EntityType>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
@@ -75,32 +67,17 @@ public:
     inline static constexpr uint32_t PICKUPS_PROJECTILES = PROJECTILES | PICKUPS;
     inline static constexpr uint32_t ENEMIES = EntityType::Asteroid;
     inline static constexpr uint32_t PICKUPS_ENEMIES = ENEMIES | PICKUPS;
+    inline static constexpr uint32_t PICKUPS_PLAYER = EntityType::Player | PICKUPS;
         
-    static bool contains(uint32_t mask, EntityType type) {
-        return (mask & type) != 0;
-    }
+    static bool contains(uint32_t mask, EntityType type);
 
-    static bool match(uint32_t mask, EntityType typeA, EntityType typeB) {
-        return (typeA != typeB) && (mask & typeA) && (mask & typeB);
-    }
+    static bool match(uint32_t mask, EntityType typeA, EntityType typeB);
 
-    static bool sameType(EntityType mask, EntityType typeA, EntityType typeB) {
-        return typeA == mask && typeB == mask;
-    }
+    static bool sameType(EntityType mask, EntityType typeA, EntityType typeB);
 
-    static bool shouldIgnoreCollision(EntityType a, EntityType b) {
-        if ((a & TypesSet::ENEMIES) && (b & TypesSet::ENEMIES)) return false;
-        if (((TypesSet::PROJECTILES & a) && (TypesSet::PROJECTILES & b))) return true;
-        if (((TypesSet::PLAYER_PROJECTILES & a) && (TypesSet::PLAYER_PROJECTILES & b))) return true;
-        if (((TypesSet::PICKUPS_PROJECTILES & a) && (TypesSet::PICKUPS_PROJECTILES & b))) return true;
-        if (((TypesSet::PICKUPS & a) && (TypesSet::PICKUPS & b))) return true;
-        if (((TypesSet::PICKUPS_ENEMIES & a) && (TypesSet::PICKUPS_ENEMIES & b))) return true;
-        return false;
-    }
+    static bool shouldIgnoreCollision(EntityType a, EntityType b);
 
-    static bool shouldDestroyIfFar(EntityType a) {
-        if (a & TypesSet::PICKUPS) return false;
-        if (a & EntityType::Background) return false;
-        return true;
-    }
+    static bool shouldDestroyIfFar(EntityType a);
+
+    static bool shouldPlayerPick(EntityType a, EntityType b);
 };

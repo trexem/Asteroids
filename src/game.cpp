@@ -1,4 +1,6 @@
 #include "game.hpp"
+#include "GameSessionManager.h"
+#include "Systems.h"
 
 #include <iostream>
 
@@ -35,7 +37,7 @@ Game::~Game() {
  	// g_particle_shimmer_surface;
 	// g_asteroid_big_surface;
 
-	// MessageManager::getInstance().cleanup();
+	// MessageManager::instance().cleanup();
 	
 	guiSystem.reset();
     std::cout << "GUI System destroyed\n";
@@ -144,31 +146,32 @@ void Game::start() {
 	fps_timer.start();
 	//Initialize srand with time so it-s always different
 	srand(time(0));
-	GameStateManager::getInstance().setState(GameState::MainMenu);
+	GameStateManager::instance().setState(GameState::MainMenu);
 }
 
 void Game::restart() {
 	entityManager.clearGameEntities();
+	GameSessionManager::instance().reset();
 	counted_frames = 0;
 	createShip(ShipType::TANK);
 	asteroidSystem->restart(&entityManager);
 	asteroidSystem->generateAsteroids(&entityManager, 0.0);
-	GameStateManager::getInstance().setState(GameState::Playing);
+	GameStateManager::instance().setState(GameState::Playing);
 }
 
 void Game::gameLoop() {
-	while(GameStateManager::getInstance().getState() != GameState::Quit) {
+	while(GameStateManager::instance().getState() != GameState::Quit) {
 		auto loopTimeStart = std::chrono::high_resolution_clock::now();
 		cap_timer.start(); //start cap timer at the beginning of the "frame"
 		//Inputs
 		inputSystem->update();
-		if (GameStateManager::getInstance().getState() == GameState::Quit) break;
+		if (GameStateManager::instance().getState() == GameState::Quit) break;
 		//Calculate time between previous movement and now
 		timeStep = step_timer.getTicks() / 1000.0;
 		auto start = std::chrono::high_resolution_clock::now();
 		auto end = std::chrono::high_resolution_clock::now();
 		//UpdateSystems
-		if (GameStateManager::getInstance().getState() == GameState::Playing) {
+		if (GameStateManager::instance().getState() == GameState::Playing) {
 			start = std::chrono::high_resolution_clock::now();
 			playerSystem->update(timeStep);
 			end = std::chrono::high_resolution_clock::now();
@@ -227,7 +230,7 @@ void Game::gameLoop() {
 		animationSystem->update(timeStep);
 		end = std::chrono::high_resolution_clock::now();
 		std::cout << "animationSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-		if (GameStateManager::getInstance().getState() == GameState::Restart) {
+		if (GameStateManager::instance().getState() == GameState::Restart) {
 			restart();
 		}
 		//GUI
@@ -235,11 +238,11 @@ void Game::gameLoop() {
 		guiSystem->update();
 		end = std::chrono::high_resolution_clock::now();
 		std::cout << "guiSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-		if (GameStateManager::getInstance().getState() == GameState::Quit) break;
+		if (GameStateManager::instance().getState() == GameState::Quit) break;
 		//restart step 
 		step_timer.start();
 		//Render PAUSE text while game is paused
-		if (GameStateManager::getInstance().getState() != GameState::Playing) {
+		if (GameStateManager::instance().getState() != GameState::Playing) {
 			step_timer.pause();
 		}
 		//Destroy entities
@@ -291,7 +294,8 @@ void Game::createShip(ShipType shipType) {
 	shipStats.speed = SHIP_SPEED;
 	shipStats.rotationSpeed = SHIP_ROT_SPEED;
 	shipStats.fireSpeed = SHIP_SHOT_DELAY;
-	shipStats.collectionRadius = SHIP_BASE_RADIUS;
+	// shipStats.collectionRadius = SHIP_BASE_RADIUS;
+	shipStats.collectionRadius = 200.0f;
 	entityManager.setComponentData<StatsComponent>(ship, shipStats);
 	// Physics
 	PhysicsComponent shipPhys;
@@ -300,20 +304,20 @@ void Game::createShip(ShipType shipType) {
 	// Player
 	PlayerComponent shipPlayer;
 	shipPlayer.type = shipType;
-	// shipPlayer.ownedPassives[static_cast<size_t>(PassiveAbilities::PickupRadius)] = true;
-	// shipPlayer.passiveLevels[static_cast<size_t>(PassiveAbilities::PickupRadius)] = 8;
+	shipPlayer.ownedPassives[static_cast<size_t>(PassiveAbilities::PickupRadius)] = true;
+	shipPlayer.passiveLevels[static_cast<size_t>(PassiveAbilities::PickupRadius)] = 8;
 	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::LaserGun)] = true;
 	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::LaserGun)] = 0;
-	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::GravitySaws)] = true;
-	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::GravitySaws)] = 1;
-	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Rocket)] = true;
-	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Rocket)] = 9;
-	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Laser)] = true;
-	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Laser)] = 9;
-	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Explosives)] = true;
-	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Explosives)] = 9;
-	shipPlayer.ownedWeaponsCount = 1;
-	shipPlayer.currentXp = 0;
+	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::GravitySaws)] = true;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::GravitySaws)] = 1;
+	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Rocket)] = true;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Rocket)] = 9;
+	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Laser)] = true;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Laser)] = 9;
+	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Explosives)] = true;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Explosives)] = 9;
+	shipPlayer.ownedWeaponsCount = 3;
+	shipPlayer.currentXp = 100;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
 	// Movement
 	MovementComponent shipMovement;

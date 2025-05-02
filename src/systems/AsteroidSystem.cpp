@@ -1,11 +1,12 @@
 #include "AsteroidSystem.h"
+#include "GameSessionManager.h"
 
 AsteroidSystem::AsteroidSystem(EntityManager* eManager, SDL_Renderer* renderer) :
 	renderer(renderer), eManager(eManager) {
-	MessageManager::getInstance().subscribe<AsteroidAsteroidCollisionMessage>(
+	MessageManager::instance().subscribe<AsteroidAsteroidCollisionMessage>(
 		[this](std::shared_ptr<AsteroidAsteroidCollisionMessage> msg) { handleAsteroidAsteroidCollision(msg); }
 	);
-	MessageManager::getInstance().subscribe<DestroyAsteroidMessage>(
+	MessageManager::instance().subscribe<DestroyAsteroidMessage>(
 		[this](std::shared_ptr<DestroyAsteroidMessage> msg) { handleDestroyAsteroidMessage(msg); }
 	);
 }
@@ -18,7 +19,7 @@ void AsteroidSystem::update(EntityManager* eManager, double timePassed) {
 void AsteroidSystem::generateAsteroids(EntityManager* eManager, double timePassed) {
     // insert logic with timing
     int lvl = 1;
-	const Uint32& time = GameStateManager::getInstance().getGameTimeSeconds();
+	const Uint32& time = GameStateManager::instance().getGameTimeSeconds();
 	if (time % 2 == 0 && previousT != time) {
 		for (int i = 0; i < 20; i++) {
 			generateSingleAsteroid(eManager, lvl);
@@ -196,12 +197,13 @@ void AsteroidSystem::handleAsteroidAsteroidCollision(std::shared_ptr<AsteroidAst
 void AsteroidSystem::handleDestroyAsteroidMessage(std::shared_ptr<DestroyAsteroidMessage> msg) {
 	TransformComponent* trComp = eManager->getComponentDataPtr<TransformComponent>(msg->id);
 	if (msg->playerDestroyed) {
+		GameSessionManager::instance().getStats().asteroidsDestroyed++;
 		FPair center = { trComp->position.x + g_asteroid_big_surface.getWidth() / 2,
 			trComp->position.y + g_asteroid_big_surface.getHeight() / 2 };
 		int goldProbLevel = GameStatsManager::instance().getStats().upgrades[UpgradeType::GoldProb];
 		float goldProb = upgradesValues[static_cast<size_t>(UpgradeType::GoldProb)][goldProbLevel];
 		int randomChance = rand() % 100;
-		MessageManager::getInstance().sendMessage(std::make_shared<PickupsSpawnMessage>(center, 1, 
+		MessageManager::instance().sendMessage(std::make_shared<PickupsSpawnMessage>(center, 1, 
 			randomChance < goldProb ? EntityType::Gold : EntityType::Experience ));
 	}
 	asteroids.erase(msg->id);

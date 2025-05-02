@@ -24,7 +24,7 @@ public:
             // Cancel single-click action and process double-click immediately
             waitingForDoubleClick = false;
             auto msg = std::make_shared<ClickMessage>(pos, button, 2);
-            MessageManager::getInstance().sendMessage(msg);
+            MessageManager::instance().sendMessage(msg);
         } else {
             // Wait before processing to see if a second click happens
             waitingForDoubleClick = true;
@@ -37,7 +37,7 @@ public:
                 if (waitingForDoubleClick) {
                     // If still waiting, process as a single click
                     auto msg = std::make_shared<ClickMessage>(pos, button, 1);
-                    MessageManager::getInstance().sendMessage(msg);
+                    MessageManager::instance().sendMessage(msg);
                     waitingForDoubleClick = false;
                 }
             });

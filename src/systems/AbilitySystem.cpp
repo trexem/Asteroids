@@ -2,11 +2,11 @@
 
 AbilitySystem::AbilitySystem(EntityManager* eManager, SDL_Renderer* renderer) : eManager(eManager) {
     // Subscribe to AbilityMessages
-    MessageManager::getInstance().subscribe<AbilityMessage>(
+    MessageManager::instance().subscribe<AbilityMessage>(
         [this](std::shared_ptr<AbilityMessage> msg) { handleAbilityMessage(msg); }
     );
     // Subscribe to ExplodeMessages
-    MessageManager::getInstance().subscribe<ExplodeMessage>(
+    MessageManager::instance().subscribe<ExplodeMessage>(
         [this](std::shared_ptr<ExplodeMessage> msg) { handleExplodeMessage(msg); }
     );
     explosionTexture.m_renderer = renderer;

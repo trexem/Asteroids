@@ -1,11 +1,23 @@
+#include "ClickMessage.h"
+#include "Colors.h"
+#include "EntityHandle.h"
+#include "Fonts.h"
+#include "GameSessionManager.h"
+#include "GameStateManager.h"
+#include "GameStatsManager.h"
+#include "GUI.h"
+#include "MouseMotionMessage.h"
 #include "PlayingScreen.h"
+#include "texture.hpp"
 
 PlayingScreen::~PlayingScreen() {
+    GameStatsManager::instance().addCoins(GameSessionManager::instance().getStats().gold);
+    GameStatsManager::instance().save("data/stats.json");
     std::cout << "PlayingScreen destroyed\n";
 }
 
 void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
-    GameStateManager::getInstance().startTimer();
+    GameStateManager::instance().startTimer();
     
     xpContainerTexture.m_renderer = renderer;
     currentXpTexture.m_renderer = renderer;
@@ -15,6 +27,8 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     pauseTexture.m_renderer = renderer;
     currentHealthTexture.m_renderer = renderer;
     healthBarTexture.m_renderer = renderer;
+    goldTexture.m_renderer = renderer;
+    enemiesTexture.m_renderer = renderer;
     drawAbilityContainers(renderer);
     drawXpContainer(renderer);
     currentXpTexture.createEmptyTexture(xpContainerTexture.getWidth() - 4, xpContainerTexture.getHeight() - 2);
@@ -23,6 +37,8 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     pauseTexture.loadFromFile("data/img/pause.bmp");
     currentHealthTexture.createEmptyTexture(std::round(GUI::HEALTHBAR_WIDTH), std::round(GUI::HEALTHBAR_HEIGHT));
     healthBarTexture.loadFromFile("data/img/healthBar.bmp");
+    goldTexture.loadFromText("gold: 0000", Colors::White, Fonts::Body);
+    enemiesTexture.loadFromText("asteroids destroyed: 0000", Colors::White, Fonts::Body);
 
     TypeComponent type = EntityType::GUI;
     GUIComponent guiComponent;
@@ -111,6 +127,30 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.set<RenderComponent>(textureComp);
     entity.set<GUIComponent>(guiComponent);
     entity.set<CollisionComponent>(colComp);
+    // Current Gold
+    goldID = eManager->createEntity();
+    entity.id = goldID;
+    entity.add<RenderComponent>();
+    entity.add<TypeComponent>();
+    entity.add<GUIComponent>();
+    trComp.position.x -= goldTexture.getWidth() - 10.0f;
+    textureComp.texture = &goldTexture;
+    entity.set<TransformComponent>(trComp);
+    entity.set<TypeComponent>(type);
+    entity.set<RenderComponent>(textureComp);
+    entity.set<GUIComponent>(guiComponent);
+    // Current enemies
+    enemiesID = eManager->createEntity();
+    entity.id = enemiesID;
+    entity.add<RenderComponent>();
+    entity.add<TypeComponent>();
+    entity.add<GUIComponent>();
+    trComp.position.x -= enemiesTexture.getWidth() - 10.0f;
+    textureComp.texture = &enemiesTexture;
+    entity.set<TransformComponent>(trComp);
+    entity.set<TypeComponent>(type);
+    entity.set<RenderComponent>(textureComp);
+    entity.set<GUIComponent>(guiComponent);
     // Current health
     currentHealthID = eManager->createEntity();
     entity.id = currentHealthID;
@@ -118,7 +158,7 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
     trComp.position.x = SCREEN_WIDTH - GUI::HEALTHBAR_WIDTH;
-    trComp.position.y += SCREEN_CENTER.y - GUI::HEALTHBAR_HEIGHT + 1;
+    trComp.position.y = SCREEN_CENTER.y - GUI::HEALTHBAR_HEIGHT / 2 + 1;
     textureComp.texture = &currentHealthTexture;
     guiComponent.clickable = false;
     guiComponent.hoverable = false;
@@ -163,8 +203,8 @@ void PlayingScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
 
 void PlayingScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
     //Time
-    Uint32 newSeconds = GameStateManager::getInstance().getGameTimeSeconds();
-    if (GameStateManager::getInstance().getState() == GameState::Playing && currentSeconds != newSeconds) {
+    Uint32 newSeconds = GameStateManager::instance().getGameTimeSeconds();
+    if (GameStateManager::instance().getState() == GameState::Playing && currentSeconds != newSeconds) {
         std::string timeText = formatTimeMMSS(currentSeconds);
         timeTexture.loadFromText(timeText, Colors::White, Fonts::Subtitle);
         currentSeconds = newSeconds;
@@ -176,13 +216,27 @@ void PlayingScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
         PlayerComponent* playerComp = eManager->getComponentDataPtr<PlayerComponent>(player);
         drawCurrentXp(renderer, playerComp->currentXp, playerComp->xpToNextLevel);
         if (previousLvl != playerComp->level) {
-            lvlText << "lvl:" << playerComp->level;
-            levelTexture.loadFromText(lvlText.str(), Colors::White, Fonts::Body);
             previousLvl = playerComp->level;
+            lvlText << "lvl:" << previousLvl;
+            levelTexture.loadFromText(lvlText.str(), Colors::White, Fonts::Body);
         }
         // Health
         HealthComponent* hComp = eManager->getComponentDataPtr<HealthComponent>(player);
         drawCurrentHealth(renderer, hComp->health, hComp->maxHealth);
+    }
+    // Gold
+    if (GameSessionManager::instance().getStats().gold != lastGold) {
+        lastGold = GameSessionManager::instance().getStats().gold;
+        std::ostringstream goldText;
+        goldText << "gold: " << lastGold;
+        goldTexture.loadFromText(goldText.str(), Colors::White, Fonts::Body);
+    }
+    // Enemies
+    if (GameSessionManager::instance().getStats().asteroidsDestroyed != lastEnemies) {
+        lastEnemies = GameSessionManager::instance().getStats().asteroidsDestroyed;
+        std::ostringstream enemiesText;
+        enemiesText << "asteroids destroyed: " << lastEnemies;
+        enemiesTexture.loadFromText(enemiesText.str(), Colors::White, Fonts::Body);
     }
 }
 
@@ -229,7 +283,7 @@ void PlayingScreen::drawCurrentXp(SDL_Renderer* renderer, int currentXp, int xpT
 }
 
 void PlayingScreen::onPauseClick() {
-    GameStateManager::getInstance().setState(GameState::Paused);
+    GameStateManager::instance().setState(GameState::Paused);
 }
 
 void PlayingScreen::drawCurrentHealth(SDL_Renderer* renderer, const float& currentHealth, const float& maxHealth) {

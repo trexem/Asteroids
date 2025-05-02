@@ -18,6 +18,7 @@ public:
     bool spendCoins(int amount);
 
     int getUpgradeLevel(UpgradeType type) const;
+    float getUpgradeValue(UpgradeType type) const;
 
 private:
     MetaStats stats;

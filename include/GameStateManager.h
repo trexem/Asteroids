@@ -9,7 +9,7 @@
 
 class GameStateManager {
 public:
-    static GameStateManager& getInstance();
+    static GameStateManager& instance();
 
     void setState(GameState newState);
     void startTimer();

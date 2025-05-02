@@ -19,7 +19,7 @@ namespace GameSave {
     }
 
     struct MetaStats {
-        int coins = 0;
+        uint32_t coins = 0;
         std::map<UpgradeType, int> upgrades;
         std::vector<ShipType> unlockedShips;
         json toJson() {

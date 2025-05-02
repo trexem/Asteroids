@@ -24,7 +24,25 @@ const uint32_t MAX_ENTITIES = 5000;
 #include "EntityManager.h"
 #include "Fonts.h"
 #include "GameStateManager.h"
-#include "Systems.h"
+
+//Forward declaring systems
+class GUISystem;
+class PlayerSystem;
+class InputSystem;
+class RenderSystem;
+class PhysicsSystem;
+class MovementSystem;
+class CollisionSystem;
+class AbilitySystem;
+class DamageSystem;
+class AnimationSystem;
+class AsteroidSystem;
+class PickupsSystem;
+class LifeTimeSystem;
+class OrbitSystem;
+class FollowSystem;
+class HealthSystem;
+class BackgroundSystem;
 
 class Game {
 public:

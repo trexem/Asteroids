@@ -1,4 +1,5 @@
 #include "Components.h"
+#include "GameStatsManager.h"
 
 std::vector<AbilityChoice> getRandomAbilityChoices(const PlayerComponent& player) {
     std::vector<AbilityChoice> availableAbilities;
@@ -55,7 +56,8 @@ std::string getNextUpgradeText(const PlayerComponent& player, const AbilityChoic
         level = std::min(level, maxPassiveLevel[index]);
         text = passiveUpgradeTexts[index][level];
     } else if (choice.type == AbilityType::Money) {
-        text = "+50 money";
+        float moneyMult = (1.0f + GameStatsManager::instance().getUpgradeValue(UpgradeType::GoldValue));
+        text = ("+ %f money", 50 * moneyMult);
     } else if (choice.type == AbilityType::Health) {
         text = "+50 health";
     }

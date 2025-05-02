@@ -1,11 +1,13 @@
 #include "PickupsSystem.h"
 
 PickupsSystem::PickupsSystem(EntityManager* eMgr, SDL_Renderer* renderer) : eManager(eMgr) {
-    MessageManager::getInstance().subscribe<PickupsSpawnMessage>(
+    MessageManager::instance().subscribe<PickupsSpawnMessage>(
         [this](std::shared_ptr<PickupsSpawnMessage> msg) { handlePickupsSpawnMessage(msg); }
     );
     experienceTexture.m_renderer = renderer;
     experienceTexture.loadFromFile("data/img/experience.bmp");
+    goldTexture.m_renderer = renderer;
+    goldTexture.loadFromFile("data/img/gold.bmp");
 }
 
 void PickupsSystem::handlePickupsSpawnMessage(std::shared_ptr<PickupsSpawnMessage> msg) {
@@ -44,7 +46,7 @@ void PickupsSystem::handlePickupsSpawnMessage(std::shared_ptr<PickupsSpawnMessag
 
 void PickupsSystem::update() {
     auto players = eManager->getEntitiesWithComponent(ComponentType::Player);
-    auto experiences = eManager->getEntitiesWithComponent(ComponentType::Pickup);
+    auto pickups = eManager->getEntitiesWithComponent(ComponentType::Pickup);
     for (uint32_t player : players) {
         TransformComponent* playerTr = eManager->getComponentDataPtr<TransformComponent>(player);
         StatsComponent* stats = eManager->getComponentDataPtr<StatsComponent>(player);
@@ -52,7 +54,7 @@ void PickupsSystem::update() {
         const float attractionRadius = stats->collectionRadius;
         SDL_FRect playerRect = {playerTr->position.x, playerTr->position.y, 
             playerRend->texture->getWidth(), playerRend->texture->getHeight() };
-        for (uint32_t xp : experiences) {
+        for (uint32_t xp : pickups) {
             TransformComponent xpTr = eManager->getComponentData<TransformComponent>(xp);
             PhysicsComponent xpPhys = eManager->getComponentData<PhysicsComponent>(xp);
             PickupComponent xpComp = eManager->getComponentData<PickupComponent>(xp);

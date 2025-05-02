@@ -1,4 +1,7 @@
+#include "ClickMessage.h"
+#include "GameStateManager.h"
 #include "LevelUpScreen.h"
+#include "MouseMotionMessage.h"
 
 void LevelUpScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eManager = eManager;
@@ -115,6 +118,6 @@ void LevelUpScreen::drawConatiner(SDL_Renderer* renderer, SDL_Texture* texture) 
 }
 
 void LevelUpScreen::onContainerClick(int i) {
-    MessageManager::getInstance().sendMessage(std::make_shared<LevelUpMessage>(options[i]));
-    GameStateManager::getInstance().setState(GameState::Playing);
+    MessageManager::instance().sendMessage(std::make_shared<LevelUpMessage>(options[i]));
+    GameStateManager::instance().setState(GameState::Playing);
 }

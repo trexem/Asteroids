@@ -14,7 +14,7 @@ void LifeTimeSystem::update(double dT) {
             if (type->type & EntityType::Rocket || type->type & EntityType::Explosive) {
                 //std::cout << "Destroying rocket after lifeTime: " << eID << std::endl;
                 WeaponAbilities w = type->type == EntityType::Rocket ? WeaponAbilities::Rocket : WeaponAbilities::Explosives;
-                MessageManager::getInstance().sendMessage(std::make_shared<ExplodeMessage>(eID, w));
+                MessageManager::instance().sendMessage(std::make_shared<ExplodeMessage>(eID, w));
             } else {
                 //std::cout << "Destroying explosion: " << eID << std::endl;
                 eManager->destroyEntityLater(eID);

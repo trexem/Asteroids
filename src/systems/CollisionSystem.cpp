@@ -59,26 +59,28 @@ void CollisionSystem::update(EntityManager* eManager) {
                 // std::cout << "Checking Collision for: " << tA << " and " << tB << std::endl;
                 if (checkCollision(transA, colA, transB, colB)) {
                     // std::cout << "Collision detected" << std::endl;
-                    if (TypesSet::match(TypesSet::PLAYER_EXPERIENCE, tA, tB)) {
-                        //std::cout << "Player Experience Collision detected" << std::endl;
-                        PickupComponent* xp = eManager->getComponentDataPtr<PickupComponent>(b);
-                        auto msg = std::make_shared<ExperiencePickupMessage>(a, xp->value);
+                    if (TypesSet::shouldPlayerPick(tA, tB)) {
+                        uint32_t player = tA & EntityType::Player ? a : b;
+                        uint32_t pickupID = player == a ? b : a;
+                        EntityType pType = pickupID == a ? tA : tB;
+                        PickupComponent* pComp = eManager->getComponentDataPtr<PickupComponent>(pickupID);
+                        auto msg = std::make_shared<PickupPickedMessage>(a, pComp->value, pType);
                         eManager->destroyEntityLater(b);
-                        MessageManager::getInstance().sendMessage(msg);
+                        MessageManager::instance().sendMessage(msg);
                         continue;
                     } else if (TypesSet::sameType(EntityType::Asteroid, tA, tB)) {
                         std::vector<uint32_t> ids;
                         ids.push_back(a);
                         ids.push_back(b);
                         auto msg = std::make_shared<AsteroidAsteroidCollisionMessage>(ids);
-                        MessageManager::getInstance().sendMessage(msg);
+                        MessageManager::instance().sendMessage(msg);
                         continue;
                     }
                     std::vector<uint32_t> ids;
                     ids.push_back(a);
                     ids.push_back(b);
                     auto msg = std::make_shared<CollisionMessage>(ids);
-                    MessageManager::getInstance().sendMessage(msg);
+                    MessageManager::instance().sendMessage(msg);
                 }
             }
         }

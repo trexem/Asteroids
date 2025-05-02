@@ -14,6 +14,11 @@ void MovementSystem::update(EntityManager* eMgr, double dT) {
         } else {
             PhysicsComponent* physComp = eMgr->getComponentDataPtr<PhysicsComponent>(eID);
             TransformComponent transComp = eMgr->getComponentData<TransformComponent>(eID);
+            TypeComponent* type = eMgr->getComponentDataPtr<TypeComponent>(eID);
+            if (physComp->acceleration == 0 && physComp->velocity == 0 && 
+                physComp->speed.x == 0 && physComp->speed.y == 0 && physComp->rotVelocity == 0) {
+                continue;
+            }
             if (physComp->isSpeedVector) {
                 transComp.position.x += physComp->speed.x * dT;
                 transComp.position.y += physComp->speed.y * dT;
@@ -22,14 +27,13 @@ void MovementSystem::update(EntityManager* eMgr, double dT) {
                 transComp.position.x += physComp->velocity * dT * sin(radians);
                 transComp.position.y -= physComp->velocity * dT * cos(radians);
             }
-            TypeComponent* type = eMgr->getComponentDataPtr<TypeComponent>(eID);
             if (TypesSet::shouldDestroyIfFar(type->type)) {
                 if (transComp.position.x > (playerTransform->position.x + SCREEN_WIDTH * 3)
                     || transComp.position.x < playerTransform->position.x - SCREEN_WIDTH * 2
                     || transComp.position.y > playerTransform->position.y + SCREEN_HEIGHT * 3 
                     || transComp.position.y < playerTransform->position.y - SCREEN_HEIGHT * 2) {
                     if (type->type & EntityType::Asteroid) {
-                        MessageManager::getInstance().sendMessage(std::make_shared<DestroyAsteroidMessage>(eID, false));
+                        MessageManager::instance().sendMessage(std::make_shared<DestroyAsteroidMessage>(eID, false));
                         continue;
                     }
                     eMgr->destroyEntityLater(eID);

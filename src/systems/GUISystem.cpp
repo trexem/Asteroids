@@ -30,7 +30,7 @@ void GUISystem::update() {
 }
 
 void GUISystem::updateState() {
-    GameState state = GameStateManager::getInstance().getState();
+    GameState state = GameStateManager::instance().getState();
     if (state != currentGameState) {    
         changeScreen(state);
     }

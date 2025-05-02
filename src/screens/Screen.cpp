@@ -1,3 +1,7 @@
+#include "ClickMessage.h"
+#include "EntityManager.h"
+#include "MessageManager.h"
+#include "MouseMotionMessage.h"
 #include "Screen.h"
 
 Screen::Screen(EntityManager* eM) : eManager(eM) {}
@@ -6,7 +10,7 @@ void Screen::initSubscriptions() {
     auto weak_this = weak_from_this();
     // Subscribe to MouseMotionMessages
     unsubscribers.emplace_back(
-        MessageManager::getInstance().subscribe<MouseMotionMessage>(
+        MessageManager::instance().subscribe<MouseMotionMessage>(
             [weak_this](auto msg) {
                 if (auto shared_this = weak_this.lock()) {
                     shared_this->handleMouseHover(msg);
@@ -16,7 +20,7 @@ void Screen::initSubscriptions() {
     );
     // Subscribe to ClickMessages
     unsubscribers.emplace_back(
-        MessageManager::getInstance().subscribe<ClickMessage>(
+        MessageManager::instance().subscribe<ClickMessage>(
             [weak_this](auto msg) {
                 if (auto shared_this = weak_this.lock()) {
                     shared_this->handleMouseClick(msg);

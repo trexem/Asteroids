@@ -11,7 +11,7 @@
 
 class MessageManager {
 public:
-    static MessageManager& getInstance();
+    static MessageManager& instance();
 
     template<typename T>
     std::function<void()> subscribe(std::function<void(std::shared_ptr<T>)> callback) {

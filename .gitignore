@@ -36,6 +36,7 @@ screenshot.bmp
 release/*
 /.vscode/*
 /.vs/*
+/data/stats.json
 /Asteroids/x64
 out/*
 /x64/Debug

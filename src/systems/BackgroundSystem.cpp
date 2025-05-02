@@ -23,10 +23,10 @@ void BackgroundSystem::update(EntityManager& eManager) {
         
         tComp.position -= delta * bComp.parallaxFactor;
 
-        if (tComp.position.x < MIN_POS) tComp.position.x += RANGE;
-        if (tComp.position.x > MAX_POS) tComp.position.x -= RANGE;
-        if (tComp.position.y < MIN_POS) tComp.position.y += RANGE;
-        if (tComp.position.y > MAX_POS) tComp.position.y -= RANGE;
+        if (tComp.position.x < lastPlayerPos.x + MIN_POS) tComp.position.x += RANGE;
+        if (tComp.position.x > lastPlayerPos.x + MAX_POS) tComp.position.x -= RANGE;
+        if (tComp.position.y < lastPlayerPos.y + MIN_POS) tComp.position.y += RANGE;
+        if (tComp.position.y > lastPlayerPos.y + MAX_POS) tComp.position.y -= RANGE;
 
         eManager.setComponentData(e, tComp);
     }
@@ -39,7 +39,7 @@ void BackgroundSystem::createBackground(EntityManager& eManager) {
             randFloat(-MAX_DISTANCE, MAX_DISTANCE),
             randFloat(-MAX_DISTANCE, MAX_DISTANCE)
         };
-        float parallax = randFloat(0.02f, .3f);
+        float parallax = randFloat(0.01f, .1f);
         uint32_t e = eManager.createEntity();
         EntityHandle eHandle {e, &eManager};
         eHandle.add<TransformComponent>();

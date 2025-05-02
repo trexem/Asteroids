@@ -2,7 +2,7 @@
 
 #include "AsteroidAsteroidCollisionMessage.h"
 #include "CollisionMessage.h"
-#include "ExperiencePickupMessage.h"
+#include "PickupPickedMessage.h"
 #include "MessageManager.h"
 #include "System.h"
 

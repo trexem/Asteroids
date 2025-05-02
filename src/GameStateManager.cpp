@@ -1,6 +1,6 @@
 #include "GameStateManager.h"
 
-GameStateManager& GameStateManager::getInstance() {
+GameStateManager& GameStateManager::instance() {
     static GameStateManager instance;
     return instance;
 }
@@ -15,7 +15,7 @@ void GameStateManager::setState(GameState newState) {
             timer.unpause();
         }
         auto msg = std::make_shared<GameStateMessage>(state);
-        MessageManager::getInstance().sendMessage(msg);
+        MessageManager::instance().sendMessage(msg);
     }
 }
 

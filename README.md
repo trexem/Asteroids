@@ -41,22 +41,12 @@ After it finishes downloading and `cmake` stops working you will have to choose 
 ### Audio
  - [ ] Implement it
 ### Systems
- - [X] AsteroidSystem REFACTOR for better angle
  - [ ] EnemyAISystem (moves enemies based on AIComponent)
  - [ ] SpawnSystem (handles waves of enemies & asteroids)
- - [ ] PowerUpSystem (applies power-ups)
- - [ ] ScoreSystem (tracks player score)
 ### Abilities
- - [X] LaserGun
- - [X] RocketLauncher
- - [X] Laser
- - [X] Explosives
- - [X] GravitySaws
- - [X] PickupRadius
- - [X] PasiveAbilities
  - [ ] TeslaCoil
+ - [ ] Balance them
 ### Screens
- - [X] PlayingScreen, add gold display.
  - [ ] GameOverScreen, add gold and kills display.
  - [ ] Settings
  - [ ] Upgrade Store
@@ -65,4 +55,7 @@ After it finishes downloading and `cmake` stops working you will have to choose 
  - [ ] Make it look good
 ### Upgrades
  - [ ] Implement them
+### Good practices
+ - [ ] Refactor all includes to forward declare and not include everything in header files
+ - [ ] Decide and change all naming of the files to one standard (first letter mayus or not, hpp or h)
  

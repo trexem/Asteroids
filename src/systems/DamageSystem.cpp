@@ -3,7 +3,7 @@
 #include <iostream>
 
 DamageSystem::DamageSystem(EntityManager* eM) : eManager(eM) {
-    MessageManager::getInstance().subscribe<CollisionMessage>(
+    MessageManager::instance().subscribe<CollisionMessage>(
         [this](std::shared_ptr<CollisionMessage> msg) { handleCollisionMessage(msg); }
     );
 }
@@ -88,19 +88,19 @@ void DamageSystem::applyDamage(const DamageContext& ctx) {
     std::cout << "applying damage for target: " << ctx.targetType << " from source: " << ctx.sourceType << std::endl;
     if (healthComp.health <= 0) {
         if (ctx.targetType & EntityType::Asteroid) {
-            MessageManager::getInstance().sendMessage(
+            MessageManager::instance().sendMessage(
                 std::make_shared<DestroyAsteroidMessage>(ctx.target));
         } else if (ctx.targetType & EntityType::Player) {
-            GameStateManager::getInstance().setState(GameState::GameOver);
+            GameStateManager::instance().setState(GameState::GameOver);
         }
     } else {
-        MessageManager::getInstance().sendMessage(
+        MessageManager::instance().sendMessage(
             std::make_shared<AnimationMessage>(ctx.target, ctx.animation));
     }
 
     if (ctx.destroySource) {
         if (ctx.sourceType & EntityType::Rocket) {
-            MessageManager::getInstance().sendMessage(
+            MessageManager::instance().sendMessage(
                 std::make_shared<ExplodeMessage>(ctx.source, WeaponAbilities::Rocket));
         } else {
             DamageComponent damageC = eManager->getComponentData<DamageComponent>(ctx.source);

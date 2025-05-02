@@ -1,7 +1,7 @@
 #include "MessageManager.h"
 #include <iostream>
 
-MessageManager& MessageManager::getInstance() {
+MessageManager& MessageManager::instance() {
     static MessageManager instance;
     return instance;
 }
