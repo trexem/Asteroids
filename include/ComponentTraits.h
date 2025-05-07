@@ -74,3 +74,27 @@ template <> struct ComponentTraits<FollowComponent> {
 template <> struct ComponentTraits<BackgroundComponent> {
     static constexpr ComponentType type = ComponentType::Background;
 };
+
+template <> struct ComponentTraits<LabelComponent> {
+    static constexpr ComponentType type = ComponentType::Label;
+};
+
+template <> struct ComponentTraits<ButtonComponent> {
+    static constexpr ComponentType type = ComponentType::Button;
+};
+
+template <> struct ComponentTraits<SliderComponent> {
+    static constexpr ComponentType type = ComponentType::Slider;
+};
+
+template <> struct ComponentTraits<ContainerComponent> {
+    static constexpr ComponentType type = ComponentType::Container;
+};
+
+template <> struct ComponentTraits<GUIStateComponent> {
+    static constexpr ComponentType type = ComponentType::GUIState;
+};
+
+template <> struct ComponentTraits<ClickCallbackComponent> {
+    static constexpr ComponentType type = ComponentType::ClickCallback;
+};

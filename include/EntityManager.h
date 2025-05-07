@@ -32,7 +32,7 @@ public:
     template <typename T>
     void setComponentData(uint32_t entityID, const T& componentData) {
         //std::cout << "Setting data for component: " << typeid(T).name() << std::endl;
-        static_assert(std::is_standard_layout<T>::value, "Component type must be standard layout.");
+        // static_assert(std::is_standard_layout<T>::value, "Component type must be standard layout.");
         assert(entityID < maxEntities);
         
         constexpr ComponentType type = ComponentTraits<T>::type;

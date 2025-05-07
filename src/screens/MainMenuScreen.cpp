@@ -7,16 +7,19 @@
 #include "GameStatsManager.h"
 #include "MainMenuScreen.h"
 #include "MouseMotionMessage.h"
+#include "texture.hpp"
 
 MainMenuScreen::~MainMenuScreen() {
 }
 
 void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     playTexture.m_renderer = renderer;
+    upgradesTexture.m_renderer = renderer;
     settingsTexture.m_renderer = renderer;
     quitTexture.m_renderer = renderer;
     goldTexture.m_renderer = renderer;
     playTexture.loadFromText("Play", Colors::White, Fonts::Title);
+    upgradesTexture.loadFromText("Upgrades", Colors::White, Fonts::Title);
     settingsTexture.loadFromText("Settings", Colors::White, Fonts::Title);
     quitTexture.loadFromText("Exit Game", Colors::White, Fonts::Title);
     std::ostringstream goldText;
@@ -35,12 +38,30 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.add<TypeComponent>();
     eHandle.add<GUIComponent>();
     eHandle.add<CollisionComponent>();
-    trComp.position = FPair(
+    guiComp.pos = FPair(
         calculateCenteredX(playTexture.getWidth()), SCREEN_HEIGHT / 3 - playTexture.getHeight());
-    colComp.position = {trComp.position.x - hoveredOffset, trComp.position.y - hoveredOffset};
+    colComp.position = {guiComp.pos.x - hoveredOffset, guiComp.pos.y - hoveredOffset};
     colComp.height = playTexture.getHeight() + 2 * hoveredOffset;
     colComp.width = playTexture.getWidth() + 2 * hoveredOffset;
     textureComp.texture = &playTexture;
+    eHandle.set<TransformComponent>(trComp);
+    eHandle.set<TypeComponent>(type);
+    eHandle.set<RenderComponent>(textureComp);
+    eHandle.set<GUIComponent>(guiComp);
+    eHandle.set<CollisionComponent>(colComp);
+    //Settings
+    upgradesID = eManager->createEntity();
+    eHandle.id = upgradesID;
+    eHandle.add<RenderComponent>();
+    eHandle.add<TypeComponent>();
+    eHandle.add<GUIComponent>();
+    eHandle.add<CollisionComponent>();
+    guiComp.pos.x = calculateCenteredX(upgradesTexture.getWidth());
+    guiComp.pos.y += playTexture.getHeight() + 2 * hoveredOffset;
+    colComp.position = {guiComp.pos.x - hoveredOffset, guiComp.pos.y - hoveredOffset};
+    colComp.height = upgradesTexture.getHeight() + 2 * hoveredOffset;
+    colComp.width = upgradesTexture.getWidth() + 2 * hoveredOffset;
+    textureComp.texture = &upgradesTexture;
     eHandle.set<TransformComponent>(trComp);
     eHandle.set<TypeComponent>(type);
     eHandle.set<RenderComponent>(textureComp);
@@ -53,9 +74,9 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.add<TypeComponent>();
     eHandle.add<GUIComponent>();
     eHandle.add<CollisionComponent>();
-    trComp.position.x = calculateCenteredX(settingsTexture.getWidth());
-    trComp.position.y += playTexture.getHeight() + 2 * hoveredOffset;
-    colComp.position = {trComp.position.x - hoveredOffset, trComp.position.y - hoveredOffset};
+    guiComp.pos.x = calculateCenteredX(settingsTexture.getWidth());
+    guiComp.pos.y += upgradesTexture.getHeight() + 2 * hoveredOffset;
+    colComp.position = {guiComp.pos.x - hoveredOffset, guiComp.pos.y - hoveredOffset};
     colComp.height = settingsTexture.getHeight() + 2 * hoveredOffset;
     colComp.width = settingsTexture.getWidth() + 2 * hoveredOffset;
     textureComp.texture = &settingsTexture;
@@ -71,9 +92,9 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.add<TypeComponent>();
     eHandle.add<GUIComponent>();
     eHandle.add<CollisionComponent>();
-    trComp.position.x = calculateCenteredX(quitTexture.getWidth());
-    trComp.position.y += settingsTexture.getHeight() + 2 * hoveredOffset;
-    colComp.position = {trComp.position.x - hoveredOffset, trComp.position.y - hoveredOffset};
+    guiComp.pos.x = calculateCenteredX(quitTexture.getWidth());
+    guiComp.pos.y += settingsTexture.getHeight() + 2 * hoveredOffset;
+    colComp.position = {guiComp.pos.x - hoveredOffset, guiComp.pos.y - hoveredOffset};
     colComp.height = quitTexture.getHeight() + 2 * hoveredOffset;
     colComp.width = quitTexture.getWidth() + 2 * hoveredOffset;
     textureComp.texture = &quitTexture;
@@ -88,8 +109,8 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.add<RenderComponent>();
     eHandle.add<TypeComponent>();
     eHandle.add<GUIComponent>();
-    trComp.position.x = SCREEN_WIDTH - goldTexture.getWidth() - 10.0f;
-    trComp.position.y = SCREEN_HEIGHT - goldTexture.getHeight() - 10.0f;
+    guiComp.pos.x = SCREEN_WIDTH - goldTexture.getWidth() - 10.0f;
+    guiComp.pos.y = SCREEN_HEIGHT - goldTexture.getHeight() - 10.0f;
     textureComp.texture = &goldTexture;
     eHandle.set<TransformComponent>(trComp);
     eHandle.set<TypeComponent>(type);
@@ -105,6 +126,7 @@ void MainMenuScreen::destroy(EntityManager* eManager) {
 
 void MainMenuScreen::handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) {
     handleHover(playID, msg->mousePos, nullptr);
+    handleHover(upgradesID, msg->mousePos, nullptr);
     handleHover(settingsID, msg->mousePos, nullptr);
     handleHover(quitID, msg->mousePos, nullptr);
 }
@@ -112,6 +134,12 @@ void MainMenuScreen::handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) {
 void MainMenuScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
     handleClick(playID, msg->mousePos, [this]() {
         onPlayClick();
+    });
+    handleClick(upgradesID, msg->mousePos, [this]() {
+        GameStateManager::instance().setState(GameState::UpgradeStore);
+    });
+    handleClick(settingsID, msg->mousePos, [this]() {
+        GameStateManager::instance().setState(GameState::Settings);
     });
     handleClick(quitID, msg->mousePos, [this]() {
         GameStateManager::instance().setState(GameState::Quit);

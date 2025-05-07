@@ -9,6 +9,7 @@ class ClickMessage : public Message {
 public:
     FPair mousePos;
     uint8_t button, clicks;
-    ClickMessage(FPair mousePos, uint8_t button, uint8_t clicks) 
-        : mousePos(mousePos), button(button), clicks(clicks) {}
+    bool isDown;
+    ClickMessage(FPair mousePos, bool down, uint8_t button, uint8_t clicks) 
+        : mousePos(mousePos), button(button), clicks(clicks), isDown(down) {}
 };

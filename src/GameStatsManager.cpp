@@ -36,4 +36,3 @@ float GameStatsManager::getUpgradeValue(UpgradeType type) const {
     int lvl = getUpgradeLevel(type);
     return upgradesValues[static_cast<size_t>(type)][lvl];
 }
-

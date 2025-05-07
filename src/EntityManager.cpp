@@ -44,7 +44,7 @@ uint32_t EntityManager::createEntity() {
 void EntityManager::destroyEntity(uint32_t entityID) {
     std::scoped_lock lock(*entityMutexes[entityID], globalMutex);
     if (entityExists(entityID)) {
-        std::cout << "Destroying Entity " << entityID << std::endl;
+        // std::cout << "Destroying Entity " << entityID << std::endl;
         freeTexturePtr(entityID);
         entities.erase(std::remove(entities.begin(), entities.end(), entityID), entities.end());
         
@@ -56,7 +56,7 @@ void EntityManager::destroyEntity(uint32_t entityID) {
         }
         destroyedEntities.insert(entityID);
         entityCount--;
-        std::cout << "Entity destroyed: " << entityID << std::endl;
+        // std::cout << "Entity destroyed: " << entityID << std::endl;
     }
 }
 

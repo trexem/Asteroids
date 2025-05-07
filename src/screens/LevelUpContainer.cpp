@@ -8,8 +8,8 @@ LevelUpContainer::LevelUpContainer(EntityManager* eManager, AbilityChoice choice
     TransformComponent trComp;
     RenderComponent textureComp;
     GUIComponent guiComp;
-    trComp.position = pos;
-    trComp.position.y = SCREEN_HEIGHT * 0.1851f;
+    guiComp.pos = pos;
+    guiComp.pos.y = SCREEN_HEIGHT * 0.1851f;
     
 
     abilityText.loadFromText(text, Colors::White, Fonts::Body);
@@ -40,8 +40,8 @@ LevelUpContainer::LevelUpContainer(EntityManager* eManager, AbilityChoice choice
     eManager->addComponent(iconId, ComponentType::Type);
     eManager->addComponent(iconId, ComponentType::GUI);
     textureComp.texture = &abilityIcon;
-    trComp.position.x += GUI::CONTAINER_WIDTH / 2 - abilityIcon.getWidth();
-    trComp.position.y += GUI::CONTAINER_GAP;
+    guiComp.pos.x += GUI::CONTAINER_WIDTH / 2 - abilityIcon.getWidth();
+    guiComp.pos.y += GUI::CONTAINER_GAP;
     eManager->setComponentData<TransformComponent>(iconId, trComp);
     eManager->setComponentData<TypeComponent>(iconId, type);
     eManager->setComponentData<RenderComponent>(iconId, textureComp);
@@ -53,7 +53,7 @@ LevelUpContainer::LevelUpContainer(EntityManager* eManager, AbilityChoice choice
     eManager->addComponent(textId, ComponentType::Type);
     eManager->addComponent(textId, ComponentType::GUI);
     textureComp.texture = &abilityText;
-    trComp.position.y += GUI::CONTAINER_GAP + abilityIcon.getHeight();
+    guiComp.pos.y += GUI::CONTAINER_GAP + abilityIcon.getHeight();
     eManager->setComponentData<TransformComponent>(textId, trComp);
     eManager->setComponentData<TypeComponent>(textId, type);
     eManager->setComponentData<RenderComponent>(textId, textureComp);

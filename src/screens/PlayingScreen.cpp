@@ -34,14 +34,14 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     currentXpTexture.createEmptyTexture(xpContainerTexture.getWidth() - 4, xpContainerTexture.getHeight() - 2);
     timeTexture.loadFromText("00:00", Colors::White, Fonts::Subtitle);
     levelTexture.loadFromText("lvl: 1" , Colors::White, Fonts::Body);
-    pauseTexture.loadFromFile("data/img/pause.bmp");
+    pauseTexture.loadFromFile("data/img/gui/pause.bmp");
     currentHealthTexture.createEmptyTexture(std::round(GUI::HEALTHBAR_WIDTH), std::round(GUI::HEALTHBAR_HEIGHT));
     healthBarTexture.loadFromFile("data/img/healthBar.bmp");
     goldTexture.loadFromText("gold: 0000", Colors::White, Fonts::Body);
     enemiesTexture.loadFromText("asteroids destroyed: 0000", Colors::White, Fonts::Body);
 
     TypeComponent type = EntityType::GUI;
-    GUIComponent guiComponent;
+    GUIComponent guiComp;
     TransformComponent trComp;
     CollisionComponent colComp;
     RenderComponent textureComp;
@@ -51,36 +51,36 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
-    trComp.position = FPair(3, 3);
+    guiComp.pos = FPair(3, 3);
     textureComp.texture = &xpContainerTexture;
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
     entity.set<RenderComponent>(textureComp);
-    entity.set<GUIComponent>(guiComponent);
+    entity.set<GUIComponent>(guiComp);
     //Current XP
     currentXpID = eManager->createEntity();
     entity.id = currentXpID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
-    trComp.position = FPair(4, 4);
+    guiComp.pos = FPair(4, 4);
     textureComp.texture = &currentXpTexture;
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
     entity.set<RenderComponent>(textureComp);
-    entity.set<GUIComponent>(guiComponent);
+    entity.set<GUIComponent>(guiComp);
     //Abilities Container
     abilitiesContainersID = eManager->createEntity();
     entity.id = abilitiesContainersID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
-    trComp.position = FPair(3, 46);
+    guiComp.pos = FPair(3, 46);
     textureComp.texture = &abilitiesContainersTexture;
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
     entity.set<RenderComponent>(textureComp);
-    entity.set<GUIComponent>(guiComponent);
+    entity.set<GUIComponent>(guiComp);
     //Time
     timeID = eManager->createEntity();
     entity.id = timeID;
@@ -90,24 +90,24 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eManager->addComponent(timeID, ComponentType::Render);
     eManager->addComponent(timeID, ComponentType::Type);
     eManager->addComponent(timeID, ComponentType::GUI);
-    trComp.position = FPair(SCREEN_CENTER.x - timeTexture.getWidth() / 2, 46);
+    guiComp.pos = FPair(SCREEN_CENTER.x - timeTexture.getWidth() / 2, 46);
     textureComp.texture = &timeTexture;
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
     entity.set<RenderComponent>(textureComp);
-    entity.set<GUIComponent>(guiComponent);
+    entity.set<GUIComponent>(guiComp);
     //Level
     levelID = eManager->createEntity();
     entity.id = levelID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
-    trComp.position = FPair(SCREEN_WIDTH - levelTexture.getWidth() - 2, 4);
+    guiComp.pos = FPair(SCREEN_WIDTH - levelTexture.getWidth() - 2, 4);
     textureComp.texture = &levelTexture;
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
     entity.set<RenderComponent>(textureComp);
-    entity.set<GUIComponent>(guiComponent);
+    entity.set<GUIComponent>(guiComp);
     //Pause
     pauseID = eManager->createEntity();
     entity.id = pauseID;
@@ -115,17 +115,17 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
     entity.add<CollisionComponent>();
-    trComp.position = FPair(SCREEN_WIDTH - pauseTexture.getWidth() - 18, 46);
-    colComp.position = {trComp.position.x - hoveredOffset, trComp.position.y - hoveredOffset};
+    guiComp.pos = FPair(SCREEN_WIDTH - pauseTexture.getWidth() - 18, 46);
+    colComp.position = {guiComp.pos.x - hoveredOffset, guiComp.pos.y - hoveredOffset};
     colComp.height = pauseTexture.getHeight() + 2 * hoveredOffset;
     colComp.width = pauseTexture.getWidth() + 2 * hoveredOffset;
     textureComp.texture = &pauseTexture;
-    guiComponent.clickable = true;
-    guiComponent.hoverable = true;
+    // guiComponent.clickable = true;
+    // guiComponent.hoverable = true;
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
     entity.set<RenderComponent>(textureComp);
-    entity.set<GUIComponent>(guiComponent);
+    entity.set<GUIComponent>(guiComp);
     entity.set<CollisionComponent>(colComp);
     // Current Gold
     goldID = eManager->createEntity();
@@ -133,51 +133,51 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
-    trComp.position.x -= goldTexture.getWidth() - 10.0f;
+    guiComp.pos.x -= goldTexture.getWidth() - 10.0f;
     textureComp.texture = &goldTexture;
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
     entity.set<RenderComponent>(textureComp);
-    entity.set<GUIComponent>(guiComponent);
+    entity.set<GUIComponent>(guiComp);
     // Current enemies
     enemiesID = eManager->createEntity();
     entity.id = enemiesID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
-    trComp.position.x -= enemiesTexture.getWidth() - 10.0f;
+    guiComp.pos.x -= enemiesTexture.getWidth() - 10.0f;
     textureComp.texture = &enemiesTexture;
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
     entity.set<RenderComponent>(textureComp);
-    entity.set<GUIComponent>(guiComponent);
+    entity.set<GUIComponent>(guiComp);
     // Current health
     currentHealthID = eManager->createEntity();
     entity.id = currentHealthID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
-    trComp.position.x = SCREEN_WIDTH - GUI::HEALTHBAR_WIDTH;
-    trComp.position.y = SCREEN_CENTER.y - GUI::HEALTHBAR_HEIGHT / 2 + 1;
+    guiComp.pos.x = SCREEN_WIDTH - GUI::HEALTHBAR_WIDTH;
+    guiComp.pos.y = SCREEN_CENTER.y - GUI::HEALTHBAR_HEIGHT / 2 + 1;
     textureComp.texture = &currentHealthTexture;
-    guiComponent.clickable = false;
-    guiComponent.hoverable = false;
+    // guiComponent.clickable = false;
+    // guiComponent.hoverable = false;
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
     entity.set<RenderComponent>(textureComp);
-    entity.set<GUIComponent>(guiComponent);
+    entity.set<GUIComponent>(guiComp);
     // HealthBar
     healthBarID = eManager->createEntity();
     entity.id = healthBarID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
-    trComp.position.y -= 1;
+    guiComp.pos.y -= 1;
     textureComp.texture = &healthBarTexture;
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
     entity.set<RenderComponent>(textureComp);
-    entity.set<GUIComponent>(guiComponent);
+    entity.set<GUIComponent>(guiComp);
 }
 
 void PlayingScreen::destroy(EntityManager* eManager) {

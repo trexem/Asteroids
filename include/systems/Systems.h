@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GUISystem.h"
+#include "ScreenManager.h"
 #include "PlayerSystem.h"
 #include "InputSystem.h"
 #include "RenderSystem.h"
@@ -17,3 +17,4 @@
 #include "FollowSystem.h"
 #include "HealthSystem.h"
 #include "BackgroundSystem.h"
+#include "GUIInteractionSystem.h"

@@ -13,10 +13,10 @@
 #include "SettingsScreen.h"
 #include "System.h"
 
-class GUISystem : public System {
+class ScreenManager : public System {
 public:
-    GUISystem(EntityManager* eM, SDL_Renderer* renderer);
-    ~GUISystem();
+    ScreenManager(EntityManager* eM, SDL_Renderer* renderer);
+    ~ScreenManager();
 
     void update();
 

@@ -1,5 +1,13 @@
-#include "PlayerSystem.h"
+#include "AbilityMessage.h"
+#include "EntityManager.h"
 #include "GameSessionManager.h"
+#include "GameStateManager.h"
+#include "GameStatsManager.h"
+#include "KeyboardMessage.h"
+#include "LevelUpMessage.h"
+#include "MessageManager.h"
+#include "PlayerSystem.h"
+#include "PickupPickedMessage.h"
 
 PlayerSystem::PlayerSystem(EntityManager* eManager) : eManager(eManager) {
     // Subscribe to KeyboardMessages

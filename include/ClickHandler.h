@@ -12,39 +12,43 @@
 
 class ClickHandler {
 private:
-    std::mutex clickMutex;
-    bool waitingForDoubleClick = false;
-    std::thread clickThread;
+    std::chrono::time_point<std::chrono::steady_clock> lastClickTime;
+    FPair lastClickPos;
+    int lastClickButton = -1;
+    bool wasDown = false;
+    const int doubleClickDelayMs = 300; // Adjust to match system settings
 
 public:
-    void handleClick(FPair pos, int button, int clickCount) {
-        std::lock_guard<std::mutex> lock(clickMutex);
+    void handleClick(FPair pos, bool isDown, int button) {
+        const auto now = std::chrono::steady_clock::now();
+        const auto timeSinceLastClick = 
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                now - lastClickTime
+            ).count();
 
-        if (clickCount == 2) {
-            // Cancel single-click action and process double-click immediately
-            waitingForDoubleClick = false;
-            auto msg = std::make_shared<ClickMessage>(pos, button, 2);
+        // Handle button down/up transitions
+        if (isDown && !wasDown) {
+            // Check for double click
+            if (button == lastClickButton && 
+                pos == lastClickPos && 
+                timeSinceLastClick < doubleClickDelayMs) {
+                
+                // Double click detected
+                auto msg = std::make_shared<ClickMessage>(pos, true, button, 2);
+                MessageManager::instance().sendMessage(msg);
+                lastClickButton = -1; // Reset to prevent triple-click as another double
+            } else {
+                // Single click down (wait for up to confirm)
+                lastClickTime = now;
+                lastClickPos = pos;
+                lastClickButton = button;
+            }
+        } else if (!isDown && wasDown && button == lastClickButton) {
+            // Single click completed
+            auto msg = std::make_shared<ClickMessage>(pos, false, button, 1);
             MessageManager::instance().sendMessage(msg);
-        } else {
-            // Wait before processing to see if a second click happens
-            waitingForDoubleClick = true;
-            if (clickThread.joinable()) clickThread.join(); // Ensure no previous thread is running
-
-            clickThread = std::thread([this, pos, button]() {
-                std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Wait for possible second click
-
-                std::lock_guard<std::mutex> lock(clickMutex);
-                if (waitingForDoubleClick) {
-                    // If still waiting, process as a single click
-                    auto msg = std::make_shared<ClickMessage>(pos, button, 1);
-                    MessageManager::instance().sendMessage(msg);
-                    waitingForDoubleClick = false;
-                }
-            });
         }
-    }
 
-    ~ClickHandler() {
-        if (clickThread.joinable()) clickThread.join();
+        wasDown = isDown;
     }
 };

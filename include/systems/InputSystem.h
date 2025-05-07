@@ -1,13 +1,7 @@
 #pragma once
 
-#include "System.h"
-#include "FPair.h"
-#include "ClickMessage.h"
 #include "ClickHandler.h"
-#include "GameStateManager.h"
-#include "KeyboardMessage.h"
-#include "MouseMotionMessage.h"
-#include "MessageManager.h"
+#include "System.h"
 
 #include <SDL3/SDL.h>
 

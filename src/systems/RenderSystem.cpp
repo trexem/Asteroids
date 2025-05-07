@@ -84,13 +84,23 @@ void RenderSystem::render(EntityManager& eM) {
         }
     }
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::GUI)) {
+        if (eM.isMarkedForDestruction(eID)) continue;
         RenderComponent rComp = eM.getComponentData<RenderComponent>(eID);
-        TransformComponent trComp = eM.getComponentData<TransformComponent>(eID);
+        FPair pos {0.0f};
+        double rot = 0;
+        if (! eM.hasComponent<GUIComponent>(eID)) {
+            TransformComponent trComp = eM.getComponentData<TransformComponent>(eID);
+            pos = trComp.position;
+            rot = trComp.rotDegrees;
+        } else {
+            GUIComponent* guiComp = eM.getComponentDataPtr<GUIComponent>(eID);
+            pos = guiComp->pos;
+        }
         rComp.texture->renderEx(
-            static_cast<int>(trComp.position.x),
-            static_cast<int>(trComp.position.y),
+            static_cast<int>(pos.x),
+            static_cast<int>(pos.y),
             nullptr,
-            static_cast<int>(trComp.rotDegrees),
+            static_cast<int>(rot),
             nullptr,
             SDL_FLIP_NONE,
             rComp.size

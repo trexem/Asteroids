@@ -46,7 +46,7 @@ void Screen::handleHover(uint32_t eID, FPair pos, std::function<void()> callback
     if (!eManager->entityExists(eID)) return;
     
     CollisionComponent colComp = eManager->getComponentData<CollisionComponent>(eID);
-    TransformComponent trComp = eManager->getComponentData<TransformComponent>(eID);
+    GUIComponent guiComp = eManager->getComponentData<GUIComponent>(eID);
     RenderComponent render = eManager->getComponentData<RenderComponent>(eID);
 
     bool isHovered = (pos.x > colComp.position.x && pos.x < colComp.position.x + colComp.width &&
@@ -57,10 +57,10 @@ void Screen::handleHover(uint32_t eID, FPair pos, std::function<void()> callback
     if (isHovered) {
         // std::cout << "HandleHover for: " << eID << std::endl;
         if (!contained) {
-            trComp.position = colComp.position;
+            guiComp.pos = colComp.position;
             render.size = colComp.width / render.texture->getWidth();
 
-            eManager->setComponentData<TransformComponent>(eID, trComp);
+            eManager->setComponentData<GUIComponent>(eID, guiComp);
             eManager->setComponentData<RenderComponent>(eID, render);
             
             hoveredEntities.insert(eID);
@@ -70,10 +70,10 @@ void Screen::handleHover(uint32_t eID, FPair pos, std::function<void()> callback
         }
     } else {
         if (contained) {
-            trComp.position += hoveredOffset;
+            guiComp.pos += hoveredOffset;
             render.size = 1.0f;
 
-            eManager->setComponentData<TransformComponent>(eID, trComp);
+            eManager->setComponentData<GUIComponent>(eID, guiComp);
             eManager->setComponentData<RenderComponent>(eID, render);
             hoveredEntities.erase(eID);
         }

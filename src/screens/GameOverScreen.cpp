@@ -19,8 +19,8 @@ void GameOverScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     CollisionComponent cComp;
     RenderComponent rComp;
     GUIComponent gComp;
-    gComp.clickable = true;
-    gComp.hoverable = true;
+    // gComp.clickable = true;
+    // gComp.hoverable = true;
 
     //Restart
     restartID = eManager->createEntity();
@@ -29,9 +29,9 @@ void GameOverScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.add<TypeComponent>();
     eHandle.add<GUIComponent>();
     eHandle.add<CollisionComponent>();
-    trComp.position = FPair(
+    gComp.pos = FPair(
         calculateCenteredX(restartTexture.getWidth()), SCREEN_HEIGHT / 3 - restartTexture.getHeight());
-    cComp.position = {trComp.position.x - hoveredOffset, trComp.position.y - hoveredOffset};
+    cComp.position = {gComp.pos.x - hoveredOffset, gComp.pos.y - hoveredOffset};
     cComp.height = restartTexture.getHeight() + 2 * hoveredOffset;
     cComp.width = restartTexture.getWidth() + 2 * hoveredOffset;
     rComp.texture = &restartTexture;
@@ -48,9 +48,9 @@ void GameOverScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.add<TypeComponent>();
     eHandle.add<GUIComponent>();
     eHandle.add<CollisionComponent>();
-    trComp.position.x = calculateCenteredX(mainMenuTexture.getWidth());
-    trComp.position.y += cComp.height + 2 * hoveredOffset;
-    cComp.position = {trComp.position.x - hoveredOffset, trComp.position.y - hoveredOffset};
+    gComp.pos.x = calculateCenteredX(mainMenuTexture.getWidth());
+    gComp.pos.y += cComp.height + 2 * hoveredOffset;
+    cComp.position = {gComp.pos.x - hoveredOffset, gComp.pos.y - hoveredOffset};
     cComp.height = mainMenuTexture.getHeight() + 2 * hoveredOffset;
     cComp.width = mainMenuTexture.getWidth() + 2 * hoveredOffset;
     rComp.texture = &mainMenuTexture;
@@ -67,9 +67,9 @@ void GameOverScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.add<TypeComponent>();
     eHandle.add<GUIComponent>();
     eHandle.add<CollisionComponent>();
-    trComp.position.x = calculateCenteredX(quitTexture.getWidth());
-    trComp.position.y += cComp.height + 2 * hoveredOffset;
-    cComp.position = {trComp.position.x - hoveredOffset, trComp.position.y - hoveredOffset};
+    gComp.pos.x = calculateCenteredX(quitTexture.getWidth());
+    gComp.pos.y += cComp.height + 2 * hoveredOffset;
+    cComp.position = {gComp.pos.x - hoveredOffset, gComp.pos.y - hoveredOffset};
     cComp.height = quitTexture.getHeight() + 2 * hoveredOffset;
     cComp.width = quitTexture.getWidth() + 2 * hoveredOffset;
     rComp.texture = &quitTexture;

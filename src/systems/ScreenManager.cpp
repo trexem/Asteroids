@@ -1,10 +1,11 @@
-#include "GUISystem.h"
+#include "ScreenManager.h"
+#include "UpgradeStoreScreen.h"
 
-GUISystem::GUISystem(EntityManager* eM, SDL_Renderer* renderer) 
+ScreenManager::ScreenManager(EntityManager* eM, SDL_Renderer* renderer) 
     : eManager(eM), renderer(renderer) {
 }
 
-GUISystem::~GUISystem() {
+ScreenManager::~ScreenManager() {
     if (overlayScreen) {
         overlayScreen->clearSubscriptions();
         overlayScreen->destroy(eManager);
@@ -15,28 +16,28 @@ GUISystem::~GUISystem() {
     screen = nullptr;
 }
 
-void GUISystem::update() {
+void ScreenManager::update() {
     auto start = std::chrono::high_resolution_clock::now();
     updateState();
     auto end = std::chrono::high_resolution_clock::now();
-    std::cout << "GUISystem updateState time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+    std::cout << "ScreenManager updateState time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
     if (overlayScreen) {
         overlayScreen->update(eManager, renderer);
     }
     start = std::chrono::high_resolution_clock::now();
     screen->update(eManager, renderer);
     end = std::chrono::high_resolution_clock::now();
-    std::cout << "GUISystem screenUpdate time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+    std::cout << "ScreenManager screenUpdate time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 }
 
-void GUISystem::updateState() {
+void ScreenManager::updateState() {
     GameState state = GameStateManager::instance().getState();
     if (state != currentGameState) {    
         changeScreen(state);
     }
 }
 
-void GUISystem::changeScreen(GameState newState) {
+void ScreenManager::changeScreen(GameState newState) {
     if ((newState == GameState::LevelUp || newState == GameState::Paused)) {
         // Only add overlay
         if (!overlayScreen || newState != currentOverlayState) {
@@ -79,6 +80,9 @@ void GUISystem::changeScreen(GameState newState) {
                     break;
                 case GameState::Playing:
                     screen = std::make_shared<PlayingScreen>(eManager);
+                    break;
+                case GameState::UpgradeStore:
+                    screen = std::make_shared<UpgradeStoreScreen>(eManager, renderer);
                     break;
                 case GameState::GameOver:
                     screen = std::make_shared<GameOverScreen>(eManager);

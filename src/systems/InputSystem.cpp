@@ -1,4 +1,10 @@
+#include "ClickMessage.h"
+#include "FPair.h"
+#include "GameStateManager.h"
 #include "InputSystem.h"
+#include "KeyboardMessage.h"
+#include "MouseMotionMessage.h"
+#include "MessageManager.h"
 
 void InputSystem::update() {
     while (SDL_PollEvent(&e)) {
@@ -21,9 +27,11 @@ void InputSystem::update() {
             MessageManager::instance().sendMessage(msg);
             break;
         }
+        case SDL_EVENT_MOUSE_BUTTON_UP:
         case SDL_EVENT_MOUSE_BUTTON_DOWN: {
+            bool isDown = e.type == SDL_EVENT_MOUSE_BUTTON_DOWN;
             FPair mousePos(e.button.x, e.button.y);
-            clickHandler.handleClick(mousePos, e.button.button, e.button.clicks);
+            clickHandler.handleClick(mousePos, isDown, e.button.button);
             break;
         }
         default:

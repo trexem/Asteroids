@@ -21,6 +21,7 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	orbitSystem = std::make_unique<OrbitSystem>(&entityManager);
 	followSystem = std::make_unique<FollowSystem>();
 	healthSystem = std::make_unique<HealthSystem>();
+	guiInteractionSystem = std::make_unique<GUIInteractionSystem>(&entityManager);
 }
 
 Game::~Game() {
@@ -39,7 +40,7 @@ Game::~Game() {
 
 	// MessageManager::instance().cleanup();
 	
-	guiSystem.reset();
+	screenManager.reset();
     std::cout << "GUI System destroyed\n";
 	playerSystem.reset();
 	std::cout << "Player System destroyed\n";
@@ -88,7 +89,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 				std::cout << "Renderer could not be created! SDL Error: " << SDL_GetError() << '\n';
 				success = false;
 			} else {
-				guiSystem = std::make_unique<GUISystem>(&entityManager, renderSystem->getRenderer());
+				screenManager = std::make_unique<ScreenManager>(&entityManager, renderSystem->getRenderer());
 				pickupsSystem = std::make_unique<PickupsSystem>(&entityManager, renderSystem->getRenderer());
 				abilitySystem = std::make_unique<AbilitySystem>(&entityManager, renderSystem->getRenderer());
 				bgSystem = std::make_unique<BackgroundSystem>(entityManager, renderSystem->getRenderer());
@@ -153,7 +154,7 @@ void Game::restart() {
 	entityManager.clearGameEntities();
 	GameSessionManager::instance().reset();
 	counted_frames = 0;
-	createShip(ShipType::TANK);
+	createShip(ShipType::FREE_MOVE);
 	asteroidSystem->restart(&entityManager);
 	asteroidSystem->generateAsteroids(&entityManager, 0.0);
 	GameStateManager::instance().setState(GameState::Playing);
@@ -235,9 +236,9 @@ void Game::gameLoop() {
 		}
 		//GUI
 		start = std::chrono::high_resolution_clock::now();
-		guiSystem->update();
+		screenManager->update();
 		end = std::chrono::high_resolution_clock::now();
-		std::cout << "guiSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+		std::cout << "ScreenManager time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 		if (GameStateManager::instance().getState() == GameState::Quit) break;
 		//restart step 
 		step_timer.start();
@@ -295,7 +296,7 @@ void Game::createShip(ShipType shipType) {
 	shipStats.rotationSpeed = SHIP_ROT_SPEED;
 	shipStats.fireSpeed = SHIP_SHOT_DELAY;
 	// shipStats.collectionRadius = SHIP_BASE_RADIUS;
-	shipStats.collectionRadius = 200.0f;
+	shipStats.collectionRadius = 0;
 	entityManager.setComponentData<StatsComponent>(ship, shipStats);
 	// Physics
 	PhysicsComponent shipPhys;
@@ -304,20 +305,20 @@ void Game::createShip(ShipType shipType) {
 	// Player
 	PlayerComponent shipPlayer;
 	shipPlayer.type = shipType;
-	shipPlayer.ownedPassives[static_cast<size_t>(PassiveAbilities::PickupRadius)] = true;
-	shipPlayer.passiveLevels[static_cast<size_t>(PassiveAbilities::PickupRadius)] = 8;
+	// shipPlayer.ownedPassives[static_cast<size_t>(PassiveAbilities::PickupRadius)] = true;
+	// shipPlayer.passiveLevels[static_cast<size_t>(PassiveAbilities::PickupRadius)] = 8;
 	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::LaserGun)] = true;
 	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::LaserGun)] = 0;
-	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::GravitySaws)] = true;
-	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::GravitySaws)] = 1;
-	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Rocket)] = true;
-	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Rocket)] = 9;
-	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Laser)] = true;
-	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Laser)] = 9;
-	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Explosives)] = true;
-	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Explosives)] = 9;
-	shipPlayer.ownedWeaponsCount = 3;
-	shipPlayer.currentXp = 100;
+	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::GravitySaws)] = true;
+	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::GravitySaws)] = 1;
+	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Rocket)] = true;
+	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Rocket)] = 9;
+	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Laser)] = true;
+	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Laser)] = 9;
+	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Explosives)] = true;
+	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Explosives)] = 9;
+	shipPlayer.ownedWeaponsCount = 1;
+	// shipPlayer.currentXp = 100;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
 	// Movement
 	MovementComponent shipMovement;

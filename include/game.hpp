@@ -26,7 +26,7 @@ const uint32_t MAX_ENTITIES = 5000;
 #include "GameStateManager.h"
 
 //Forward declaring systems
-class GUISystem;
+class ScreenManager;
 class PlayerSystem;
 class InputSystem;
 class RenderSystem;
@@ -43,6 +43,7 @@ class OrbitSystem;
 class FollowSystem;
 class HealthSystem;
 class BackgroundSystem;
+class GUIInteractionSystem;
 
 class Game {
 public:
@@ -67,7 +68,7 @@ private:
 	Texture g_particle_shimmer_texture;
 	Window m_window;
 	std::unique_ptr<InputSystem> inputSystem;
-	std::unique_ptr<GUISystem> guiSystem;
+	std::unique_ptr<ScreenManager> screenManager;
 	std::unique_ptr<PlayerSystem> playerSystem;
 	std::unique_ptr<PhysicsSystem> physicsSystem;
 	std::unique_ptr<MovementSystem> movementSystem;
@@ -83,6 +84,7 @@ private:
 	std::unique_ptr<FollowSystem> followSystem;
 	std::unique_ptr<HealthSystem> healthSystem;
 	std::unique_ptr<BackgroundSystem> bgSystem;
+	std::unique_ptr<GUIInteractionSystem> guiInteractionSystem;
 	Camera camera;
 	Uint32 last_tick = 0, tick = 0;
 	SDL_Event e; //event to catch keypresses

@@ -2,6 +2,7 @@
 
 #include <array>
 #include <bitset>
+#include <functional>
 #include <unordered_map>
 
 #include "abilitiesText.h"
@@ -38,6 +39,12 @@ enum class ComponentType {
     Orbit,
     Follow,
     Background,
+    Label,
+    Button,
+    Slider,
+    Container,
+    GUIState,
+    ClickCallback,
 
     Count
 };
@@ -55,6 +62,10 @@ enum MoveState {
 
 enum class Shape {
     Rectangle, Circle
+};
+
+enum class GUIState {
+    Idle, Hovered, Pressed, Clicked
 };
 
 struct TransformComponent {
@@ -175,8 +186,9 @@ struct AnimationComponent {
 };
 
 struct GUIComponent {
-    bool clickable {false};
-    bool hoverable {false};   
+    FPair pos;
+    FPair size;
+    uint32_t parent = 0; 
 };
 
 struct LifeTimeComponent {
@@ -202,6 +214,33 @@ struct BackgroundComponent {
     float parallaxFactor = 0.5;
 
     BackgroundComponent(float f) : parallaxFactor(f) {}
+};
+
+struct LabelComponent { 
+    std::string text {""};
+};
+
+struct ButtonComponent {
+    std::string label {""};
+    bool disabled{false};
+};
+
+struct SliderComponent {
+    float value{0};
+    float min{0};
+    float max{0};
+};
+
+struct ContainerComponent {
+    bool scrollable{false};
+};
+
+struct GUIStateComponent {
+    GUIState state;
+};
+
+struct ClickCallbackComponent {
+    std::function<void(uint32_t)> onClick;
 };
 
 std::vector<AbilityChoice> getRandomAbilityChoices(const PlayerComponent& player);

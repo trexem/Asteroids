@@ -11,6 +11,7 @@ enum class GameState {
     Settings,
     GameOver,
     Restart,
+    UpgradeStore,
     Quit
 };
 

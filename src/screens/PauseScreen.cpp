@@ -1,7 +1,7 @@
 #include "PauseScreen.h"
 
 void PauseScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
-
+    
 }
 
 void PauseScreen::destroy(EntityManager* eManager) {

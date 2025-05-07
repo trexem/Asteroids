@@ -49,10 +49,10 @@ void LevelUpScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
             eManager->addComponent(id, ComponentType::Render);
             eManager->addComponent(id, ComponentType::Collision);
             eManager->addComponent(id, ComponentType::GUI);
-            trComp.position = pos - 2;
+            guiComp.pos = pos - 2;
             // std::cout << "containerId: " << id << " with pos: " << trComp.position.x <<
             // ", " << trComp.position.y << std::endl;
-            colComp.position = trComp.position - hoveredOffset;
+            colComp.position = guiComp.pos - hoveredOffset;
             colComp.height = container1.getHeight() + 2 * hoveredOffset;
             colComp.width = container1.getWidth() + 2 * hoveredOffset;
             textureComp.texture = i == 0 ? &container1 : i == 1 ? &container2 : &container3;

@@ -2,15 +2,11 @@
 
 #include <iostream>
 
-#include "AbilityMessage.h"
-#include "EntityManager.h"
-#include "PickupPickedMessage.h"
-#include "GameStateManager.h"
-#include "GameStatsManager.h"
-#include "KeyboardMessage.h"
-#include "LevelUpMessage.h"
-#include "MessageManager.h"
 #include "System.h"
+
+class KeyboardMessage;
+class PickupPickedMessage;
+class LevelUpMessage;
 
 class PlayerSystem : public System {
 public:
