@@ -44,6 +44,7 @@ class FollowSystem;
 class HealthSystem;
 class BackgroundSystem;
 class GUIInteractionSystem;
+class AudioSystem;
 
 class Game {
 public:
@@ -85,6 +86,7 @@ private:
 	std::unique_ptr<HealthSystem> healthSystem;
 	std::unique_ptr<BackgroundSystem> bgSystem;
 	std::unique_ptr<GUIInteractionSystem> guiInteractionSystem;
+	std::unique_ptr<AudioSystem> audioSystem;
 	Camera camera;
 	Uint32 last_tick = 0, tick = 0;
 	SDL_Event e; //event to catch keypresses

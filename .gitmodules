@@ -7,3 +7,6 @@
 [submodule "vendored/sdl_image"]
 	path = vendored/sdl_image
 	url = https://github.com/libsdl-org/SDL_image.git
+[submodule "vendored/sdl_mixer"]
+	path = vendored/sdl_mixer
+	url = https://github.com/libsdl-org/SDL_mixer

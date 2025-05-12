@@ -3,6 +3,8 @@
 #include "Systems.h"
 
 #include <iostream>
+#include <SDL3/SDL_init.h>
+#include <SDL3_mixer/SDL_mixer.h>
 
 Game::Game() : entityManager(MAX_ENTITIES) {
 	quit = false;
@@ -74,7 +76,7 @@ Game::~Game() {
 
 bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_height, Uint32 flags) {
 	bool success = true;
-	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS)) {
+	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO)) {
 		std::cout << "SDL could not initialize! SDL_ERROR: " << SDL_GetError() << '\n';
 		success = false;
 	} else {
@@ -102,6 +104,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y, int t_width, int t_
 				}
 			}
 		}
+		audioSystem = std::make_unique<AudioSystem>();
 	}
 	return success;
 }
@@ -234,6 +237,8 @@ void Game::gameLoop() {
 		if (GameStateManager::instance().getState() == GameState::Restart) {
 			restart();
 		}
+		//Audio
+		audioSystem->update();
 		//GUI
 		start = std::chrono::high_resolution_clock::now();
 		screenManager->update();

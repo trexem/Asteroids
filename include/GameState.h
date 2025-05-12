@@ -23,6 +23,7 @@ inline const std::unordered_map<GameState, std::string> GameStateNames = {
     {GameState::Settings,       "Settings"},
     {GameState::GameOver,       "GameOver"},
     {GameState::UpgradeStore,   "UpgradeStore"},
+    {GameState::Restart,        "Restart"},
     {GameState::Quit,           "Quit"}
 };
 

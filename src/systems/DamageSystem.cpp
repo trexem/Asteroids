@@ -85,7 +85,7 @@ void DamageSystem::applyDamage(const DamageContext& ctx) {
     healthComp.health -= ctx.damage;
     eManager->setComponentData(ctx.target, healthComp);
     entitiesDamageCooldown[ctx.target][ctx.source] = ctx.cooldownDuration;
-    std::cout << "applying damage for target: " << ctx.targetType << " from source: " << ctx.sourceType << std::endl;
+    // std::cout << "applying damage for target: " << ctx.targetType << " from source: " << ctx.sourceType << std::endl;
     if (healthComp.health <= 0) {
         if (ctx.targetType & EntityType::Asteroid) {
             MessageManager::instance().sendMessage(
