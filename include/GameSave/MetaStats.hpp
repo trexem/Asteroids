@@ -23,18 +23,32 @@ enum class UpgradeType {
     UpgradesCount
 };
 
-constexpr float upgradesValues[static_cast<size_t>(UpgradeType::UpgradesCount)][10] {
+constexpr float upgradesValues[static_cast<size_t>(UpgradeType::UpgradesCount)][11] {
     {}, //Speed
     {}, //Damage
     {}, //Fire rate
     {}, //Projectile Count
-    { 0.0f, 0.025f, 0.05f,   0.1f, 0.15f,  0.3f,  0.5f,  1.0f,  1.5f,   2.5f}, //Experience
-    { 1.0f,   2.0f,  3.0f,   4.0f,  5.0f,  6.0f,  7.0f,  8.0f,  9.0f,  10.0f}, //GoldProb
-    { 0.0f, 0.025f, 0.05f, 0.075f,  0.1f, 0.13f, 0.16f,  0.2f, 0.25f,   0.5f}, //GoldValue
+    { 0.0f, 0.025f, 0.05f,   0.1f, 0.15f,  0.3f,  0.5f,  1.0f,  1.5f,   2.5f,  5.0f}, //Experience
+    { 1.0f,   2.0f,  3.0f,   4.0f,  5.0f,  6.0f,  7.0f,  8.0f,  9.0f,  10.0f, 15.0f}, //GoldProb
+    { 0.0f, 0.025f, 0.05f,   0.1f, 0.15f,  0.3f,  0.5f,  1.0f,  1.5f,   2.5f,  5.0f}, //GoldValue
     {}, //Collection Radius
     {}, //Health Regen
     {}, //Max Health
     {}, //Armor
+};
+
+constexpr int upgradesMaxLevel[static_cast<size_t>(UpgradeType::UpgradesCount)] {
+    10,
+    10,
+    5,
+    3,
+    10,
+    10,
+    10,
+    5,
+    10,
+    10,
+    10,
 };
 
 constexpr int upgradesCost[static_cast<size_t>(UpgradeType::UpgradesCount)][10] {

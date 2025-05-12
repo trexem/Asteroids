@@ -25,6 +25,8 @@ void PickupsSystem::handlePickupsSpawnMessage(std::shared_ptr<PickupsSpawnMessag
         renderComp.texture = &goldTexture;
         int lvl = GameStatsManager::instance().getUpgradeLevel(UpgradeType::GoldValue);
         pickComponent.value *= (1.0f + upgradesValues[static_cast<size_t>(UpgradeType::GoldValue)][lvl]);
+        std::cout << "lvl and gold value: " << lvl << ": " << pickComponent.value << std::endl;
+        std::cout << "upgradesValues: " << upgradesValues[static_cast<size_t>(UpgradeType::GoldValue)][lvl] << std::endl;
     }
     colComp.height = renderComp.texture->getHeight();
     colComp.width = renderComp.texture->getWidth();

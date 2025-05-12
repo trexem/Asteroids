@@ -16,13 +16,14 @@ enum class GameState {
 };
 
 inline const std::unordered_map<GameState, std::string> GameStateNames = {
-    {GameState::MainMenu,   "MainMenu"},
-    {GameState::Playing,    "Playing"},
-    {GameState::LevelUp,    "LevelUp"},
-    {GameState::Paused,     "Paused"},
-    {GameState::Settings,   "Settings"},
-    {GameState::GameOver,   "GameOver"},
-    {GameState::Quit,       "Quit"}
+    {GameState::MainMenu,       "MainMenu"},
+    {GameState::Playing,        "Playing"},
+    {GameState::LevelUp,        "LevelUp"},
+    {GameState::Paused,         "Paused"},
+    {GameState::Settings,       "Settings"},
+    {GameState::GameOver,       "GameOver"},
+    {GameState::UpgradeStore,   "UpgradeStore"},
+    {GameState::Quit,           "Quit"}
 };
 
 inline std::string getGameStateName(GameState type) {

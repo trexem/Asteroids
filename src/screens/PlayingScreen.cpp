@@ -300,8 +300,8 @@ void PlayingScreen::drawCurrentHealth(SDL_Renderer* renderer, const float& curre
         SDL_RenderFillRect(renderer, &rect);
         SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
         SDL_SetRenderTarget(renderer, NULL);
-        std::cout << "Current health: " << currentHealth << std::endl;
-        std::cout << "Draw health with rect: " << rect.x << ", " << rect.y << ", " << rect.w << ", " << rect.h << std::endl;
+        // std::cout << "Current health: " << currentHealth << std::endl;
+        // std::cout << "Draw health with rect: " << rect.x << ", " << rect.y << ", " << rect.w << ", " << rect.h << std::endl;
         previousHealth = currentHealth;
     }
 }

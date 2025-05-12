@@ -28,7 +28,7 @@ uint32_t EntityManager::createEntity() {
         }
         entities.push_back(newEntityID);
         entityCount++;
-        std::cout << "Entity created: " << newEntityID << std::endl;
+        // std::cout << "Entity created: " << newEntityID << std::endl;
         for (size_t i = 0; i < static_cast<size_t>(ComponentType::Count); ++i) {
             if (entityComponentMasks[newEntityID][i]) {
                 // If this prints something bad is happening. entityComponentMasks for this newEntity should be empty

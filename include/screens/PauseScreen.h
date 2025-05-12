@@ -1,14 +1,14 @@
 #pragma once
 
+#include "screens/Components/Button.h"
 #include "Screen.h"
 #include "texture.hpp"
 
 class PauseScreen : public Screen {
-    Texture playTexture = nullptr;
-    Texture settingsTexture = nullptr;
-    Texture quitTexture = nullptr;
-
-    
+    std::unique_ptr<Button> continueButton;
+    std::unique_ptr<Button> settingsButton;
+    std::unique_ptr<Button> mainMenuButton;
+    std::unique_ptr<Button> exitButton;
 
     void handleMouseHover(std::shared_ptr<MouseMotionMessage> msg);
     void handleMouseClick(std::shared_ptr<ClickMessage> msg);

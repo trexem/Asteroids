@@ -85,7 +85,8 @@ void RenderSystem::render(EntityManager& eM) {
     }
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::GUI)) {
         if (eM.isMarkedForDestruction(eID)) continue;
-        RenderComponent rComp = eM.getComponentData<RenderComponent>(eID);
+        RenderComponent* rComp = eM.getComponentDataPtr<RenderComponent>(eID);
+        if (rComp == nullptr) continue;
         FPair pos {0.0f};
         double rot = 0;
         if (! eM.hasComponent<GUIComponent>(eID)) {
@@ -94,16 +95,21 @@ void RenderSystem::render(EntityManager& eM) {
             rot = trComp.rotDegrees;
         } else {
             GUIComponent* guiComp = eM.getComponentDataPtr<GUIComponent>(eID);
-            pos = guiComp->pos;
+            if (guiComp->parent != 0) {
+                auto parentGui = eM.getComponentDataPtr<GUIComponent>(guiComp->parent);
+                pos = parentGui->pos + guiComp->pos;
+            } else {
+                pos = guiComp->pos;
+            }
         }
-        rComp.texture->renderEx(
+        rComp->texture->renderEx(
             static_cast<int>(pos.x),
             static_cast<int>(pos.y),
             nullptr,
             static_cast<int>(rot),
             nullptr,
             SDL_FLIP_NONE,
-            rComp.size
+            rComp->size
         );
     }
     renderer->render();

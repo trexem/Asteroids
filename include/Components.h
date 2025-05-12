@@ -11,6 +11,7 @@
 #include "FPair.h"
 #include "MetaStats.hpp"
 #include "texture.hpp"
+#include "GUIState.h"
 
 const int SHIP_TOP_SPEED = 500; //TOP speed of ship, must be lower than the speed of shot
 const int SHIP_MIN_SPEED = -200; //Min speed in reverse (lower than forward speed)
@@ -64,10 +65,6 @@ enum class Shape {
     Rectangle, Circle
 };
 
-enum class GUIState {
-    Idle, Hovered, Pressed, Clicked
-};
-
 struct TransformComponent {
     FPair position {0.0f, 0.0f};
     double rotDegrees {0.0f};
@@ -99,7 +96,7 @@ struct CollisionComponent {
 
 struct RenderComponent {
     Texture* texture{nullptr};
-    float size{1.0f};
+    float size{1.0f}; //Percentage, 1 is original size
     bool isStretched {false};
     FPair exactSize{1.0f, 1.0f};
     int visibility{255};

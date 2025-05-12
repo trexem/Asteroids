@@ -176,53 +176,53 @@ void Game::gameLoop() {
 			start = std::chrono::high_resolution_clock::now();
 			playerSystem->update(timeStep);
 			end = std::chrono::high_resolution_clock::now();
-			std::cout << "playerSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			// std::cout << "playerSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			start = std::chrono::high_resolution_clock::now();
 			physicsSystem->update(&entityManager, timeStep);
 			end = std::chrono::high_resolution_clock::now();
-			std::cout << "physicsSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			// std::cout << "physicsSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			start = std::chrono::high_resolution_clock::now();
 			movementSystem->update(&entityManager, timeStep);
 			end = std::chrono::high_resolution_clock::now();
-			std::cout << "movementSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			// std::cout << "movementSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			start = std::chrono::high_resolution_clock::now();
 			orbitSystem->update(timeStep);
 			end = std::chrono::high_resolution_clock::now();
-			std::cout << "orbitSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			// std::cout << "orbitSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			start = std::chrono::high_resolution_clock::now();
 			followSystem->update(&entityManager);
 			end = std::chrono::high_resolution_clock::now();
-			std::cout << "followSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			// std::cout << "followSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			//Update LifeTime System
 			start = std::chrono::high_resolution_clock::now();
 			lifeTimeSystem->update(timeStep);
 			end = std::chrono::high_resolution_clock::now();
-			std::cout << "LifeTimeSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			// std::cout << "LifeTimeSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			//Check collisions
 			start = std::chrono::high_resolution_clock::now();
 			collisionSystem->update(&entityManager);
 			end = std::chrono::high_resolution_clock::now();
-			std::cout << "collisionSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			// std::cout << "collisionSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			//update asteroids
 			start = std::chrono::high_resolution_clock::now();
 			asteroidSystem->update(&entityManager, timeStep);
 			end = std::chrono::high_resolution_clock::now();
-			std::cout << "asteroidSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			// std::cout << "asteroidSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			//Update damageSystem
 			start = std::chrono::high_resolution_clock::now();
 			damageSystem->update(timeStep);
 			end = std::chrono::high_resolution_clock::now();
-			std::cout << "damageSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			// std::cout << "damageSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			//Update abilities
 			start = std::chrono::high_resolution_clock::now();
 			abilitySystem->update();
 			end = std::chrono::high_resolution_clock::now();
-			std::cout << "abilitySystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			// std::cout << "abilitySystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			//Update Pickups
 			start = std::chrono::high_resolution_clock::now();
 			pickupsSystem->update();
 			end = std::chrono::high_resolution_clock::now();
-			std::cout << "pickupsSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+			// std::cout << "pickupsSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 			healthSystem->update(&entityManager, timeStep);
 			bgSystem->update(entityManager);
 		}
@@ -230,7 +230,7 @@ void Game::gameLoop() {
 		start = std::chrono::high_resolution_clock::now();
 		animationSystem->update(timeStep);
 		end = std::chrono::high_resolution_clock::now();
-		std::cout << "animationSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+		// std::cout << "animationSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 		if (GameStateManager::instance().getState() == GameState::Restart) {
 			restart();
 		}
@@ -238,7 +238,7 @@ void Game::gameLoop() {
 		start = std::chrono::high_resolution_clock::now();
 		screenManager->update();
 		end = std::chrono::high_resolution_clock::now();
-		std::cout << "ScreenManager time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+		// std::cout << "ScreenManager time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 		if (GameStateManager::instance().getState() == GameState::Quit) break;
 		//restart step 
 		step_timer.start();
@@ -259,9 +259,9 @@ void Game::gameLoop() {
 			SDL_Delay(SCREEN_TICKS_PER_FRAME - frame_ticks);
 		}
 		end = std::chrono::high_resolution_clock::now();
-		std::cout << "Waiting time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+		// std::cout << "Waiting time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 		auto loopTimeEnd = std::chrono::high_resolution_clock::now();
-		std::cout << "*#*# LOOP time: " << std::chrono::duration_cast<std::chrono::microseconds>(loopTimeEnd - loopTimeStart).count() << " us #*#*\n";
+		// std::cout << "*#*# LOOP time: " << std::chrono::duration_cast<std::chrono::microseconds>(loopTimeEnd - loopTimeStart).count() << " us #*#*\n";
 	}
 }
 

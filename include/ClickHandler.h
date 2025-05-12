@@ -42,6 +42,8 @@ public:
                 lastClickTime = now;
                 lastClickPos = pos;
                 lastClickButton = button;
+                auto msg = std::make_shared<ClickMessage>(pos, true, button, 1);
+                MessageManager::instance().sendMessage(msg);
             }
         } else if (!isDown && wasDown && button == lastClickButton) {
             // Single click completed

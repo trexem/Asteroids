@@ -35,25 +35,15 @@ void UpgradeStoreScreen::create(EntityManager* eManager, SDL_Renderer* renderer)
         pos = {i % 2 ? SCREEN_CENTER.x + 240 : SCREEN_CENTER.x + 20,
                    (i / 2) * size.y + 40};
         std::string label = to_string(type);
-        upgradeButtons.push_back(std::make_shared<Button>(
-            eManager, label, pos, size, &idleButtonTexture, renderer));
-        int level = GameStatsManager::instance().getUpgradeLevel(type);
-        callback.onClick = [&, type, level](uint32_t entity) {
-            const int cost = upgradesCost[static_cast<size_t>(type)][level];
-            if (GameStatsManager::instance().spendCoins(cost)) {
-                GameStatsManager::instance().getStats().upgrades[type]++;
-                GameStatsManager::instance().save("data/stats.json");
-            }
-        };
-        eManager->addComponent(upgradeButtons[i].get()->id, ComponentType::ClickCallback);
-        eManager->setComponentData<ClickCallbackComponent>(upgradeButtons[i].get()->id, callback);
+        upgradeButtons.push_back(std::make_shared<UpgradeButton>(
+            eManager, label, pos, size, &idleButtonTexture, renderer, type));
     }
 }
 
 void UpgradeStoreScreen::destroy(EntityManager* eManager) {
-    backButton.get()->destroy(eManager);
+    backButton->destroy(eManager);
     for (auto b : upgradeButtons) {
-        b.get()->destroy(eManager);
+        b->destroy(eManager);
     }
 }
 
@@ -67,13 +57,15 @@ void UpgradeStoreScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
 
 void UpgradeStoreScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
     for (auto b : upgradeButtons) {
-        GUIState state = eManager->getComponentData<GUIStateComponent>(b.get()->id).state;
-        RenderComponent render = eManager->getComponentData<RenderComponent>(b.get()->id);
+        b->updateCost(eManager);
+        b->updateState(eManager);
+        GUIState state = eManager->getComponentData<GUIStateComponent>(b->id).state;
+        RenderComponent render = eManager->getComponentData<RenderComponent>(b->id);
         if (state == GUIState::Pressed) {
             render.texture = &pressedButtonTexture;
-        } else if (state == GUIState::Idle) {
+        } else if (state == GUIState::Idle || state == GUIState::Hovered) {
             render.texture = &idleButtonTexture;
         }
-        eManager->setComponentData(b.get()->id, render);
+        eManager->setComponentData(b->id, render);
     }
 }

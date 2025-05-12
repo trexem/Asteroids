@@ -21,9 +21,9 @@ enum class WeaponAbilities : size_t {
 constexpr float abilitiesCooldowns[static_cast<size_t>(WeaponAbilities::WeaponAbilitiesCount)][10] {
     //Levels 0     1     2       3      4      5      6      7      8      9
     {   0.50f, 0.50f, 0.50f, 0.50f, 0.50f, 0.45f, 0.45f, 0.45f, 0.45f, 0.35f},  //LaserGun
-    {   1.50f, 1.50f, 1.40f, 1.40f, 1.40f, 1.30f, 1.30f, 1.20f, 1.20f, 1.00f},  //Rocket
-    {   3.25f, 3.25f, 3.20f, 3.20f, 3.20f, 3.10f, 3.10f, 3.10f, 3.10f, 3.0f},  //Laser
-    {   1.25f, 1.25f, 1.20f, 1.20f, 1.20f, 1.10f, 1.10f, 1.10f, 1.10f, 1.00f},  //Explosives
+    {   3.0f,  3.0f,   2.5f,  2.5f,  2.5f,  2.0f,  2.0f,  1.5f, 1.25f, 1.00f},  //Rocket
+    {   3.25f, 3.25f, 3.20f, 3.20f, 3.20f, 3.10f, 3.10f, 3.10f, 3.10f,  3.0f},  //Laser
+    {   3.0f,  3.0f,   2.5f,  2.5f,  2.5f,  2.0f,  2.0f,  1.5f, 1.25f, 1.00f},  //Explosives
     {   3.25f, 3.25f, 3.20f, 3.20f, 3.20f, 3.10f, 3.10f, 3.10f, 3.10f, 3.05f},  //GravitySaws
 };
 

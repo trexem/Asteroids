@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 
-#include "screens/Components/Button.h"
+#include "screens/Components/UpgradeButton.h"
 #include "Screen.h"
 
 class Texture;
@@ -13,7 +13,7 @@ class UpgradeStoreScreen : public Screen {
     Texture pressedButtonTexture;
     Texture idleButtonTexture;
     Texture backButtonTexture;
-    std::vector<std::shared_ptr<Button>> upgradeButtons;
+    std::vector<std::shared_ptr<UpgradeButton>> upgradeButtons;
     std::shared_ptr<Button> backButton;
 
     void handleMouseHover(std::shared_ptr<MouseMotionMessage> msg);

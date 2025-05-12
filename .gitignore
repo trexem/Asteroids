@@ -37,6 +37,7 @@ release/*
 /.vscode/*
 /.vs/*
 /data/stats.json
+/data/readable.json
 /Asteroids/x64
 out/*
 /x64/Debug

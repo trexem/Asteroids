@@ -20,14 +20,14 @@ void ScreenManager::update() {
     auto start = std::chrono::high_resolution_clock::now();
     updateState();
     auto end = std::chrono::high_resolution_clock::now();
-    std::cout << "ScreenManager updateState time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+    // std::cout << "ScreenManager updateState time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
     if (overlayScreen) {
         overlayScreen->update(eManager, renderer);
     }
     start = std::chrono::high_resolution_clock::now();
     screen->update(eManager, renderer);
     end = std::chrono::high_resolution_clock::now();
-    std::cout << "ScreenManager screenUpdate time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+    // std::cout << "ScreenManager screenUpdate time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 }
 
 void ScreenManager::updateState() {

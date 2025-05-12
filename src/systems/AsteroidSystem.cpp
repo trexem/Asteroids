@@ -32,7 +32,7 @@ void AsteroidSystem::generateSingleAsteroid(EntityManager* eManager, int lvl) {
 	if (asteroids.size() >= MAX_ASTEROIDS) return;
     // std::cout << "Generating Asteroids: ";
 	uint32_t asteroid = eManager->createEntity();
-	std::cout <<" with eID: " << asteroid << std::endl;
+	// std::cout <<" with eID: " << asteroid << std::endl;
 	eManager->addComponent(asteroid, ComponentType::Render);
 	eManager->addComponent(asteroid, ComponentType::Physics);
 	eManager->addComponent(asteroid, ComponentType::Collision);
