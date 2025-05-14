@@ -28,7 +28,9 @@ public:
     FPair operator-(const FPair& rhs) const { return FPair(x - rhs.x, y - rhs.y); }
     FPair operator-(float s) const { return FPair(x - s, y - s); }
     FPair operator*(float s) const { return FPair(x * s, y * s); }
+    FPair operator*(const FPair& rhs) const { return FPair(x * rhs.x, y * rhs.y); }
     FPair operator/(float s) const { return FPair(x / s, y / s); }
+    FPair operator/(const FPair& rhs) const { return FPair(x / rhs.x, y / rhs.y); }
 
     // Comparison operators
     bool operator==(const FPair& rhs) const { return x == rhs.x && y == rhs.y; }

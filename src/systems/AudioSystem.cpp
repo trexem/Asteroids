@@ -67,7 +67,7 @@ void AudioSystem::update() {
     }
 }
 
-void AudioSystem::setFxVolume(int volume) {
+void AudioSystem::setSfxVolume(int volume) {
     for (auto c : sounds) {
         Mix_VolumeChunk(c.second, volume);
     }

@@ -68,4 +68,5 @@ void UpgradeStoreScreen::update(EntityManager* eManager, SDL_Renderer* renderer)
         }
         eManager->setComponentData(b->id, render);
     }
+    backButton->updateState(eManager);
 }

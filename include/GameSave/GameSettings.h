@@ -16,7 +16,7 @@ namespace GameSave {
 
         int masterVolume = 128;
         int musicVolume = 128;
-        float sfxVolume = 128;
+        int sfxVolume = 128;
 
         json toJson() const {
             return {
