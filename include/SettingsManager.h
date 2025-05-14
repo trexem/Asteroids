@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameSettings.h"
+#include "VolumeSource.h"
 #include "FPair.h"
 
 using GameSettings = GameSave::GameSettings;
@@ -20,8 +21,13 @@ public:
     FPair scalePos(FPair basePos, FPair prevScreenSize) const;
     void nextResolution();
     void backResolution();
+    void increaseVolume(const VolumeSource& source);
+    void decreaseVolume(const VolumeSource& source);
+    int getVolume(const VolumeSource& source);
     GameSettings& get();
     std::string getCurrentResolutionName() const;
+    std::map<std::string, FPair>::iterator findResolutionBySize(const FPair& size);
+    void updateResolution();
 private:
     GameSettings settings;
     SettingsManager();

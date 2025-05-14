@@ -38,6 +38,7 @@ release/*
 /.vs/*
 /data/stats.json
 /data/readable.json
+/data/settings.json
 /Asteroids/x64
 out/*
 /x64/Debug

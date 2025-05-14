@@ -64,6 +64,7 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     fullScreenButton = std::make_shared<Button>(eManager, "", pos, size, &checkBoxFalseTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().get().fullscreen = !SettingsManager::instance().get().fullscreen;
+        SettingsManager::instance().updateResolution();
     };
     eManager->addComponent(fullScreenButton->id, ComponentType::ClickCallback);
     eManager->setComponentData(fullScreenButton->id, callback);
@@ -80,6 +81,7 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     vsyncButton = std::make_shared<Button>(eManager, "", pos, size, &checkBoxFalseTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().get().vsync = !SettingsManager::instance().get().vsync;
+        SettingsManager::instance().updateResolution();
     };
     eManager->addComponent(vsyncButton->id, ComponentType::ClickCallback);
     eManager->setComponentData(vsyncButton->id, callback);
@@ -91,21 +93,22 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     size = 75.0f;
     leftMasterVolume = std::make_shared<Button>(eManager, "", pos, size, &leftButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
-        SettingsManager::instance().get().masterVolume--;
+        SettingsManager::instance().decreaseVolume(VolumeSource::MasterVolume);
     };
     eManager->addComponent(leftMasterVolume->id, ComponentType::ClickCallback);
     eManager->setComponentData(leftMasterVolume->id, callback);
     // Label
     pos.x = settings.screenWidth / 2.0f - 200.0f;
     size = 400.0f;
-    masterText = "Master Volume: " + std::to_string(SettingsManager::instance().get().masterVolume);
+    masterText = "Master Volume: " 
+        + std::to_string(SettingsManager::instance().getVolume(VolumeSource::MasterVolume));
     masterLabel = std::make_shared<Label>(eManager, masterText, pos, size, renderer, 0, Fonts::Subtitle);
     // Right Button
     pos.x += 700.0f;
     size = 75.0f;
     rightMasterVolume = std::make_shared<Button>(eManager, "", pos, size, &rightButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
-        SettingsManager::instance().get().masterVolume++;
+        SettingsManager::instance().increaseVolume(VolumeSource::MasterVolume);
     };
     eManager->addComponent(rightMasterVolume->id, ComponentType::ClickCallback);
     eManager->setComponentData(rightMasterVolume->id, callback);
@@ -117,21 +120,22 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     size = 75.0f;
     leftMusicVolume = std::make_shared<Button>(eManager, "", pos, size, &leftButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
-        SettingsManager::instance().get().musicVolume--;
+        SettingsManager::instance().decreaseVolume(VolumeSource::MusicVolume);
     };
     eManager->addComponent(leftMusicVolume->id, ComponentType::ClickCallback);
     eManager->setComponentData(leftMusicVolume->id, callback);
     // Label
     pos.x = settings.screenWidth / 2.0f - 200.0f;
     size = 400.0f;
-    musicText = "Music Volume: " + std::to_string(SettingsManager::instance().get().musicVolume);
+    musicText = "Music Volume: " 
+        + std::to_string(SettingsManager::instance().getVolume(VolumeSource::MusicVolume));
     musicLabel = std::make_shared<Label>(eManager, musicText, pos, size, renderer, 0, Fonts::Subtitle);
     // Right Button
     pos.x += 700.0f;
     size = 75.0f;
     rightMusicVolume = std::make_shared<Button>(eManager, "", pos, size, &rightButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
-        SettingsManager::instance().get().musicVolume++;
+        SettingsManager::instance().increaseVolume(VolumeSource::MusicVolume);
     };
     eManager->addComponent(rightMusicVolume->id, ComponentType::ClickCallback);
     eManager->setComponentData(rightMusicVolume->id, callback);
@@ -143,27 +147,29 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     size = 75.0f;
     leftSfxVolume = std::make_shared<Button>(eManager, "", pos, size, &leftButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
-        SettingsManager::instance().get().sfxVolume--;
+        SettingsManager::instance().decreaseVolume(VolumeSource::SFXVolume);
     };
     eManager->addComponent(leftSfxVolume->id, ComponentType::ClickCallback);
     eManager->setComponentData(leftSfxVolume->id, callback);
     // Label
     pos.x = settings.screenWidth / 2.0f - 200.0f;
     size = 400.0f;
-    sfxText = "SFX Volume: " + std::to_string(SettingsManager::instance().get().sfxVolume);
+    sfxText = "SFX Volume: " 
+        + std::to_string(SettingsManager::instance().getVolume(VolumeSource::SFXVolume));
     sfxLabel = std::make_shared<Label>(eManager, sfxText, pos, size, renderer, 0, Fonts::Subtitle);
     // Right Button
     pos.x += 700.0f;
     size = 75.0f;
     rightSfxVolume = std::make_shared<Button>(eManager, "", pos, size, &rightButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
-        SettingsManager::instance().get().sfxVolume++;
+        SettingsManager::instance().increaseVolume(VolumeSource::SFXVolume);
     };
     eManager->addComponent(rightSfxVolume->id, ComponentType::ClickCallback);
     eManager->setComponentData(rightSfxVolume->id, callback);
 }
 
 void SettingsScreen::destroy(EntityManager* eManager) {
+    SettingsManager::instance().save();
     backButton->destroy(eManager);
     leftResolutionButton->destroy(eManager);
     resolutionLabel->destroy(eManager);
@@ -212,7 +218,8 @@ void SettingsScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
 
     leftMasterVolume->updateState(eManager);
     rightMasterVolume->updateState(eManager);
-    std::string newMasterText = "Master Volume: " + std::to_string(SettingsManager::instance().get().masterVolume);
+    std::string newMasterText = "Master Volume: " + 
+        std::to_string(SettingsManager::instance().getVolume(VolumeSource::MasterVolume));
     if (masterText != newMasterText) {
         masterText = newMasterText;
         masterLabel->setText(masterText);
@@ -220,7 +227,8 @@ void SettingsScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
 
     leftMusicVolume->updateState(eManager);
     rightMusicVolume->updateState(eManager);
-    std::string newMusicText = "Music Volume: " + std::to_string(SettingsManager::instance().get().musicVolume);
+    std::string newMusicText = "Music Volume: " 
+        + std::to_string(SettingsManager::instance().getVolume(VolumeSource::MusicVolume));
     if (musicText != newMusicText) {
         musicText = newMusicText;
         musicLabel->setText(musicText);
@@ -228,7 +236,8 @@ void SettingsScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
 
     leftSfxVolume->updateState(eManager);
     rightSfxVolume->updateState(eManager);
-    std::string newSfxText = "SFX Volume: " + std::to_string(SettingsManager::instance().get().sfxVolume);
+    std::string newSfxText = "SFX Volume: " 
+        + std::to_string(SettingsManager::instance().getVolume(VolumeSource::SFXVolume));
     if (sfxText != newSfxText) {
         sfxText = newSfxText;
         sfxLabel->setText(sfxText);

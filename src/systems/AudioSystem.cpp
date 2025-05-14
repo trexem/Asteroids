@@ -2,6 +2,8 @@
 #include "MessageManager.h"
 #include "ExplodeMessage.h"
 #include "AbilityMessage.h"
+#include "VolumeMessage.h"
+#include "SettingsManager.h"
 
 AudioSystem::AudioSystem() {
     Mix_Init(MIX_INIT_OGG | MIX_INIT_MP3);
@@ -39,6 +41,14 @@ AudioSystem::AudioSystem() {
     MessageManager::instance().subscribe<AbilityMessage>(
         [this](std::shared_ptr<AbilityMessage> msg) { handleAbilityMessage(msg); }
     );
+    MessageManager::instance().subscribe<VolumeMessage>(
+        [this](std::shared_ptr<VolumeMessage> msg) { handleVolumeMessage(msg); }
+    );
+    GameSettings s = SettingsManager::instance().get();
+    masterVolume = s.masterVolume;
+    musicVolume = s.musicVolume;
+    sfxVolume = s.sfxVolume;
+    updateVolumes();
 }
 
 AudioSystem::~AudioSystem() {
@@ -80,4 +90,27 @@ void AudioSystem::setMasterVolume(int volume) {
 
 void AudioSystem::setMusicVolume(int volume) {
     Mix_VolumeMusic(volume);
+}
+
+void AudioSystem::handleVolumeMessage(std::shared_ptr<VolumeMessage> msg) {
+    switch (msg->soruce) {
+    case VolumeSource::MasterVolume:
+        masterVolume = msg->volume;
+        break;
+    case VolumeSource::MusicVolume:
+        musicVolume = msg->volume;
+        break;
+    case VolumeSource::SFXVolume:
+        sfxVolume = msg->volume;
+        break;
+    }
+    updateVolumes();
+}
+
+void AudioSystem::updateVolumes() {
+    int music = static_cast<int>(masterVolume / 10.0 * musicVolume / 10.0 * MIX_MAX_VOLUME);
+    int sfx = static_cast<int>(masterVolume / 10.0 * sfxVolume / 10.0 * MIX_MAX_VOLUME);
+
+    Mix_VolumeMusic(music);
+    Mix_Volume(-1, sfx);
 }

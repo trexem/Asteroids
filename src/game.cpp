@@ -1,6 +1,8 @@
 #include "game.hpp"
 #include "GameSessionManager.h"
 #include "Systems.h"
+#include "MessageManager.h"
+#include "GraphicsSettingsMessage.h"
 
 #include <iostream>
 #include <SDL3/SDL_init.h>
@@ -24,6 +26,10 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	followSystem = std::make_unique<FollowSystem>();
 	healthSystem = std::make_unique<HealthSystem>();
 	guiInteractionSystem = std::make_unique<GUIInteractionSystem>(&entityManager);
+
+	MessageManager::instance().subscribe<GraphicsSettingsMessage>(
+        [this](std::shared_ptr<GraphicsSettingsMessage> msg) { handleGraphicsSettingsMessage(msg); }
+    );
 }
 
 Game::~Game() {
@@ -256,6 +262,10 @@ void Game::gameLoop() {
 		//display in window the render
 		renderSystem->render(entityManager);
 		++counted_frames;
+
+		if (shouldUpdateSettings) {
+			updateGraphicsSettings();
+		}
 		//Wait time to cap FPS at 60
 		int frame_ticks = cap_timer.getTicks();
 		start = std::chrono::high_resolution_clock::now();
@@ -344,4 +354,19 @@ void Game::createShip(ShipType shipType) {
 	//Animation
 	AnimationComponent anim;
 	entityManager.setComponentData<AnimationComponent>(ship, anim);
+}
+
+void Game::handleGraphicsSettingsMessage(std::shared_ptr<GraphicsSettingsMessage> msg) {
+	shouldUpdateSettings = true;
+	graphicsSettings = msg;
+}
+
+void Game::updateGraphicsSettings() {
+	if (graphicsSettings->newSize != graphicsSettings->prevSize) {
+		SDL_SetWindowSize(m_window.getWindow(), graphicsSettings->newSize.x, graphicsSettings->newSize.y);
+	}
+	SDL_SetWindowFullscreen(m_window.getWindow(), graphicsSettings->fullscreen);
+	SDL_SetRenderVSync(renderSystem->getRenderer(), graphicsSettings->vsync ? 1 : SDL_RENDERER_VSYNC_DISABLED);
+	shouldUpdateSettings = false;
+	graphicsSettings.reset();
 }

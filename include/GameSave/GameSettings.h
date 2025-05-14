@@ -14,9 +14,9 @@ namespace GameSave {
         bool fullscreen = false;
         bool vsync = true;
 
-        int masterVolume = 128;
-        int musicVolume = 128;
-        int sfxVolume = 128;
+        int masterVolume = 10;
+        int musicVolume = 10;
+        int sfxVolume = 10;
 
         json toJson() const {
             return {

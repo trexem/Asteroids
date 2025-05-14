@@ -45,6 +45,7 @@ class HealthSystem;
 class BackgroundSystem;
 class GUIInteractionSystem;
 class AudioSystem;
+class GraphicsSettingsMessage;
 
 class Game {
 public:
@@ -87,9 +88,13 @@ private:
 	std::unique_ptr<BackgroundSystem> bgSystem;
 	std::unique_ptr<GUIInteractionSystem> guiInteractionSystem;
 	std::unique_ptr<AudioSystem> audioSystem;
+	bool shouldUpdateSettings;
+	std::shared_ptr<GraphicsSettingsMessage> graphicsSettings;
 	Camera camera;
 	Uint32 last_tick = 0, tick = 0;
 	SDL_Event e; //event to catch keypresses
 
 	void createShip(ShipType shipType);
+	void handleGraphicsSettingsMessage(std::shared_ptr<GraphicsSettingsMessage> msg);
+	void updateGraphicsSettings();
 };
