@@ -1,10 +1,11 @@
 #include "EntityHandle.h"
 #include "GameStateManager.h"
 #include "PauseScreen.h"
+#include "GUI.h"
 
 void PauseScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     // Continue
-    FPair pos {SCREEN_CENTER.x - 250.0f, SCREEN_CENTER.y - 200.0f};
+    FPair pos {GUI::screenCenter.x - 250.0f, GUI::screenCenter.y - 200.0f};
     FPair size {500.0f, 100.0f};
     ClickCallbackComponent callback;
     callback.onClick = [&](uint32_t entity) {

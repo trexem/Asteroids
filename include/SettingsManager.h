@@ -28,6 +28,7 @@ public:
     std::string getCurrentResolutionName() const;
     std::map<std::string, FPair>::iterator findResolutionBySize(const FPair& size);
     void updateResolution();
+    void setWindowSize(const int& w, const int& h);
 private:
     GameSettings settings;
     SettingsManager();

@@ -3,6 +3,7 @@
 #include "texture.hpp"
 #include "SettingsManager.h"
 #include "GameStateManager.h"
+#include "GUI.h"
 
 void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     settings = SettingsManager::instance().get();
@@ -20,8 +21,8 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eManager->setComponentData<ClickCallbackComponent>(backButton->id, callback);
     //** Resolution **
     // Left Button
-    pos.x = settings.screenWidth / 2.0f - 500.0f;
-    pos.y = settings.screenHeight / 2.0f - 300.0f;
+    pos.x = GUI::screenWidth / 2.0f - 500.0f;
+    pos.y = GUI::screenHeight / 2.0f - 300.0f;
     size = 75.0f;
     leftButtonTexture.m_renderer = renderer;
     leftButtonTexture.loadFromFile("data/img/gui/leftButton.bmp");
@@ -32,7 +33,7 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eManager->addComponent(leftResolutionButton->id, ComponentType::ClickCallback);
     eManager->setComponentData(leftResolutionButton->id, callback);
     // Label
-    pos.x = settings.screenWidth / 2.0f - 200.0f;
+    pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
     resolutionText = "Resolution: " + SettingsManager::instance().getCurrentResolutionName();
     resolutionLabel = std::make_shared<Label>(eManager, resolutionText, pos, size, renderer, 0, Fonts::Subtitle);
@@ -51,7 +52,7 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     // ** FullScreen **
     //Label
     pos.y += 150;
-    pos.x = settings.screenWidth / 2.0f - 200.0f;
+    pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
     fullscreenLabel = std::make_shared<Label>(eManager, "Full Screen", pos, size, renderer, 0, Fonts::Subtitle);
     // Button
@@ -72,7 +73,7 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     // ** VSync **
     //Label
     pos.y += 150;
-    pos.x = settings.screenWidth / 2.0f - 200.0f;
+    pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
     vsyncLabel = std::make_shared<Label>(eManager, "VSync", pos, size, renderer, 0, Fonts::Subtitle);
     // Button
@@ -88,7 +89,7 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
 
     //** Master Volume **
     // Left Button
-    pos.x = settings.screenWidth / 2.0f - 500.0f;
+    pos.x = GUI::screenWidth / 2.0f - 500.0f;
     pos.y += 150;
     size = 75.0f;
     leftMasterVolume = std::make_shared<Button>(eManager, "", pos, size, &leftButtonTexture, renderer);
@@ -98,7 +99,7 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eManager->addComponent(leftMasterVolume->id, ComponentType::ClickCallback);
     eManager->setComponentData(leftMasterVolume->id, callback);
     // Label
-    pos.x = settings.screenWidth / 2.0f - 200.0f;
+    pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
     masterText = "Master Volume: " 
         + std::to_string(SettingsManager::instance().getVolume(VolumeSource::MasterVolume));
@@ -115,7 +116,7 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
 
     //** Music Volume **
     // Left Button
-    pos.x = settings.screenWidth / 2.0f - 500.0f;
+    pos.x = GUI::screenWidth / 2.0f - 500.0f;
     pos.y += 150;
     size = 75.0f;
     leftMusicVolume = std::make_shared<Button>(eManager, "", pos, size, &leftButtonTexture, renderer);
@@ -125,7 +126,7 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eManager->addComponent(leftMusicVolume->id, ComponentType::ClickCallback);
     eManager->setComponentData(leftMusicVolume->id, callback);
     // Label
-    pos.x = settings.screenWidth / 2.0f - 200.0f;
+    pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
     musicText = "Music Volume: " 
         + std::to_string(SettingsManager::instance().getVolume(VolumeSource::MusicVolume));
@@ -142,7 +143,7 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
 
     //** SFX Volume **
     // Left Button
-    pos.x = settings.screenWidth / 2.0f - 500.0f;
+    pos.x = GUI::screenWidth / 2.0f - 500.0f;
     pos.y += 150;
     size = 75.0f;
     leftSfxVolume = std::make_shared<Button>(eManager, "", pos, size, &leftButtonTexture, renderer);
@@ -152,7 +153,7 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eManager->addComponent(leftSfxVolume->id, ComponentType::ClickCallback);
     eManager->setComponentData(leftSfxVolume->id, callback);
     // Label
-    pos.x = settings.screenWidth / 2.0f - 200.0f;
+    pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
     sfxText = "SFX Volume: " 
         + std::to_string(SettingsManager::instance().getVolume(VolumeSource::SFXVolume));

@@ -53,7 +53,7 @@ public:
 	Game();
 	~Game();
 
-	bool initialize(const char* t_title, int t_x, int t_y, int t_width, int t_height, Uint32 flags);
+	bool initialize(const char* t_title, int t_x, int t_y);
 	bool loadMedia(void);
 	void start(void);
 	void restart(void);
@@ -88,7 +88,7 @@ private:
 	std::unique_ptr<BackgroundSystem> bgSystem;
 	std::unique_ptr<GUIInteractionSystem> guiInteractionSystem;
 	std::unique_ptr<AudioSystem> audioSystem;
-	bool shouldUpdateSettings;
+	bool shouldUpdateSettings, pendingFullScreenChange;
 	std::shared_ptr<GraphicsSettingsMessage> graphicsSettings;
 	Camera camera;
 	Uint32 last_tick = 0, tick = 0;
@@ -97,4 +97,5 @@ private:
 	void createShip(ShipType shipType);
 	void handleGraphicsSettingsMessage(std::shared_ptr<GraphicsSettingsMessage> msg);
 	void updateGraphicsSettings();
+	void updateFullScreen();
 };

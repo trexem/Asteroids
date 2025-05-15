@@ -5,6 +5,8 @@
 #include "Fonts.h"
 #include "GameStateManager.h"
 #include "GameStatsManager.h"
+#include "GUI.h"
+#include "SettingsManager.h"
 #include "MainMenuScreen.h"
 #include "MouseMotionMessage.h"
 #include "texture.hpp"
@@ -39,7 +41,7 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.add<GUIComponent>();
     eHandle.add<CollisionComponent>();
     guiComp.pos = FPair(
-        calculateCenteredX(playTexture.getWidth()), SCREEN_HEIGHT / 3 - playTexture.getHeight());
+        calculateCenteredX(playTexture.getWidth()), GUI::screenHeight / 3 - playTexture.getHeight());
     colComp.position = {guiComp.pos.x - hoveredOffset, guiComp.pos.y - hoveredOffset};
     colComp.height = playTexture.getHeight() + 2 * hoveredOffset;
     colComp.width = playTexture.getWidth() + 2 * hoveredOffset;
@@ -109,8 +111,8 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.add<RenderComponent>();
     eHandle.add<TypeComponent>();
     eHandle.add<GUIComponent>();
-    guiComp.pos.x = SCREEN_WIDTH - goldTexture.getWidth() - 10.0f;
-    guiComp.pos.y = SCREEN_HEIGHT - goldTexture.getHeight() - 10.0f;
+    guiComp.pos.x = GUI::screenWidth - goldTexture.getWidth() - 10.0f;
+    guiComp.pos.y = GUI::screenHeight - goldTexture.getHeight() - 10.0f;
     textureComp.texture = &goldTexture;
     eHandle.set<TransformComponent>(trComp);
     eHandle.set<TypeComponent>(type);

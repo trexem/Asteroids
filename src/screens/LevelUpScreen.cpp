@@ -11,13 +11,13 @@ void LevelUpScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     CollisionComponent colComp;
     GUIComponent guiComp;
     FPair pos;
-    pos.y = SCREEN_HEIGHT * 0.1851f;
+    pos.y = GUI::screenHeight * 0.1851f;
     container1.m_renderer = renderer;
     container2.m_renderer = renderer;
     container3.m_renderer = renderer;
-    container1.createEmptyTexture(GUI::CONTAINER_WIDTH + 4, GUI::CONTAINER_HEIGHT + 4);
-    container2.createEmptyTexture(GUI::CONTAINER_WIDTH + 4, GUI::CONTAINER_HEIGHT + 4);
-    container3.createEmptyTexture(GUI::CONTAINER_WIDTH + 4, GUI::CONTAINER_HEIGHT + 4);
+    container1.createEmptyTexture(GUI::containerWidth + 4, GUI::containerHeight + 4);
+    container2.createEmptyTexture(GUI::containerWidth + 4, GUI::containerHeight + 4);
+    container3.createEmptyTexture(GUI::containerWidth + 4, GUI::containerHeight + 4);
     drawConatiner(renderer, container1.getTexture());
     drawConatiner(renderer, container2.getTexture());
     drawConatiner(renderer, container3.getTexture());
@@ -38,11 +38,11 @@ void LevelUpScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
         size_t count = options.size();
         for (int i = 0; i < count; i++) {
             if (count == 3) {
-                pos.x = SCREEN_WIDTH * .15625f + i * (GUI::CONTAINER_WIDTH + GUI::CONTAINER_GAP);
+                pos.x = GUI::screenWidth * .15625f + i * (GUI::containerWidth + GUI::containerGap);
             } else {
                 pos.x = i == 0 ?
-                SCREEN_CENTER.x - GUI::CONTAINER_WIDTH - GUI::CONTAINER_GAP :
-                SCREEN_CENTER.x + GUI::CONTAINER_GAP;
+                GUI::screenCenter.x - GUI::containerWidth - GUI::containerGap :
+                GUI::screenCenter.x + GUI::containerGap;
             }
             //Container
             uint32_t id = i == 0 ? id1 : i == 1 ? id2 : id3;
@@ -111,7 +111,7 @@ void LevelUpScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
 void LevelUpScreen::drawConatiner(SDL_Renderer* renderer, SDL_Texture* texture) {
     SDL_SetRenderTarget(renderer, texture);
     SDL_SetRenderDrawColor(renderer, Colors::White.r, Colors::White.g, Colors::White.b, Colors::White.a);
-    SDL_FRect rect = {0, 0, GUI::CONTAINER_WIDTH + 4, GUI::CONTAINER_HEIGHT + 4};
+    SDL_FRect rect = {0, 0, GUI::containerWidth + 4, GUI::containerHeight + 4};
     SDL_RenderFillRect(renderer, &rect);
     SDL_SetRenderTarget(renderer, NULL);
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);

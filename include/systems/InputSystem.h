@@ -8,6 +8,7 @@
 class InputSystem : public System {
 public:
     void update();
+    FPair adjustMousePos(FPair mousePos);
 private:
     SDL_Event e;
     ClickHandler clickHandler;

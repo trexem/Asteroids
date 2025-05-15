@@ -3,6 +3,7 @@
 
 #include "MovementSystem.h"
 #include "utils.hpp"
+#include "GUI.h"
 
 void MovementSystem::update(EntityManager* eMgr, double dT) {
     TransformComponent* playerTransform;
@@ -28,10 +29,10 @@ void MovementSystem::update(EntityManager* eMgr, double dT) {
                 transComp.position.y -= physComp->velocity * dT * cos(radians);
             }
             if (TypesSet::shouldDestroyIfFar(type->type)) {
-                if (transComp.position.x > (playerTransform->position.x + SCREEN_WIDTH * 3)
-                    || transComp.position.x < playerTransform->position.x - SCREEN_WIDTH * 2
-                    || transComp.position.y > playerTransform->position.y + SCREEN_HEIGHT * 3 
-                    || transComp.position.y < playerTransform->position.y - SCREEN_HEIGHT * 2) {
+                if (transComp.position.x > (playerTransform->position.x + GUI::screenWidth * 3)
+                    || transComp.position.x < playerTransform->position.x - GUI::screenWidth * 2
+                    || transComp.position.y > playerTransform->position.y + GUI::screenHeight * 3 
+                    || transComp.position.y < playerTransform->position.y - GUI::screenHeight * 2) {
                     if (type->type & EntityType::Asteroid) {
                         MessageManager::instance().sendMessage(std::make_shared<DestroyAsteroidMessage>(eID, false));
                         continue;
@@ -64,7 +65,7 @@ void MovementSystem::updatePlayer(EntityManager* eMgr, double dT, uint32_t eID) 
         transComp.position.x += physComp->speed.x * dT;
         transComp.position.y += physComp->speed.y * dT;
     }
-    camera->position.x = transComp.position.x - SCREEN_CENTER.x + g_ship_surface.getWidth() /2 ;
-    camera->position.y = transComp.position.y - SCREEN_CENTER.y + g_ship_surface.getHeight() /2 ;
+    camera->position.x = transComp.position.x - GUI::screenCenter.x + g_ship_surface.getWidth() /2 ;
+    camera->position.y = transComp.position.y - GUI::screenCenter.y + g_ship_surface.getHeight() /2 ;
     eMgr->setComponentData<TransformComponent>(eID, transComp);
 }

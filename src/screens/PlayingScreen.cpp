@@ -35,7 +35,7 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     timeTexture.loadFromText("00:00", Colors::White, Fonts::Subtitle);
     levelTexture.loadFromText("lvl: 1" , Colors::White, Fonts::Body);
     pauseTexture.loadFromFile("data/img/gui/pause.bmp");
-    currentHealthTexture.createEmptyTexture(std::round(GUI::HEALTHBAR_WIDTH), std::round(GUI::HEALTHBAR_HEIGHT));
+    currentHealthTexture.createEmptyTexture(std::round(GUI::healthbarWidth), std::round(GUI::healtbarHeight));
     healthBarTexture.loadFromFile("data/img/healthBar.bmp");
     goldTexture.loadFromText("gold: 0000", Colors::White, Fonts::Body);
     enemiesTexture.loadFromText("asteroids destroyed: 0000", Colors::White, Fonts::Body);
@@ -90,7 +90,7 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eManager->addComponent(timeID, ComponentType::Render);
     eManager->addComponent(timeID, ComponentType::Type);
     eManager->addComponent(timeID, ComponentType::GUI);
-    guiComp.pos = FPair(SCREEN_CENTER.x - timeTexture.getWidth() / 2, 46);
+    guiComp.pos = FPair(GUI::screenCenter.x - timeTexture.getWidth() / 2, 46);
     textureComp.texture = &timeTexture;
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
@@ -102,7 +102,7 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
-    guiComp.pos = FPair(SCREEN_WIDTH - levelTexture.getWidth() - 2, 4);
+    guiComp.pos = FPair(GUI::screenWidth - levelTexture.getWidth() - 2, 4);
     textureComp.texture = &levelTexture;
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
@@ -115,7 +115,7 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
     entity.add<CollisionComponent>();
-    guiComp.pos = FPair(SCREEN_WIDTH - pauseTexture.getWidth() - 18, 46);
+    guiComp.pos = FPair(GUI::screenWidth - pauseTexture.getWidth() - 18, 46);
     colComp.position = {guiComp.pos.x - hoveredOffset, guiComp.pos.y - hoveredOffset};
     colComp.height = pauseTexture.getHeight() + 2 * hoveredOffset;
     colComp.width = pauseTexture.getWidth() + 2 * hoveredOffset;
@@ -157,8 +157,8 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
-    guiComp.pos.x = SCREEN_WIDTH - GUI::HEALTHBAR_WIDTH;
-    guiComp.pos.y = SCREEN_CENTER.y - GUI::HEALTHBAR_HEIGHT / 2 + 1;
+    guiComp.pos.x = GUI::screenWidth - GUI::healthbarWidth;
+    guiComp.pos.y = GUI::screenCenter.y - GUI::healtbarHeight / 2 + 1;
     textureComp.texture = &currentHealthTexture;
     // guiComponent.clickable = false;
     // guiComponent.hoverable = false;
@@ -252,17 +252,17 @@ void PlayingScreen::drawAbilityContainers(SDL_Renderer* renderer) {
 }
 
 void PlayingScreen::drawXpContainer(SDL_Renderer* renderer) {
-    xpContainerTexture.createEmptyTexture(SCREEN_WIDTH - 6, 40);
+    xpContainerTexture.createEmptyTexture(GUI::screenWidth - 6, 40);
     SDL_SetRenderTarget(renderer, xpContainerTexture.getTexture());
     SDL_SetRenderDrawColor(renderer, 5, 5, 5, 255);
-    SDL_FRect rect = {0, 0, SCREEN_WIDTH - 6, 40};
+    SDL_FRect rect = {0, 0, GUI::screenWidth - 6, 40};
     SDL_RenderFillRect(renderer, &rect);
     SDL_SetRenderTarget(renderer, NULL);
 }
 
 void PlayingScreen::drawCurrentXp(SDL_Renderer* renderer, int currentXp, int xpToNextLevel) {
     if (previousXp != currentXp) {
-        float maxWidth = SCREEN_WIDTH - 8.0f;
+        float maxWidth = GUI::screenWidth - 8.0f;
         float currentWidth = float(currentXp) / float(xpToNextLevel) * maxWidth;
         SDL_SetRenderTarget(renderer, currentXpTexture.getTexture());
         if (currentXp < previousXp) {
@@ -290,10 +290,10 @@ void PlayingScreen::drawCurrentHealth(SDL_Renderer* renderer, const float& curre
     if (previousHealth != currentHealth) {
         SDL_SetRenderTarget(renderer, currentHealthTexture.getTexture());
         float percentage = currentHealth / maxHealth;
-        float height = GUI::HEALTHBAR_HEIGHT * percentage;
+        float height = GUI::healtbarHeight * percentage;
         float startPoint = 400.0f - height;
-        SDL_FRect fullRect = {0, 0, GUI::HEALTHBAR_WIDTH, GUI::CONTAINER_HEIGHT};
-        SDL_FRect rect = {0, startPoint, GUI::HEALTHBAR_WIDTH, height};
+        SDL_FRect fullRect = {0, 0, GUI::healthbarWidth, GUI::containerHeight};
+        SDL_FRect rect = {0, startPoint, GUI::healthbarWidth, height};
         SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
         SDL_RenderFillRect(renderer, &fullRect);
         SDL_SetRenderDrawColor(renderer, Colors::Health.r, Colors::Health.g, Colors::Health.b, Colors::Health.a);

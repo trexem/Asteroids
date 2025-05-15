@@ -4,6 +4,7 @@
 #include "UpgradeStoreScreen.h"
 #include "GameStatsManager.h"
 #include "GameStateManager.h"
+#include "GUI.h"
 
 UpgradeStoreScreen::UpgradeStoreScreen(EntityManager* eManager, SDL_Renderer* renderer) : Screen(eManager) {
     pressedButtonTexture.m_renderer = renderer;
@@ -28,11 +29,11 @@ void UpgradeStoreScreen::create(EntityManager* eManager, SDL_Renderer* renderer)
     eManager->setComponentData<ClickCallbackComponent>(backButton.get()->id, callback);
     // UpgradeButtons
     containerTexture.m_renderer = renderer;
-    containerTexture.createEmptyTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
+    containerTexture.createEmptyTexture(GUI::screenWidth, GUI::screenHeight);
     for (int i = 0; i < static_cast<size_t>(UpgradeType::UpgradesCount); i++) {
         UpgradeType type = static_cast<UpgradeType>(i);
         size = {200.0f};
-        pos = {i % 2 ? SCREEN_CENTER.x + 240 : SCREEN_CENTER.x + 20,
+        pos = {i % 2 ? GUI::screenCenter.x + 240 : GUI::screenCenter.x + 20,
                    (i / 2) * size.y + 40};
         std::string label = to_string(type);
         upgradeButtons.push_back(std::make_shared<UpgradeButton>(

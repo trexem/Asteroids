@@ -2,6 +2,7 @@
 #include "VolumeMessage.h"
 #include "GraphicsSettingsMessage.h"
 #include "MessageManager.h"
+#include "GUI.h"
 
 SettingsManager::SettingsManager() {
     resolutions = {
@@ -39,7 +40,9 @@ void SettingsManager::load() {
 void SettingsManager::save() {
     GameSave::saveSettings(settings);
     scale = {settings.screenWidth / SCREEN_WIDTH, settings.screenHeight / SCREEN_HEIGHT};
+    std::cout << "Scale: " << scale << std::endl;
     currentScreenSize = {static_cast<float>(settings.screenWidth), static_cast<float>(settings.screenHeight)};
+    // GUI::update(currentScreenSize);
 }
 
 GameSettings& SettingsManager::get() { return settings; }
@@ -128,10 +131,21 @@ int SettingsManager::getVolume(const VolumeSource& source) {
 }
 
 std::map<std::string, FPair>::iterator SettingsManager::findResolutionBySize(const FPair& size) {
+    auto closestIt = resolutions.begin();
+    float minDistanceSq = std::numeric_limits<float>::max();
+
     for (auto it = resolutions.begin(); it != resolutions.end(); ++it) {
-        if (it->second == size) return it;
+        float dx = it->second.x - size.x;
+        float dy = it->second.y - size.y;
+        float distanceSq = dx * dx + dy * dy;
+
+        if (distanceSq < minDistanceSq) {
+            minDistanceSq = distanceSq;
+            closestIt = it;
+        }
     }
-    return resolutions.end();
+
+    return closestIt;
 }
 
 void SettingsManager::updateResolution() {
@@ -139,6 +153,14 @@ void SettingsManager::updateResolution() {
     MessageManager::instance().sendMessage(std::make_shared<GraphicsSettingsMessage>(
         settings.fullscreen, settings.vsync, currentScreenSize, currentResolution->second));
     currentScreenSize = currentResolution->second;
+    settings.screenWidth = currentScreenSize.x;
+    settings.screenHeight = currentScreenSize.y;
+    save();
+}
+
+void SettingsManager::setWindowSize(const int& w, const int& h) {
+    currentScreenSize = {static_cast<float>(w), static_cast<float>(h)};
+    currentResolution = findResolutionBySize(currentScreenSize);
     settings.screenWidth = currentScreenSize.x;
     settings.screenHeight = currentScreenSize.y;
     save();

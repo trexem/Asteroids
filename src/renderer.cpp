@@ -9,7 +9,7 @@ Renderer::Renderer(SDL_Window* window, const char * name) {
 }
 
 void Renderer::changeColor(int red, int green, int blue, int alpha) {
-	SDL_SetRenderDrawColor(&*m_renderer, red, blue, green, alpha);
+	SDL_SetRenderDrawColor(&*m_renderer, red, green, blue, alpha);
 }
 
 SDL_Renderer* Renderer::getRenderer() {

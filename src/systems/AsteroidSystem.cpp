@@ -1,5 +1,6 @@
 #include "AsteroidSystem.h"
 #include "GameSessionManager.h"
+#include "GUI.h"
 
 AsteroidSystem::AsteroidSystem(EntityManager* eManager, SDL_Renderer* renderer) :
 	renderer(renderer), eManager(eManager) {
@@ -100,7 +101,7 @@ FPair AsteroidSystem::generatePosition(EntityManager* eManager) {
 			float angleOffset = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * ANGLE_BIAS_STRENGTH;
 			float angle = movementAngle + angleOffset;
 
-			float minRadius = std::max(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.75f;
+			float minRadius = std::max(GUI::screenWidth, GUI::screenHeight) * 0.75f;
 			float maxRadius = minRadius * OUTER_RADIUS;
 			float distance = minRadius + static_cast<float>(rand()) / RAND_MAX * (maxRadius - minRadius);
 			float x = playerTransform->position.x + distance * sin(angle);

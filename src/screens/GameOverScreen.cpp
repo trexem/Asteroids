@@ -5,6 +5,7 @@
 #include "GameStateManager.h"
 #include "GameStatsManager.h"
 #include "MouseMotionMessage.h"
+#include "GUI.h"
 
 void GameOverScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     restartTexture.m_renderer = renderer;
@@ -30,7 +31,7 @@ void GameOverScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.add<GUIComponent>();
     eHandle.add<CollisionComponent>();
     gComp.pos = FPair(
-        calculateCenteredX(restartTexture.getWidth()), SCREEN_HEIGHT / 3 - restartTexture.getHeight());
+        calculateCenteredX(restartTexture.getWidth()), GUI::screenHeight / 3 - restartTexture.getHeight());
     cComp.position = {gComp.pos.x - hoveredOffset, gComp.pos.y - hoveredOffset};
     cComp.height = restartTexture.getHeight() + 2 * hoveredOffset;
     cComp.width = restartTexture.getWidth() + 2 * hoveredOffset;

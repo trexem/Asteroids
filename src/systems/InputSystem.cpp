@@ -5,6 +5,7 @@
 #include "KeyboardMessage.h"
 #include "MouseMotionMessage.h"
 #include "MessageManager.h"
+#include "SettingsManager.h"
 
 void InputSystem::update() {
     while (SDL_PollEvent(&e)) {
@@ -22,7 +23,8 @@ void InputSystem::update() {
             break;
         }
         case SDL_EVENT_MOUSE_MOTION: {
-            FPair mousePos(e.motion.x, e.motion.y);
+            FPair rawMousePos(e.motion.x, e.motion.y);
+            FPair mousePos = adjustMousePos(rawMousePos);
             auto msg = std::make_shared<MouseMotionMessage>(mousePos);
             MessageManager::instance().sendMessage(msg);
             break;
@@ -30,7 +32,8 @@ void InputSystem::update() {
         case SDL_EVENT_MOUSE_BUTTON_UP:
         case SDL_EVENT_MOUSE_BUTTON_DOWN: {
             bool isDown = e.type == SDL_EVENT_MOUSE_BUTTON_DOWN;
-            FPair mousePos(e.button.x, e.button.y);
+            FPair rawMousePos(e.button.x, e.button.y);
+            FPair mousePos = adjustMousePos(rawMousePos);
             clickHandler.handleClick(mousePos, isDown, e.button.button);
             break;
         }
@@ -38,4 +41,8 @@ void InputSystem::update() {
             break;
         } 
 	}
+}
+
+FPair InputSystem::adjustMousePos(FPair mousePos) {
+    return mousePos / SettingsManager::instance().scale;
 }

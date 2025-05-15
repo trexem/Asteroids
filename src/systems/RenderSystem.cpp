@@ -1,8 +1,15 @@
 #include "RenderSystem.h"
+#include "SettingsManager.h"
+#include "GUI.h"
 
 RenderSystem::RenderSystem(SDL_Window* window, const char * name, Camera* camera)
     : renderer(std::make_unique<Renderer>(window, name)), camera(camera) {
     renderer->changeColor(0x00, 0x00, 0x00, 0xFF);
+    screenTexture = SDL_CreateTexture(renderer->getRenderer(), SDL_PIXELFORMAT_RGBA8888,
+        SDL_TEXTUREACCESS_TARGET, 1920, 1080);
+    if (!screenTexture) {
+        std::cerr << "Failed to create screen texture: " << SDL_GetError() << std::endl;
+    }
 }
 
 SDL_Renderer* RenderSystem::getRenderer() {
@@ -11,15 +18,45 @@ SDL_Renderer* RenderSystem::getRenderer() {
 
 void RenderSystem::render(EntityManager& eM) {
     renderer->clear();
-    // renderer->drawDebugLine(0, SCREEN_CENTER.y, SCREEN_WIDTH, SCREEN_CENTER.y, Colors::Red);
-    // renderer->drawDebugLine(SCREEN_CENTER.x, 0, SCREEN_CENTER.x, SCREEN_HEIGHT, Colors::Red);
-    // std::cout << "Rendering frame: " << frame << std::endl;
+    SDL_SetRenderTarget(renderer->getRenderer(), screenTexture);
+    SDL_SetRenderDrawColor(renderer->getRenderer(), 0, 0, 0, 255);
+    renderer->clear();
+    drawGameEntities(eM);
+    drawGUI(eM);
+    renderer->render();
+    SDL_SetRenderTarget(renderer->getRenderer(), nullptr);
+    FPair screenSize = SettingsManager::instance().currentScreenSize;
+    SDL_FRect screenRect = {0, 0, screenSize.x, screenSize.y};
+    SDL_RenderTexture(renderer->getRenderer(), screenTexture, nullptr, &screenRect);
+    renderer->render();
+    frame++;
+    // saveRendererToImage();
+}
+
+
+//Used for debugging purposes but might be useful in the future to save actual screenshots (?)
+void RenderSystem::saveRendererToImage() {
+    int width, height;
+    SDL_GetCurrentRenderOutputSize(renderer->getRenderer(), &width, &height);
+    SDL_Surface* surface = SDL_RenderReadPixels(renderer->getRenderer(), NULL);
+    // Save the surface to a BMP file (you can use SDL_SaveBMP or SDL_Image for PNG, JPG, etc.)
+    if (!SDL_SaveBMP(surface, "screenshot.bmp")) {
+        std::cerr << "SDL_SaveBMP failed: " << SDL_GetError() << std::endl;
+    } else {
+        std::cout << "Saved screenshot as screenshot.bmp" << std::endl;
+    }
+
+    // Clean up the surface
+    SDL_DestroySurface(surface);
+}
+
+void RenderSystem::drawGameEntities(EntityManager& eM) {
     const float margin = 64.0f;
     const SDL_FRect cameraView = {
         camera->position.x - margin,
         camera->position.y - margin,
-        SCREEN_WIDTH + 2 * margin,
-        SCREEN_HEIGHT + 2 * margin
+        GUI::screenWidth + 2 * margin,
+        GUI::screenHeight + 2 * margin
     };
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::Render)) {
         if (eM.isMarkedForDestruction(eID)) continue;
@@ -83,6 +120,9 @@ void RenderSystem::render(EntityManager& eM) {
             // }
         }
     }
+}
+
+void RenderSystem::drawGUI(EntityManager& eM) {
     for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::GUI)) {
         if (eM.isMarkedForDestruction(eID)) continue;
         RenderComponent* rComp = eM.getComponentDataPtr<RenderComponent>(eID);
@@ -112,24 +152,4 @@ void RenderSystem::render(EntityManager& eM) {
             rComp->size
         );
     }
-    renderer->render();
-    frame++;
-    // saveRendererToImage();
-}
-
-
-//Used for debugging purposes but might be useful in the future to save actual screenshots (?)
-void RenderSystem::saveRendererToImage() {
-    int width, height;
-    SDL_GetCurrentRenderOutputSize(renderer->getRenderer(), &width, &height);
-    SDL_Surface* surface = SDL_RenderReadPixels(renderer->getRenderer(), NULL);
-    // Save the surface to a BMP file (you can use SDL_SaveBMP or SDL_Image for PNG, JPG, etc.)
-    if (!SDL_SaveBMP(surface, "screenshot.bmp")) {
-        std::cerr << "SDL_SaveBMP failed: " << SDL_GetError() << std::endl;
-    } else {
-        std::cout << "Saved screenshot as screenshot.bmp" << std::endl;
-    }
-
-    // Clean up the surface
-    SDL_DestroySurface(surface);
 }

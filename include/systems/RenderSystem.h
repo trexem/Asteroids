@@ -13,7 +13,10 @@ public:
     ~RenderSystem() = default;
     void render(EntityManager& eM);
     SDL_Renderer* getRenderer();
+    SDL_Texture* screenTexture;
     void saveRendererToImage();
+    void drawGameEntities(EntityManager& eM);
+    void drawGUI(EntityManager& eM);
 private:
     std::unique_ptr<Renderer> renderer;
     Camera* camera;

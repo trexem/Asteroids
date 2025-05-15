@@ -9,16 +9,16 @@ LevelUpContainer::LevelUpContainer(EntityManager* eManager, AbilityChoice choice
     RenderComponent textureComp;
     GUIComponent guiComp;
     guiComp.pos = pos;
-    guiComp.pos.y = SCREEN_HEIGHT * 0.1851f;
+    guiComp.pos.y = GUI::screenHeight * 0.1851f;
     
 
     abilityText.loadFromText(text, Colors::White, Fonts::Body);
     abilityIcon.loadFromFile(choice.type == AbilityType::Weapon ?
          weaponIconLocation[choice.index] : passiveIconLocation[choice.index]);
-    abilityContainer.createEmptyTexture(GUI::CONTAINER_WIDTH, GUI::CONTAINER_HEIGHT);
+    abilityContainer.createEmptyTexture(GUI::containerWidth, GUI::containerHeight);
     SDL_SetRenderTarget(renderer, abilityContainer.getTexture());
     SDL_SetRenderDrawColor(renderer, Colors::Black.r, Colors::Black.g, Colors::Black.b, Colors::Black.a);
-    SDL_FRect rect = {0, 0, GUI::CONTAINER_WIDTH, GUI::CONTAINER_HEIGHT};
+    SDL_FRect rect = {0, 0, GUI::containerWidth, GUI::containerHeight};
     SDL_RenderFillRect(renderer, &rect);
     SDL_SetRenderTarget(renderer, NULL);
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
@@ -40,8 +40,8 @@ LevelUpContainer::LevelUpContainer(EntityManager* eManager, AbilityChoice choice
     eManager->addComponent(iconId, ComponentType::Type);
     eManager->addComponent(iconId, ComponentType::GUI);
     textureComp.texture = &abilityIcon;
-    guiComp.pos.x += GUI::CONTAINER_WIDTH / 2 - abilityIcon.getWidth();
-    guiComp.pos.y += GUI::CONTAINER_GAP;
+    guiComp.pos.x += GUI::containerWidth / 2 - abilityIcon.getWidth();
+    guiComp.pos.y += GUI::containerGap;
     eManager->setComponentData<TransformComponent>(iconId, trComp);
     eManager->setComponentData<TypeComponent>(iconId, type);
     eManager->setComponentData<RenderComponent>(iconId, textureComp);
@@ -53,7 +53,7 @@ LevelUpContainer::LevelUpContainer(EntityManager* eManager, AbilityChoice choice
     eManager->addComponent(textId, ComponentType::Type);
     eManager->addComponent(textId, ComponentType::GUI);
     textureComp.texture = &abilityText;
-    guiComp.pos.y += GUI::CONTAINER_GAP + abilityIcon.getHeight();
+    guiComp.pos.y += GUI::containerGap + abilityIcon.getHeight();
     eManager->setComponentData<TransformComponent>(textId, trComp);
     eManager->setComponentData<TypeComponent>(textId, type);
     eManager->setComponentData<RenderComponent>(textId, textureComp);

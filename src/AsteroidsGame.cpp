@@ -4,10 +4,7 @@ int main(int argc, char const* argv[]) {
 	Game game;
 	bool is_initialized = game.initialize("Asteroids - by trexem",
 		SDL_WINDOWPOS_CENTERED,
-		SDL_WINDOWPOS_CENTERED,
-		SCREEN_WIDTH,
-		SCREEN_HEIGHT,
-		SDL_WINDOW_BORDERLESS
+		SDL_WINDOWPOS_CENTERED
 	);
 	if (!is_initialized) {
 		std::cout << "Failed to initialize" << '\n';

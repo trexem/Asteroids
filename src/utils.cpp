@@ -1,4 +1,5 @@
 #include "utils.hpp"
+#include "GUI.h"
 
 float getSquaredDistanceBetweenCenters(const SDL_FRect& rect1, const SDL_FRect& rect2) {
     float centerX1 = rect1.x + rect1.w / 2.0f;
@@ -23,7 +24,7 @@ float getSquaredDistanceBetweenCircles(const FPair& pos1, const float& radius1, 
 }
 
 float calculateCenteredX(int w) {
-    return SCREEN_CENTER.x - w / 2;
+    return GUI::screenCenter.x - w / 2;
 }
 
 FPair calculateCenters(float x, float y, float w, float h) {
