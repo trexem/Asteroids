@@ -89,7 +89,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y) {
 	} else {
 		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "software");
 		GameSettings settings = SettingsManager::instance().get();
-		Uint32 flags;
+		Uint32 flags = SDL_WINDOW_BORDERLESS;
 		if (settings.fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
 		m_window = Window(t_title, t_x, t_y, settings.screenWidth, settings.screenHeight, flags);
 		if (settings.fullscreen) {
@@ -379,7 +379,7 @@ void Game::updateGraphicsSettings() {
 
 	SDL_SetRenderVSync(renderSystem->getRenderer(), graphicsSettings->vsync ? 1 : SDL_RENDERER_VSYNC_DISABLED);
 	
-	if (graphicsSettings->fullscreen) pendingFullScreenChange = true;
+	pendingFullScreenChange = true;
 	shouldUpdateSettings = false;
 	graphicsSettings.reset();
 }

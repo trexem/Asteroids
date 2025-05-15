@@ -88,7 +88,7 @@ private:
 	std::unique_ptr<BackgroundSystem> bgSystem;
 	std::unique_ptr<GUIInteractionSystem> guiInteractionSystem;
 	std::unique_ptr<AudioSystem> audioSystem;
-	bool shouldUpdateSettings, pendingFullScreenChange;
+	bool shouldUpdateSettings{ false }, pendingFullScreenChange{ false };
 	std::shared_ptr<GraphicsSettingsMessage> graphicsSettings;
 	Camera camera;
 	Uint32 last_tick = 0, tick = 0;

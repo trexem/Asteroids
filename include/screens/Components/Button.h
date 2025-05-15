@@ -16,7 +16,7 @@ class Button {
 public:
     uint32_t id, labelID;
     Texture labelTexture;
-    bool hasTexture;
+    bool hasTexture{ false };
     FPair originalPos, labelPos;
     FPair originalSize, labelSize;
     GUIState lastState = GUIState::Idle;
