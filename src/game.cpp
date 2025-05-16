@@ -112,7 +112,7 @@ bool Game::loadMedia() {
 	bool success = true;
 
 	Fonts::loadFonts();
-	if (!g_ship_surface.loadFromFile("data/img/spaceship.bmp")) {
+	if (!g_ship_surface.loadFromFile("data/img/atreyu001.png")) {
 		printf("Failed to load ship texture");
 		success = false;
 	}
@@ -132,7 +132,7 @@ bool Game::loadMedia() {
 		printf("Failed to load ship shimmer particle texture");
 		success = false;
 	}
-	if (!g_asteroid_big_surface.loadFromFile("data/img/asteroid1.bmp")) {
+	if (!g_asteroid_big_surface.loadFromFile("data/img/asteroid001.png")) {
 		printf("Failed to load asteroid big 1 texture");
 		success = false;
 	}
