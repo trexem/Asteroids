@@ -1,6 +1,7 @@
 #include "AbilitySystem.h"
+#include "GameStateManager.h"
 
-AbilitySystem::AbilitySystem(EntityManager* eManager, SDL_Renderer* renderer) : eManager(eManager) {
+AbilitySystem::AbilitySystem(EntityManager& eManager, SDL_Renderer* renderer) : eMgr(eManager) {
     // Subscribe to AbilityMessages
     MessageManager::instance().subscribe<AbilityMessage>(
         [this](std::shared_ptr<AbilityMessage> msg) { handleAbilityMessage(msg); }
@@ -56,25 +57,27 @@ void AbilitySystem::spawnRocket(uint32_t eID) {
 }
 
 void AbilitySystem::handleExplodeMessage(std::shared_ptr<ExplodeMessage> msg) {
-    TransformComponent* transComp = eManager->getComponentDataPtr<TransformComponent>(msg->id);
+    TransformComponent* transComp = eMgr.getComponentDataPtr<TransformComponent>(msg->id);
     explosions.push_back({transComp->position, msg->source});
-    eManager->destroyEntityLater(msg->id);
+    eMgr.destroyEntityLater(msg->id);
 }
 
-void AbilitySystem::update() {
-    for (int i = 0; i < explosions.size(); i++) {
-        createExplosion(explosions[i]);
+void AbilitySystem::update(EntityManager& eMgr, const double& dT) {
+    if (GameStateManager::instance().getState() == GameState::Playing) {
+        for (int i = 0; i < explosions.size(); i++) {
+            createExplosion(explosions[i]);
+        }
+        explosions.clear();
     }
-    explosions.clear();
 }
 
 void AbilitySystem::createExplosion(const ExplosionConfig& exp) {
-    uint32_t playerID = eManager->getEntitiesWithComponent(ComponentType::Player).at(0);
-    PlayerComponent* playerComp = eManager->getComponentDataPtr<PlayerComponent>(playerID);
-    StatsComponent* statsComp = eManager->getComponentDataPtr<StatsComponent>(playerID);
+    uint32_t playerID = eMgr.getEntitiesWithComponent(ComponentType::Player).at(0);
+    PlayerComponent* playerComp = eMgr.getComponentDataPtr<PlayerComponent>(playerID);
+    StatsComponent* statsComp = eMgr.getComponentDataPtr<StatsComponent>(playerID);
     size_t ability = static_cast<size_t>(exp.source);
     std::cout << "Creating explosion at: " << exp.pos << std::endl;
-    uint32_t eID = eManager->createEntity();
+    uint32_t eID = eMgr.createEntity();
     TransformComponent transComp;
     RenderComponent rendComp;
     CollisionComponent colComp;
@@ -91,20 +94,20 @@ void AbilitySystem::createExplosion(const ExplosionConfig& exp) {
     colComp.radius = std::max(w, h);
     lifeComp.lifeTime = EXPLOSION_LIFETIME;
     damageComp.damage = abilitiesDamage[ability][playerComp->weaponLevels[ability]] * statsComp->baseDamage;
-    eManager->addComponent(eID, ComponentType::Transform);
-    eManager->addComponent(eID, ComponentType::Render);
-    eManager->addComponent(eID, ComponentType::Collision);
-    eManager->addComponent(eID, ComponentType::Type);
-    eManager->addComponent(eID, ComponentType::LifeTime);
-    eManager->addComponent(eID, ComponentType::Damage);
-    eManager->addComponent(eID, ComponentType::Physics);
-    eManager->setComponentData(eID, transComp);
-    eManager->setComponentData(eID, rendComp);
-    eManager->setComponentData(eID, colComp);
-    eManager->setComponentData(eID, typeComp);
-    eManager->setComponentData(eID, lifeComp);
-    eManager->setComponentData(eID, damageComp);
-    eManager->setComponentData(eID, physComp);
+    eMgr.addComponent(eID, ComponentType::Transform);
+    eMgr.addComponent(eID, ComponentType::Render);
+    eMgr.addComponent(eID, ComponentType::Collision);
+    eMgr.addComponent(eID, ComponentType::Type);
+    eMgr.addComponent(eID, ComponentType::LifeTime);
+    eMgr.addComponent(eID, ComponentType::Damage);
+    eMgr.addComponent(eID, ComponentType::Physics);
+    eMgr.setComponentData(eID, transComp);
+    eMgr.setComponentData(eID, rendComp);
+    eMgr.setComponentData(eID, colComp);
+    eMgr.setComponentData(eID, typeComp);
+    eMgr.setComponentData(eID, lifeComp);
+    eMgr.setComponentData(eID, damageComp);
+    eMgr.setComponentData(eID, physComp);
 }
 
 void AbilitySystem::spawnGravitySaws(uint32_t eID) {
@@ -121,10 +124,10 @@ void AbilitySystem::spawnExplosives(uint32_t eID) {
 
 auto AbilitySystem::getPlayerComponents(uint32_t eID) {
     return std::make_tuple(
-        eManager->getComponentDataPtr<PlayerComponent>(eID),
-        eManager->getComponentDataPtr<StatsComponent>(eID),
-        eManager->getComponentDataPtr<TransformComponent>(eID),
-        eManager->getComponentDataPtr<RenderComponent>(eID)
+        eMgr.getComponentDataPtr<PlayerComponent>(eID),
+        eMgr.getComponentDataPtr<StatsComponent>(eID),
+        eMgr.getComponentDataPtr<TransformComponent>(eID),
+        eMgr.getComponentDataPtr<RenderComponent>(eID)
     );
 }
 
@@ -231,8 +234,8 @@ void AbilitySystem::spawnProjectile(uint32_t eID, WeaponAbilities ability) {
 }
 
 EntityHandle AbilitySystem::createProjectileEntity() {
-    uint32_t id = eManager->createEntity();
-    return {id, eManager};
+    uint32_t id = eMgr.createEntity();
+    return {id, eMgr};
 }
 
 FPair AbilitySystem::positionProjectile(int index, int total, const FPair& posSource, const float& angleSource,

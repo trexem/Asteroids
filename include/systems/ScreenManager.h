@@ -15,15 +15,15 @@
 
 class ScreenManager : public System {
 public:
-    ScreenManager(EntityManager* eM, SDL_Renderer* renderer);
+    ScreenManager(EntityManager& eM, SDL_Renderer* renderer);
     ~ScreenManager();
 
-    void update();
+    void update(EntityManager& eMgr, const double& dT) override;
 
 private:
     void changeScreen(GameState newState);
     void updateState();
-    EntityManager* eManager;
+    EntityManager& eMgr;
     SDL_Renderer* renderer;
     GameState currentGameState{GameState::Quit};
     GameState currentMainState{GameState::Quit};

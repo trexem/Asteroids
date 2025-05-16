@@ -14,7 +14,7 @@
 MainMenuScreen::~MainMenuScreen() {
 }
 
-void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
+void MainMenuScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     playTexture.m_renderer = renderer;
     upgradesTexture.m_renderer = renderer;
     settingsTexture.m_renderer = renderer;
@@ -34,7 +34,7 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     RenderComponent textureComp;
     GUIComponent guiComp;
     // Play button
-    playID = eManager->createEntity();
+    playID = eManager.createEntity();
     EntityHandle eHandle = {playID, eManager};
     eHandle.add<RenderComponent>();
     eHandle.add<TypeComponent>();
@@ -52,7 +52,7 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.set<GUIComponent>(guiComp);
     eHandle.set<CollisionComponent>(colComp);
     //Settings
-    upgradesID = eManager->createEntity();
+    upgradesID = eManager.createEntity();
     eHandle.id = upgradesID;
     eHandle.add<RenderComponent>();
     eHandle.add<TypeComponent>();
@@ -70,7 +70,7 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.set<GUIComponent>(guiComp);
     eHandle.set<CollisionComponent>(colComp);
     //Settings
-    settingsID = eManager->createEntity();
+    settingsID = eManager.createEntity();
     eHandle.id = settingsID;
     eHandle.add<RenderComponent>();
     eHandle.add<TypeComponent>();
@@ -88,7 +88,7 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.set<GUIComponent>(guiComp);
     eHandle.set<CollisionComponent>(colComp);
     //Quit
-    quitID = eManager->createEntity();
+    quitID = eManager.createEntity();
     eHandle.id = quitID;
     eHandle.add<RenderComponent>();
     eHandle.add<TypeComponent>();
@@ -106,7 +106,7 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.set<GUIComponent>(guiComp);
     eHandle.set<CollisionComponent>(colComp);
     //Global gold
-    goldID = eManager->createEntity();
+    goldID = eManager.createEntity();
     eHandle.id = goldID;
     eHandle.add<RenderComponent>();
     eHandle.add<TypeComponent>();
@@ -120,10 +120,10 @@ void MainMenuScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.set<GUIComponent>(guiComp);
 }
 
-void MainMenuScreen::destroy(EntityManager* eManager) {
-    eManager->destroyEntityLater(playID);
-    eManager->destroyEntityLater(settingsID);
-    eManager->destroyEntityLater(quitID);
+void MainMenuScreen::destroy(EntityManager& eManager) {
+    eManager.destroyEntityLater(playID);
+    eManager.destroyEntityLater(settingsID);
+    eManager.destroyEntityLater(quitID);
 }
 
 void MainMenuScreen::handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) {
@@ -152,6 +152,6 @@ void MainMenuScreen::onPlayClick() {
     GameStateManager::instance().setState(GameState::Restart);
 }
 
-void MainMenuScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
+void MainMenuScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
 
 }

@@ -1,6 +1,7 @@
 #include "PickupsSystem.h"
+#include "GameStateManager.h"
 
-PickupsSystem::PickupsSystem(EntityManager* eMgr, SDL_Renderer* renderer) : eManager(eMgr) {
+PickupsSystem::PickupsSystem(EntityManager& eMgr, SDL_Renderer* renderer) : eMgr(eMgr) {
     MessageManager::instance().subscribe<PickupsSpawnMessage>(
         [this](std::shared_ptr<PickupsSpawnMessage> msg) { handlePickupsSpawnMessage(msg); }
     );
@@ -32,37 +33,38 @@ void PickupsSystem::handlePickupsSpawnMessage(std::shared_ptr<PickupsSpawnMessag
     colComp.width = renderComp.texture->getWidth();
     trComp.position = {msg->position.x - renderComp.texture->getWidth() / 2, 
         msg->position.y - renderComp.texture->getHeight() / 2 };
-    uint32_t id = eManager->createEntity();
-    eManager->addComponent(id, ComponentType::Transform);
-    eManager->addComponent(id, ComponentType::Collision);
-    eManager->addComponent(id, ComponentType::Physics);
-    eManager->addComponent(id, ComponentType::Render);
-    eManager->addComponent(id, ComponentType::Pickup);
-    eManager->setComponentData<TransformComponent>(id, trComp);
-    eManager->setComponentData<CollisionComponent>(id, colComp);
-    eManager->setComponentData<PhysicsComponent>(id, physComp);
-    eManager->setComponentData<RenderComponent>(id, renderComp);
-    eManager->setComponentData<TypeComponent>(id, type);
-    eManager->setComponentData<PickupComponent>(id, pickComponent);
+    uint32_t id = eMgr.createEntity();
+    eMgr.addComponent(id, ComponentType::Transform);
+    eMgr.addComponent(id, ComponentType::Collision);
+    eMgr.addComponent(id, ComponentType::Physics);
+    eMgr.addComponent(id, ComponentType::Render);
+    eMgr.addComponent(id, ComponentType::Pickup);
+    eMgr.setComponentData<TransformComponent>(id, trComp);
+    eMgr.setComponentData<CollisionComponent>(id, colComp);
+    eMgr.setComponentData<PhysicsComponent>(id, physComp);
+    eMgr.setComponentData<RenderComponent>(id, renderComp);
+    eMgr.setComponentData<TypeComponent>(id, type);
+    eMgr.setComponentData<PickupComponent>(id, pickComponent);
 }
 
-void PickupsSystem::update() {
-    auto players = eManager->getEntitiesWithComponent(ComponentType::Player);
-    auto pickups = eManager->getEntitiesWithComponent(ComponentType::Pickup);
-    for (uint32_t player : players) {
-        TransformComponent* playerTr = eManager->getComponentDataPtr<TransformComponent>(player);
-        StatsComponent* stats = eManager->getComponentDataPtr<StatsComponent>(player);
-        RenderComponent* playerRend = eManager->getComponentDataPtr<RenderComponent>(player);
+void PickupsSystem::update(EntityManager& eMgr, const double& dT) {
+    if (GameStateManager::instance().getState() == GameState::Playing) {
+        auto players = eMgr.getEntitiesWithComponent(ComponentType::Player);
+        auto pickups = eMgr.getEntitiesWithComponent(ComponentType::Pickup);
+        for (uint32_t player : players) {
+        TransformComponent* playerTr = eMgr.getComponentDataPtr<TransformComponent>(player);
+        StatsComponent* stats = eMgr.getComponentDataPtr<StatsComponent>(player);
+        RenderComponent* playerRend = eMgr.getComponentDataPtr<RenderComponent>(player);
         const float attractionRadius = stats->collectionRadius;
         SDL_FRect playerRect = {playerTr->position.x, playerTr->position.y, 
             playerRend->texture->getWidth(), playerRend->texture->getHeight() };
         for (uint32_t xp : pickups) {
-            TransformComponent xpTr = eManager->getComponentData<TransformComponent>(xp);
-            PhysicsComponent xpPhys = eManager->getComponentData<PhysicsComponent>(xp);
-            PickupComponent xpComp = eManager->getComponentData<PickupComponent>(xp);
+            TransformComponent xpTr = eMgr.getComponentData<TransformComponent>(xp);
+            PhysicsComponent xpPhys = eMgr.getComponentData<PhysicsComponent>(xp);
+            PickupComponent xpComp = eMgr.getComponentData<PickupComponent>(xp);
             if (xpComp.isPickedUp) {
                 xpTr.rotDegrees = xpTr.position.angleTowards(playerTr->position) * RAD2DEG;
-                eManager->setComponentData<TransformComponent>(xp, xpTr);
+                eMgr.setComponentData<TransformComponent>(xp, xpTr);
                 continue;
             }
             SDL_FRect xpRect = {xpTr.position.x, xpTr.position.y,
@@ -75,10 +77,11 @@ void PickupsSystem::update() {
                 xpPhys.velocity = stats->maxSpeed + 35.0f;
                 xpPhys.acceleration = 1000.0f;
                 xpComp.isPickedUp = true;
-                eManager->setComponentData<PickupComponent>(xp, xpComp);
-                eManager->setComponentData<PhysicsComponent>(xp, xpPhys);
-                eManager->setComponentData<TransformComponent>(xp, xpTr);
+                eMgr.setComponentData<PickupComponent>(xp, xpComp);
+                eMgr.setComponentData<PhysicsComponent>(xp, xpPhys);
+                eMgr.setComponentData<TransformComponent>(xp, xpTr);
             }
         }
+    }
     }
 }

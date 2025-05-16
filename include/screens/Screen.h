@@ -15,17 +15,17 @@ class Screen : public std::enable_shared_from_this<Screen> {
     std::unordered_set<uint32_t> hoveredEntities;
     std::vector<std::function<void()>> unsubscribers;
 protected:
-    EntityManager* eManager;
+    EntityManager& eManager;
 public:
-    Screen(EntityManager* eM);
+    Screen(EntityManager& eM);
     ~Screen();
     void initSubscriptions();
     void clearSubscriptions();
-    virtual void create(EntityManager* eManager, SDL_Renderer* renderer) = 0;
-    virtual void destroy(EntityManager* eManager) = 0;
+    virtual void create(EntityManager& eManager, SDL_Renderer* renderer) = 0;
+    virtual void destroy(EntityManager& eManager) = 0;
     virtual void handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) = 0;
     virtual void handleMouseClick(std::shared_ptr<ClickMessage> msg) = 0;
-    virtual void update(EntityManager* eManager, SDL_Renderer* renderer) = 0;
+    virtual void update(EntityManager& eManager, SDL_Renderer* renderer) = 0;
     void handleHover(uint32_t eID, FPair pos, std::function<void()> callback);
     void handleClick(uint32_t eID, FPair pos, std::function<void()> callback);
 

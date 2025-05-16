@@ -3,8 +3,7 @@
 #include "LevelUpScreen.h"
 #include "MouseMotionMessage.h"
 
-void LevelUpScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
-    eManager = eManager;
+void LevelUpScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     TypeComponent type = EntityType::GUI;
     TransformComponent trComp;
     RenderComponent textureComp;
@@ -21,15 +20,15 @@ void LevelUpScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     drawConatiner(renderer, container1.getTexture());
     drawConatiner(renderer, container2.getTexture());
     drawConatiner(renderer, container3.getTexture());
-    id1 = eManager->createEntity();
-    eManager->addComponent(id1, ComponentType::Type);
-    id2 = eManager->createEntity();
-    eManager->addComponent(id2, ComponentType::Type);
-    id3 = eManager->createEntity();
-    eManager->addComponent(id3, ComponentType::Type);
-    auto players = eManager->getEntitiesWithComponent(ComponentType::Player);
+    id1 = eManager.createEntity();
+    eManager.addComponent(id1, ComponentType::Type);
+    id2 = eManager.createEntity();
+    eManager.addComponent(id2, ComponentType::Type);
+    id3 = eManager.createEntity();
+    eManager.addComponent(id3, ComponentType::Type);
+    auto players = eManager.getEntitiesWithComponent(ComponentType::Player);
     for (uint32_t player : players) {
-        PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(player);
+        PlayerComponent playerComp = eManager.getComponentData<PlayerComponent>(player);
         options = getRandomAbilityChoices(playerComp);
         if (options.size() == 0) {
             options.push_back({AbilityType::Money, static_cast<size_t>(PassiveAbilities::PassiveAbilitiesCount)});
@@ -46,9 +45,9 @@ void LevelUpScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
             }
             //Container
             uint32_t id = i == 0 ? id1 : i == 1 ? id2 : id3;
-            eManager->addComponent(id, ComponentType::Render);
-            eManager->addComponent(id, ComponentType::Collision);
-            eManager->addComponent(id, ComponentType::GUI);
+            eManager.addComponent(id, ComponentType::Render);
+            eManager.addComponent(id, ComponentType::Collision);
+            eManager.addComponent(id, ComponentType::GUI);
             guiComp.pos = pos - 2;
             // std::cout << "containerId: " << id << " with pos: " << trComp.position.x <<
             // ", " << trComp.position.y << std::endl;
@@ -56,11 +55,11 @@ void LevelUpScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
             colComp.height = container1.getHeight() + 2 * hoveredOffset;
             colComp.width = container1.getWidth() + 2 * hoveredOffset;
             textureComp.texture = i == 0 ? &container1 : i == 1 ? &container2 : &container3;
-            eManager->setComponentData<TransformComponent>(id, trComp);
-            eManager->setComponentData<TypeComponent>(id, type);
-            eManager->setComponentData<CollisionComponent>(id, colComp);
-            eManager->setComponentData<RenderComponent>(id, textureComp);
-            eManager->setComponentData<GUIComponent>(id, guiComp);
+            eManager.setComponentData<TransformComponent>(id, trComp);
+            eManager.setComponentData<TypeComponent>(id, type);
+            eManager.setComponentData<CollisionComponent>(id, colComp);
+            eManager.setComponentData<RenderComponent>(id, textureComp);
+            eManager.setComponentData<GUIComponent>(id, guiComp);
             //LevelUpContainer
             std::string text = getNextUpgradeText(playerComp, options[i]);
             lvlUpContainers.push_back(std::make_unique<LevelUpContainer>(
@@ -74,15 +73,15 @@ void LevelUpScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     }
 }
 
-void LevelUpScreen::destroy(EntityManager* eManager) {
+void LevelUpScreen::destroy(EntityManager& eManager) {
     // std::cout << "Destroying LevelUpScreen" << std::endl;
-    eManager->destroyEntityLater(id1);
-    eManager->destroyEntityLater(id2);
-    eManager->destroyEntityLater(id3);
+    eManager.destroyEntityLater(id1);
+    eManager.destroyEntityLater(id2);
+    eManager.destroyEntityLater(id3);
     for (int i = 0; i < lvlUpContainers.size(); i++) {
-        eManager->destroyEntityLater(lvlUpContainers.at(i)->containerId);
-        eManager->destroyEntityLater(lvlUpContainers.at(i)->textId);
-        eManager->destroyEntityLater(lvlUpContainers.at(i)->iconId);
+        eManager.destroyEntityLater(lvlUpContainers.at(i)->containerId);
+        eManager.destroyEntityLater(lvlUpContainers.at(i)->textId);
+        eManager.destroyEntityLater(lvlUpContainers.at(i)->iconId);
     }
 }
 
@@ -104,7 +103,7 @@ void LevelUpScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
     });
 }
 
-void LevelUpScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
+void LevelUpScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
     
 }
 

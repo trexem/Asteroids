@@ -5,7 +5,7 @@
 #include "GameStateManager.h"
 #include "GUI.h"
 
-void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
+void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     settings = SettingsManager::instance().get();
     // BackButton
     backButtonTexture.m_renderer = renderer;
@@ -17,8 +17,8 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     callback.onClick = [&] (uint32_t entity) {
         GameStateManager::instance().setState(GameState::MainMenu);
     };
-    eManager->addComponent(backButton->id, ComponentType::ClickCallback);
-    eManager->setComponentData<ClickCallbackComponent>(backButton->id, callback);
+    eManager.addComponent(backButton->id, ComponentType::ClickCallback);
+    eManager.setComponentData<ClickCallbackComponent>(backButton->id, callback);
     //** Resolution **
     // Left Button
     pos.x = GUI::screenWidth / 2.0f - 500.0f;
@@ -30,8 +30,8 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().backResolution();
     };
-    eManager->addComponent(leftResolutionButton->id, ComponentType::ClickCallback);
-    eManager->setComponentData(leftResolutionButton->id, callback);
+    eManager.addComponent(leftResolutionButton->id, ComponentType::ClickCallback);
+    eManager.setComponentData(leftResolutionButton->id, callback);
     // Label
     pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
@@ -46,8 +46,8 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().nextResolution();
     };
-    eManager->addComponent(rightResolutionButton->id, ComponentType::ClickCallback);
-    eManager->setComponentData(rightResolutionButton->id, callback);
+    eManager.addComponent(rightResolutionButton->id, ComponentType::ClickCallback);
+    eManager.setComponentData(rightResolutionButton->id, callback);
 
     // ** FullScreen **
     //Label
@@ -67,8 +67,8 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
         SettingsManager::instance().get().fullscreen = !SettingsManager::instance().get().fullscreen;
         SettingsManager::instance().updateResolution();
     };
-    eManager->addComponent(fullScreenButton->id, ComponentType::ClickCallback);
-    eManager->setComponentData(fullScreenButton->id, callback);
+    eManager.addComponent(fullScreenButton->id, ComponentType::ClickCallback);
+    eManager.setComponentData(fullScreenButton->id, callback);
 
     // ** VSync **
     //Label
@@ -84,8 +84,8 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
         SettingsManager::instance().get().vsync = !SettingsManager::instance().get().vsync;
         SettingsManager::instance().updateResolution();
     };
-    eManager->addComponent(vsyncButton->id, ComponentType::ClickCallback);
-    eManager->setComponentData(vsyncButton->id, callback);
+    eManager.addComponent(vsyncButton->id, ComponentType::ClickCallback);
+    eManager.setComponentData(vsyncButton->id, callback);
 
     //** Master Volume **
     // Left Button
@@ -96,8 +96,8 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().decreaseVolume(VolumeSource::MasterVolume);
     };
-    eManager->addComponent(leftMasterVolume->id, ComponentType::ClickCallback);
-    eManager->setComponentData(leftMasterVolume->id, callback);
+    eManager.addComponent(leftMasterVolume->id, ComponentType::ClickCallback);
+    eManager.setComponentData(leftMasterVolume->id, callback);
     // Label
     pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
@@ -111,8 +111,8 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().increaseVolume(VolumeSource::MasterVolume);
     };
-    eManager->addComponent(rightMasterVolume->id, ComponentType::ClickCallback);
-    eManager->setComponentData(rightMasterVolume->id, callback);
+    eManager.addComponent(rightMasterVolume->id, ComponentType::ClickCallback);
+    eManager.setComponentData(rightMasterVolume->id, callback);
 
     //** Music Volume **
     // Left Button
@@ -123,8 +123,8 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().decreaseVolume(VolumeSource::MusicVolume);
     };
-    eManager->addComponent(leftMusicVolume->id, ComponentType::ClickCallback);
-    eManager->setComponentData(leftMusicVolume->id, callback);
+    eManager.addComponent(leftMusicVolume->id, ComponentType::ClickCallback);
+    eManager.setComponentData(leftMusicVolume->id, callback);
     // Label
     pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
@@ -138,8 +138,8 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().increaseVolume(VolumeSource::MusicVolume);
     };
-    eManager->addComponent(rightMusicVolume->id, ComponentType::ClickCallback);
-    eManager->setComponentData(rightMusicVolume->id, callback);
+    eManager.addComponent(rightMusicVolume->id, ComponentType::ClickCallback);
+    eManager.setComponentData(rightMusicVolume->id, callback);
 
     //** SFX Volume **
     // Left Button
@@ -150,8 +150,8 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().decreaseVolume(VolumeSource::SFXVolume);
     };
-    eManager->addComponent(leftSfxVolume->id, ComponentType::ClickCallback);
-    eManager->setComponentData(leftSfxVolume->id, callback);
+    eManager.addComponent(leftSfxVolume->id, ComponentType::ClickCallback);
+    eManager.setComponentData(leftSfxVolume->id, callback);
     // Label
     pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
@@ -165,11 +165,11 @@ void SettingsScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().increaseVolume(VolumeSource::SFXVolume);
     };
-    eManager->addComponent(rightSfxVolume->id, ComponentType::ClickCallback);
-    eManager->setComponentData(rightSfxVolume->id, callback);
+    eManager.addComponent(rightSfxVolume->id, ComponentType::ClickCallback);
+    eManager.setComponentData(rightSfxVolume->id, callback);
 }
 
-void SettingsScreen::destroy(EntityManager* eManager) {
+void SettingsScreen::destroy(EntityManager& eManager) {
     SettingsManager::instance().save();
     backButton->destroy(eManager);
     leftResolutionButton->destroy(eManager);
@@ -200,7 +200,7 @@ void SettingsScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
 
 }
 
-void SettingsScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
+void SettingsScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
     backButton->updateState(eManager);
     leftResolutionButton->updateState(eManager);
     rightResolutionButton->updateState(eManager);
@@ -210,11 +210,11 @@ void SettingsScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
         resolutionLabel->setText(resolutionText);
     }
     fullScreenButton->updateState(eManager);
-    RenderComponent* fullScreenCheck = eManager->getComponentDataPtr<RenderComponent>(fullScreenButton->id);
+    RenderComponent* fullScreenCheck = eManager.getComponentDataPtr<RenderComponent>(fullScreenButton->id);
     fullScreenCheck->texture = SettingsManager::instance().get().fullscreen ? &checkBoxTrueTexture : &checkBoxFalseTexture;
 
     vsyncButton->updateState(eManager);
-    RenderComponent* vsyncCheck = eManager->getComponentDataPtr<RenderComponent>(vsyncButton->id);
+    RenderComponent* vsyncCheck = eManager.getComponentDataPtr<RenderComponent>(vsyncButton->id);
     vsyncCheck->texture = SettingsManager::instance().get().vsync ? &checkBoxTrueTexture : &checkBoxFalseTexture;
 
     leftMasterVolume->updateState(eManager);

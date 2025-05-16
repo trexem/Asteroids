@@ -31,11 +31,11 @@ class PlayingScreen : public Screen {
     void drawCurrentHealth(SDL_Renderer* renderer, const float& currentHealth, const float& maxHealth);
 
 public:
-    PlayingScreen(EntityManager* eManager) : Screen(eManager) {
+    PlayingScreen(EntityManager& eManager) : Screen(eManager) {
         // std::cout << "Creating PlayingScreen\n";
     }
     ~PlayingScreen();
-    void create(EntityManager* eManager, SDL_Renderer* renderer);
-    void destroy(EntityManager* eManager);
-    void update(EntityManager* eManager, SDL_Renderer* renderer);
+    void create(EntityManager& eManager, SDL_Renderer* renderer);
+    void destroy(EntityManager& eManager);
+    void update(EntityManager& eManager, SDL_Renderer* renderer);
 };

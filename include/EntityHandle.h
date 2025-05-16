@@ -4,15 +4,15 @@
 
 struct EntityHandle {
     uint32_t id;
-    EntityManager* eManager;
+    EntityManager& eManager;
     
     template<typename T>
     void set(const T& data) { 
-        eManager->setComponentData<T>(id, data); 
+        eManager.setComponentData<T>(id, data); 
     }
     
     template<typename T>
     void add() { 
-        eManager->addComponent(id, EntityManager::getComponentType<T>()); 
+        eManager.addComponent(id, EntityManager::getComponentType<T>()); 
     }
 };

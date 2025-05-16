@@ -14,8 +14,8 @@ class PauseScreen : public Screen {
     void handleMouseClick(std::shared_ptr<ClickMessage> msg);
 
 public:
-    PauseScreen(EntityManager* eManager) : Screen(eManager) {}
-    void create(EntityManager* eManager, SDL_Renderer* renderer);
-    void destroy(EntityManager* eManager);
-    void update(EntityManager* eManager, SDL_Renderer* renderer);
+    PauseScreen(EntityManager& eManager) : Screen(eManager) {}
+    void create(EntityManager& eManager, SDL_Renderer* renderer);
+    void destroy(EntityManager& eManager);
+    void update(EntityManager& eManager, SDL_Renderer* renderer);
 };

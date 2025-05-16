@@ -17,9 +17,9 @@ class MainMenuScreen : public Screen {
     void onPlayClick();
 
 public:
-    MainMenuScreen(EntityManager* eManager) : Screen(eManager) {}
+    MainMenuScreen(EntityManager& eManager) : Screen(eManager) {}
     ~MainMenuScreen();
-    void create(EntityManager* eManager, SDL_Renderer* renderer);
-    void destroy(EntityManager* eManager);
-    void update(EntityManager* eManager, SDL_Renderer* renderer);
+    void create(EntityManager& eManager, SDL_Renderer* renderer);
+    void destroy(EntityManager& eManager);
+    void update(EntityManager& eManager, SDL_Renderer* renderer);
 };

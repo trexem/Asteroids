@@ -1,20 +1,23 @@
 #include "OrbitSystem.h"
+#include "GameStateManager.h"
 
-void OrbitSystem::update(double dT) {
-    for (uint32_t id : eManager->getEntitiesWithComponent(ComponentType::Orbit)) {
-        OrbitComponent orbitComp = eManager->getComponentData<OrbitComponent>(id);
-        TransformComponent orbitTrans = eManager->getComponentData<TransformComponent>(id);
-        TransformComponent* parentTrans = eManager->getComponentDataPtr<TransformComponent>(orbitComp.parentId);
+void OrbitSystem::update(EntityManager& eMgr, const double& dT) {
+    if (GameStateManager::instance().getState() == GameState::Playing) {
+        for (uint32_t id : eMgr.getEntitiesWithComponent(ComponentType::Orbit)) {
+            OrbitComponent orbitComp = eMgr.getComponentData<OrbitComponent>(id);
+            TransformComponent orbitTrans = eMgr.getComponentData<TransformComponent>(id);
+            TransformComponent* parentTrans = eMgr.getComponentDataPtr<TransformComponent>(orbitComp.parentId);
 
-        orbitComp.angle += dT * orbitComp.rotationSpeed;
-        if (orbitComp.angle > TAU) {
-            orbitComp.angle -= TAU;
+            orbitComp.angle += dT * orbitComp.rotationSpeed;
+            if (orbitComp.angle > TAU) {
+                orbitComp.angle -= TAU;
+            }
+            float offsetX = orbitComp.radius * sin(orbitComp.angle);
+            float offsetY = orbitComp.radius * cos(orbitComp.angle);
+            orbitTrans.position.x = parentTrans->position.x + offsetX;
+            orbitTrans.position.y = parentTrans->position.y + offsetY;
+            eMgr.setComponentData(id, orbitComp);
+            eMgr.setComponentData(id, orbitTrans);
         }
-        float offsetX = orbitComp.radius * sin(orbitComp.angle);
-        float offsetY = orbitComp.radius * cos(orbitComp.angle);
-        orbitTrans.position.x = parentTrans->position.x + offsetX;
-        orbitTrans.position.y = parentTrans->position.y + offsetY;
-        eManager->setComponentData(id, orbitComp);
-        eManager->setComponentData(id, orbitTrans);
     }
 }

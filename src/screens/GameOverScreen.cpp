@@ -7,7 +7,7 @@
 #include "MouseMotionMessage.h"
 #include "GUI.h"
 
-void GameOverScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
+void GameOverScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     restartTexture.m_renderer = renderer;
     mainMenuTexture.m_renderer = renderer;
     quitTexture.m_renderer = renderer;
@@ -24,7 +24,7 @@ void GameOverScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     // gComp.hoverable = true;
 
     //Restart
-    restartID = eManager->createEntity();
+    restartID = eManager.createEntity();
     EntityHandle eHandle = {restartID, eManager};
     eHandle.add<RenderComponent>();
     eHandle.add<TypeComponent>();
@@ -43,7 +43,7 @@ void GameOverScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.set<CollisionComponent>(cComp);
 
     //Main Menu
-    mmID = eManager->createEntity();
+    mmID = eManager.createEntity();
     eHandle.id = mmID;
     eHandle.add<RenderComponent>();
     eHandle.add<TypeComponent>();
@@ -62,7 +62,7 @@ void GameOverScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.set<CollisionComponent>(cComp);
 
     //Exit Game
-    quitID = eManager->createEntity();
+    quitID = eManager.createEntity();
     eHandle.id = quitID;
     eHandle.add<RenderComponent>();
     eHandle.add<TypeComponent>();
@@ -81,10 +81,10 @@ void GameOverScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     eHandle.set<CollisionComponent>(cComp);
 }
 
-void GameOverScreen::destroy(EntityManager* eManager) {
-    eManager->destroyEntityLater(restartID);
-    eManager->destroyEntityLater(mmID);
-    eManager->destroyEntityLater(quitID);
+void GameOverScreen::destroy(EntityManager& eManager) {
+    eManager.destroyEntityLater(restartID);
+    eManager.destroyEntityLater(mmID);
+    eManager.destroyEntityLater(quitID);
     
 }
 
@@ -106,6 +106,6 @@ void GameOverScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
     });
 }
 
-void GameOverScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
+void GameOverScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
     
 }

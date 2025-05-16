@@ -3,7 +3,7 @@
 #include "PauseScreen.h"
 #include "GUI.h"
 
-void PauseScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
+void PauseScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     // Continue
     FPair pos {GUI::screenCenter.x - 250.0f, GUI::screenCenter.y - 200.0f};
     FPair size {500.0f, 100.0f};
@@ -12,35 +12,35 @@ void PauseScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
         GameStateManager::instance().setState(GameState::Playing);
     };
     continueButton = std::make_unique<Button>(eManager, "Continue", pos, size, nullptr, renderer, 0, Fonts::Title);
-    eManager->addComponent(continueButton->id, ComponentType::ClickCallback);
-    eManager->setComponentData(continueButton->id, callback);
+    eManager.addComponent(continueButton->id, ComponentType::ClickCallback);
+    eManager.setComponentData(continueButton->id, callback);
     // Settings
     pos.y += 100.0f;
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::Settings);
     };
     settingsButton = std::make_unique<Button>(eManager, "Settings", pos, size, nullptr, renderer, 0, Fonts::Title);
-    eManager->addComponent(settingsButton->id, ComponentType::ClickCallback);
-    eManager->setComponentData(settingsButton->id, callback);
+    eManager.addComponent(settingsButton->id, ComponentType::ClickCallback);
+    eManager.setComponentData(settingsButton->id, callback);
     // Main Menu
     pos.y += 100.0f;
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::MainMenu);
     };
     mainMenuButton = std::make_unique<Button>(eManager, "Main Menu", pos, size, nullptr, renderer, 0, Fonts::Title);
-    eManager->addComponent(mainMenuButton->id, ComponentType::ClickCallback);
-    eManager->setComponentData(mainMenuButton->id, callback);
+    eManager.addComponent(mainMenuButton->id, ComponentType::ClickCallback);
+    eManager.setComponentData(mainMenuButton->id, callback);
     // Exit
     pos.y += 100.0f;
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::Quit);
     };
     exitButton = std::make_unique<Button>(eManager, "Exit", pos, size, nullptr, renderer, 0, Fonts::Title);
-    eManager->addComponent(exitButton->id, ComponentType::ClickCallback);
-    eManager->setComponentData(exitButton->id, callback);
+    eManager.addComponent(exitButton->id, ComponentType::ClickCallback);
+    eManager.setComponentData(exitButton->id, callback);
 }
 
-void PauseScreen::destroy(EntityManager* eManager) {
+void PauseScreen::destroy(EntityManager& eManager) {
     continueButton->destroy(eManager);
     settingsButton->destroy(eManager);
     mainMenuButton->destroy(eManager);
@@ -55,7 +55,7 @@ void PauseScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
 
 }
 
-void PauseScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
+void PauseScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
     continueButton->updateState(eManager);
     settingsButton->updateState(eManager);
     mainMenuButton->updateState(eManager);

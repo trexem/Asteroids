@@ -5,5 +5,5 @@
 
 class FollowSystem : public System {
 public:
-    void update(EntityManager* eManager);
+    void update(EntityManager& eMgr, const double& dT) override;
 };

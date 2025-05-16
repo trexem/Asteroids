@@ -6,10 +6,10 @@
 
 class AnimationSystem : public System {
 public:
-    AnimationSystem(EntityManager* eManager);
-    void update(double dT);
+    AnimationSystem(EntityManager& eManager);
+    void update(EntityManager& eMgr, const double& dT) override;
 
 private:
     void handleAnimationMessage(std::shared_ptr<AnimationMessage> msg);
-    EntityManager* eManager;
+    EntityManager& eMgr;
 };

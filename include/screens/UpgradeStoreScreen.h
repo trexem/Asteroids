@@ -20,8 +20,8 @@ class UpgradeStoreScreen : public Screen {
     void handleMouseClick(std::shared_ptr<ClickMessage> msg);
 
 public:
-    UpgradeStoreScreen(EntityManager* eManager, SDL_Renderer* renderer);
-    void create(EntityManager* eManager, SDL_Renderer* renderer);
-    void destroy(EntityManager* eManager);
-    void update(EntityManager* eManager, SDL_Renderer* renderer);
+    UpgradeStoreScreen(EntityManager& eManager, SDL_Renderer* renderer);
+    void create(EntityManager& eManager, SDL_Renderer* renderer);
+    void destroy(EntityManager& eManager);
+    void update(EntityManager& eManager, SDL_Renderer* renderer);
 };

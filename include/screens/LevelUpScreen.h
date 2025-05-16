@@ -23,8 +23,8 @@ class LevelUpScreen : public Screen {
     void onContainerClick(int i);
 
 public:
-    LevelUpScreen(EntityManager* eManager) : Screen(eManager) {}
-    void create(EntityManager* eManager, SDL_Renderer* renderer);
-    void destroy(EntityManager* eManager);
-    void update(EntityManager* eManager, SDL_Renderer* renderer);
+    LevelUpScreen(EntityManager& eManager) : Screen(eManager) {}
+    void create(EntityManager& eManager, SDL_Renderer* renderer);
+    void destroy(EntityManager& eManager);
+    void update(EntityManager& eManager, SDL_Renderer* renderer);
 };

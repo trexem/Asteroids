@@ -2,10 +2,10 @@
 #include "screens/Components/Button.h"
 #include "texture.hpp"
 
-Button::Button(EntityManager* em, const std::string& label, FPair pos, FPair size,
+Button::Button(EntityManager& em, const std::string& label, FPair pos, FPair size,
     Texture* texture, SDL_Renderer* renderer, uint32_t parent, TTF_Font* font, SDL_Color color) {
     // Button container (?)
-    id = em->createEntity();
+    id = em.createEntity();
     EntityHandle handle {id, em};
 
     GUIComponent guiComp {pos, size, parent};
@@ -31,7 +31,7 @@ Button::Button(EntityManager* em, const std::string& label, FPair pos, FPair siz
     handle.set(button);
     handle.set(type);
     //Button Label
-    labelID = em->createEntity();
+    labelID = em.createEntity();
     handle.id = labelID;
     LabelComponent labelComp {label};
     labelTexture.m_renderer = renderer;
@@ -53,17 +53,17 @@ Button::Button(EntityManager* em, const std::string& label, FPair pos, FPair siz
     handle.set(type);
 }
 
-bool Button::wasClicked(EntityManager* em) {
-    return em->getComponentDataPtr<GUIStateComponent>(id)->state == GUIState::Clicked;
+bool Button::wasClicked(EntityManager& em) {
+    return em.getComponentDataPtr<GUIStateComponent>(id)->state == GUIState::Clicked;
 }
 
-void Button::destroy(EntityManager* em) {
-    em->destroyEntityLater(id);
-    em->destroyEntityLater(labelID);
+void Button::destroy(EntityManager& em) {
+    em.destroyEntityLater(id);
+    em.destroyEntityLater(labelID);
 }
 
-void Button::updateState(EntityManager* em) {
-    GUIState state = em->getComponentDataPtr<GUIStateComponent>(id)->state;
+void Button::updateState(EntityManager& em) {
+    GUIState state = em.getComponentDataPtr<GUIStateComponent>(id)->state;
     if (lastState != state) {
         if (hasTexture) setSizeFromState(em, id, state);
         setSizeFromState(em, labelID, state);
@@ -71,9 +71,9 @@ void Button::updateState(EntityManager* em) {
     }
 }
 
-void Button::setSizeFromState(EntityManager* em, uint32_t e, GUIState state) {
-    RenderComponent render = em->getComponentData<RenderComponent>(e);
-    GUIComponent gComp = em->getComponentData<GUIComponent>(e);
+void Button::setSizeFromState(EntityManager& em, uint32_t e, GUIState state) {
+    RenderComponent render = em.getComponentData<RenderComponent>(e);
+    GUIComponent gComp = em.getComponentData<GUIComponent>(e);
     switch (state) {
     case GUIState::Hovered:
         gComp.pos -= e == id ? originalSize * 0.05f : labelSize * 0.05f;
@@ -95,6 +95,6 @@ void Button::setSizeFromState(EntityManager* em, uint32_t e, GUIState state) {
         render.size = 1.0f;
         break;
     }
-    em->setComponentData(e, gComp);
-    em->setComponentData(e, render);
+    em.setComponentData(e, gComp);
+    em.setComponentData(e, render);
 }

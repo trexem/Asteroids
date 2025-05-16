@@ -15,8 +15,8 @@ class GameOverScreen : public Screen {
     void handleMouseClick(std::shared_ptr<ClickMessage> msg);
 
 public:
-    GameOverScreen(EntityManager* eManager) : Screen(eManager) {}
-    void create(EntityManager* eManager, SDL_Renderer* renderer);
-    void destroy(EntityManager* eManager);
-    void update(EntityManager* eManager, SDL_Renderer* renderer);
+    GameOverScreen(EntityManager& eManager) : Screen(eManager) {}
+    void create(EntityManager& eManager, SDL_Renderer* renderer);
+    void destroy(EntityManager& eManager);
+    void update(EntityManager& eManager, SDL_Renderer* renderer);
 };

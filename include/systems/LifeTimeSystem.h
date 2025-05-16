@@ -6,8 +6,8 @@
 
 class LifeTimeSystem : public System {
 public:
-    LifeTimeSystem(EntityManager* eMgr);
-    void update(double dT);
+    LifeTimeSystem(EntityManager& eMgr);
+    void update(EntityManager& eMgr, const double& dT) override;
 private:
-    EntityManager* eManager;
+    EntityManager& eManager;
 };

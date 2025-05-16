@@ -1,6 +1,7 @@
 #include "game.hpp"
 #include "GameSessionManager.h"
 #include "Systems.h"
+#include "SystemManager.h"
 #include "MessageManager.h"
 #include "GraphicsSettingsMessage.h"
 #include "SettingsManager.h"
@@ -14,19 +15,20 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	pause = false;
 	last_tick = 0;
 	tick = 0;
+	systemManager = std::make_unique<SystemManager>();
 	GameStatsManager::instance().load("data/stats.json");
-	inputSystem = std::make_unique<InputSystem>();
-	playerSystem = std::make_unique<PlayerSystem>(&entityManager);
-	physicsSystem = std::make_unique<PhysicsSystem>();
-	movementSystem = std::make_unique<MovementSystem>(&camera);
-	collisionSystem = std::make_unique<CollisionSystem>();
-	damageSystem = std::make_unique<DamageSystem>(&entityManager);
-	animationSystem = std::make_unique<AnimationSystem>(&entityManager);
-	lifeTimeSystem = std::make_unique<LifeTimeSystem>(&entityManager);
-	orbitSystem = std::make_unique<OrbitSystem>(&entityManager);
-	followSystem = std::make_unique<FollowSystem>();
-	healthSystem = std::make_unique<HealthSystem>();
-	guiInteractionSystem = std::make_unique<GUIInteractionSystem>(&entityManager);
+	systemManager->registerSystem<InputSystem>();
+	systemManager->registerSystem<PlayerSystem>(entityManager);
+	systemManager->registerSystem<PhysicsSystem>();
+	systemManager->registerSystem<MovementSystem>(&camera);
+	systemManager->registerSystem<CollisionSystem>();
+	systemManager->registerSystem<DamageSystem>(entityManager);
+	systemManager->registerSystem<AnimationSystem>(entityManager);
+	systemManager->registerSystem<LifeTimeSystem>(entityManager);
+	systemManager->registerSystem<OrbitSystem>(entityManager);
+	systemManager->registerSystem<FollowSystem>();
+	systemManager->registerSystem<HealthSystem>();
+	systemManager->registerSystem<GUIInteractionSystem>(entityManager);
 
 	MessageManager::instance().subscribe<GraphicsSettingsMessage>(
         [this](std::shared_ptr<GraphicsSettingsMessage> msg) { handleGraphicsSettingsMessage(msg); }
@@ -49,33 +51,13 @@ Game::~Game() {
 
 	// MessageManager::instance().cleanup();
 	
-	screenManager.reset();
-    std::cout << "GUI System destroyed\n";
-	playerSystem.reset();
-	std::cout << "Player System destroyed\n";
-	physicsSystem.reset();
-	std::cout << "Physics System destroyed\n";
-	movementSystem.reset();
-	std::cout << "Movement System destroyed\n";
-	collisionSystem.reset();
-	std::cout << "Collision System destroyed\n";
-	abilitySystem.reset();
-	std::cout << "Ability System destroyed\n";
-	damageSystem.reset();
-	std::cout << "Damage System destroyed\n";
-	animationSystem.reset();
-	std::cout << "Animation System destroyed\n";
-	asteroidSystem.reset();
-	std::cout << "asteroidSystem destroyed\n";
+
 
 	std::cout << "Before EntityManager clear\n";
 	entityManager.clear();
 	std::cout << "EntityManager cleared\n";
 
-	std::cout << "Before render reset";
-    renderSystem.reset();
-    std::cout << "Render System destroyed\n";
-
+	systemManager->resetAll();
 	Fonts::cleanFonts();
 	TTF_Quit();
 	SDL_Quit();
@@ -103,15 +85,15 @@ bool Game::initialize(const char* t_title, int t_x, int t_y) {
 			std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << '\n';
 			success = false;
 		} else {
-			renderSystem = std::make_unique<RenderSystem>(m_window.getWindow(), "", &camera);
+			renderSystem = systemManager->registerSystem<RenderSystem>(m_window.getWindow(), "", &camera);
 			if (!renderSystem->getRenderer()) {
 				std::cout << "Renderer could not be created! SDL Error: " << SDL_GetError() << '\n';
 				success = false;
 			} else {
-				screenManager = std::make_unique<ScreenManager>(&entityManager, renderSystem->getRenderer());
-				pickupsSystem = std::make_unique<PickupsSystem>(&entityManager, renderSystem->getRenderer());
-				abilitySystem = std::make_unique<AbilitySystem>(&entityManager, renderSystem->getRenderer());
-				bgSystem = std::make_unique<BackgroundSystem>(entityManager, renderSystem->getRenderer());
+				systemManager->registerSystem<ScreenManager>(entityManager, renderSystem->getRenderer());
+				systemManager->registerSystem<PickupsSystem>(entityManager, renderSystem->getRenderer());
+				systemManager->registerSystem<AbilitySystem>(entityManager, renderSystem->getRenderer());
+				systemManager->registerSystem<BackgroundSystem>(entityManager, renderSystem->getRenderer());
 				g_shot_texture.m_renderer = renderSystem->getRenderer();
 				g_rocket_texture.m_renderer = renderSystem->getRenderer();
 				//init SDL_ttf
@@ -121,7 +103,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y) {
 				}
 			}
 		}
-		audioSystem = std::make_unique<AudioSystem>();
+		systemManager->registerSystem<AudioSystem>();
 	}
 	return success;
 }
@@ -161,8 +143,8 @@ bool Game::loadMedia() {
 void Game::start() {
 	createShip(ShipType::FREE_MOVE);
 	counted_frames = 0;
-	asteroidSystem = std::make_unique<AsteroidSystem>(&entityManager, renderSystem->getRenderer());
-	asteroidSystem->generateAsteroids(&entityManager, 0.0);
+	asteroidSystem = systemManager->registerSystem<AsteroidSystem>(entityManager, renderSystem->getRenderer());
+	asteroidSystem->generateAsteroids(entityManager, 0.0);
 	//start fps timer
 	fps_timer.start();
 	//Initialize srand with time so it-s always different
@@ -175,8 +157,8 @@ void Game::restart() {
 	GameSessionManager::instance().reset();
 	counted_frames = 0;
 	createShip(ShipType::FREE_MOVE);
-	asteroidSystem->restart(&entityManager);
-	asteroidSystem->generateAsteroids(&entityManager, 0.0);
+	asteroidSystem->restart(entityManager);
+	asteroidSystem->generateAsteroids(entityManager, 0.0);
 	GameStateManager::instance().setState(GameState::Playing);
 }
 
@@ -185,81 +167,15 @@ void Game::gameLoop() {
 		auto loopTimeStart = std::chrono::high_resolution_clock::now();
 		cap_timer.start(); //start cap timer at the beginning of the "frame"
 		//Inputs
-		inputSystem->update();
 		if (GameStateManager::instance().getState() == GameState::Quit) break;
 		//Calculate time between previous movement and now
 		timeStep = step_timer.getTicks() / 1000.0;
+		systemManager->updateAll(entityManager, timeStep);
 		auto start = std::chrono::high_resolution_clock::now();
 		auto end = std::chrono::high_resolution_clock::now();
-		//UpdateSystems
-		if (GameStateManager::instance().getState() == GameState::Playing) {
-			start = std::chrono::high_resolution_clock::now();
-			playerSystem->update(timeStep);
-			end = std::chrono::high_resolution_clock::now();
-			// std::cout << "playerSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-			start = std::chrono::high_resolution_clock::now();
-			physicsSystem->update(&entityManager, timeStep);
-			end = std::chrono::high_resolution_clock::now();
-			// std::cout << "physicsSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-			start = std::chrono::high_resolution_clock::now();
-			movementSystem->update(&entityManager, timeStep);
-			end = std::chrono::high_resolution_clock::now();
-			// std::cout << "movementSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-			start = std::chrono::high_resolution_clock::now();
-			orbitSystem->update(timeStep);
-			end = std::chrono::high_resolution_clock::now();
-			// std::cout << "orbitSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-			start = std::chrono::high_resolution_clock::now();
-			followSystem->update(&entityManager);
-			end = std::chrono::high_resolution_clock::now();
-			// std::cout << "followSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-			//Update LifeTime System
-			start = std::chrono::high_resolution_clock::now();
-			lifeTimeSystem->update(timeStep);
-			end = std::chrono::high_resolution_clock::now();
-			// std::cout << "LifeTimeSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-			//Check collisions
-			start = std::chrono::high_resolution_clock::now();
-			collisionSystem->update(&entityManager);
-			end = std::chrono::high_resolution_clock::now();
-			// std::cout << "collisionSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-			//update asteroids
-			start = std::chrono::high_resolution_clock::now();
-			asteroidSystem->update(&entityManager, timeStep);
-			end = std::chrono::high_resolution_clock::now();
-			// std::cout << "asteroidSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-			//Update damageSystem
-			start = std::chrono::high_resolution_clock::now();
-			damageSystem->update(timeStep);
-			end = std::chrono::high_resolution_clock::now();
-			// std::cout << "damageSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-			//Update abilities
-			start = std::chrono::high_resolution_clock::now();
-			abilitySystem->update();
-			end = std::chrono::high_resolution_clock::now();
-			// std::cout << "abilitySystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-			//Update Pickups
-			start = std::chrono::high_resolution_clock::now();
-			pickupsSystem->update();
-			end = std::chrono::high_resolution_clock::now();
-			// std::cout << "pickupsSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-			healthSystem->update(&entityManager, timeStep);
-			bgSystem->update(entityManager);
-		}
-		//animations
-		start = std::chrono::high_resolution_clock::now();
-		animationSystem->update(timeStep);
-		end = std::chrono::high_resolution_clock::now();
-		// std::cout << "animationSystem time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 		if (GameStateManager::instance().getState() == GameState::Restart) {
 			restart();
 		}
-		//Audio
-		audioSystem->update();
-		//GUI
-		start = std::chrono::high_resolution_clock::now();
-		screenManager->update();
-		end = std::chrono::high_resolution_clock::now();
 		// std::cout << "ScreenManager time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
 		if (GameStateManager::instance().getState() == GameState::Quit) break;
 		//restart step 

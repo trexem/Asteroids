@@ -6,7 +6,7 @@
 #include "GameStateManager.h"
 #include "GUI.h"
 
-UpgradeStoreScreen::UpgradeStoreScreen(EntityManager* eManager, SDL_Renderer* renderer) : Screen(eManager) {
+UpgradeStoreScreen::UpgradeStoreScreen(EntityManager& eManager, SDL_Renderer* renderer) : Screen(eManager) {
     pressedButtonTexture.m_renderer = renderer;
     idleButtonTexture.m_renderer = renderer;
     containerTexture.m_renderer = renderer;
@@ -16,7 +16,7 @@ UpgradeStoreScreen::UpgradeStoreScreen(EntityManager* eManager, SDL_Renderer* re
     backButtonTexture.loadFromFile("data/img/gui/backButton.bmp");
 }
 
-void UpgradeStoreScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
+void UpgradeStoreScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     //BackButton
     FPair size {backButtonTexture.getWidth(), backButtonTexture.getHeight()};
     FPair pos {40.0f, 40.0f};
@@ -25,8 +25,8 @@ void UpgradeStoreScreen::create(EntityManager* eManager, SDL_Renderer* renderer)
     callback.onClick = [&] (uint32_t entity) {
         GameStateManager::instance().setState(GameState::MainMenu);
     };
-    eManager->addComponent(backButton.get()->id, ComponentType::ClickCallback);
-    eManager->setComponentData<ClickCallbackComponent>(backButton.get()->id, callback);
+    eManager.addComponent(backButton.get()->id, ComponentType::ClickCallback);
+    eManager.setComponentData<ClickCallbackComponent>(backButton.get()->id, callback);
     // UpgradeButtons
     containerTexture.m_renderer = renderer;
     containerTexture.createEmptyTexture(GUI::screenWidth, GUI::screenHeight);
@@ -41,7 +41,7 @@ void UpgradeStoreScreen::create(EntityManager* eManager, SDL_Renderer* renderer)
     }
 }
 
-void UpgradeStoreScreen::destroy(EntityManager* eManager) {
+void UpgradeStoreScreen::destroy(EntityManager& eManager) {
     backButton->destroy(eManager);
     for (auto b : upgradeButtons) {
         b->destroy(eManager);
@@ -56,18 +56,18 @@ void UpgradeStoreScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
 
 }
 
-void UpgradeStoreScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
+void UpgradeStoreScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
     for (auto b : upgradeButtons) {
         b->updateCost(eManager);
         b->updateState(eManager);
-        GUIState state = eManager->getComponentData<GUIStateComponent>(b->id).state;
-        RenderComponent render = eManager->getComponentData<RenderComponent>(b->id);
+        GUIState state = eManager.getComponentData<GUIStateComponent>(b->id).state;
+        RenderComponent render = eManager.getComponentData<RenderComponent>(b->id);
         if (state == GUIState::Pressed) {
             render.texture = &pressedButtonTexture;
         } else if (state == GUIState::Idle || state == GUIState::Hovered) {
             render.texture = &idleButtonTexture;
         }
-        eManager->setComponentData(b->id, render);
+        eManager.setComponentData(b->id, render);
     }
     backButton->updateState(eManager);
 }

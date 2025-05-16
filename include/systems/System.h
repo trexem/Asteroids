@@ -5,8 +5,7 @@
 class System {
 public:
     virtual ~System() = default;
-
-    virtual void update(EntityManager eMgr, float dT) {}
+    virtual void update(EntityManager& eMgr, const double& dT) = 0;
 protected:
     System() = default;
 };

@@ -7,7 +7,7 @@
 
 class InputSystem : public System {
 public:
-    void update();
+    void update(EntityManager& eMgr, const double& dT) override;
     FPair adjustMousePos(FPair mousePos);
 private:
     SDL_Event e;

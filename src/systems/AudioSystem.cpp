@@ -70,7 +70,7 @@ void AudioSystem::handleAbilityMessage(std::shared_ptr<AbilityMessage> msg) {
     }
 }
 
-void AudioSystem::update() {
+void AudioSystem::update(EntityManager& eMgr, const double& dT) {
     while (!toPlay.empty()) {
         Mix_PlayChannel(-1, toPlay.front(), 0);
         toPlay.pop_front();

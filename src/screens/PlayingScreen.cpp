@@ -16,7 +16,7 @@ PlayingScreen::~PlayingScreen() {
     std::cout << "PlayingScreen destroyed\n";
 }
 
-void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
+void PlayingScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     GameStateManager::instance().startTimer();
     
     xpContainerTexture.m_renderer = renderer;
@@ -46,7 +46,7 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     CollisionComponent colComp;
     RenderComponent textureComp;
     //XP Container
-    xpContainerID = eManager->createEntity();
+    xpContainerID = eManager.createEntity();
     EntityHandle entity = {xpContainerID, eManager};
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
@@ -58,7 +58,7 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.set<RenderComponent>(textureComp);
     entity.set<GUIComponent>(guiComp);
     //Current XP
-    currentXpID = eManager->createEntity();
+    currentXpID = eManager.createEntity();
     entity.id = currentXpID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
@@ -70,7 +70,7 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.set<RenderComponent>(textureComp);
     entity.set<GUIComponent>(guiComp);
     //Abilities Container
-    abilitiesContainersID = eManager->createEntity();
+    abilitiesContainersID = eManager.createEntity();
     entity.id = abilitiesContainersID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
@@ -82,14 +82,14 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.set<RenderComponent>(textureComp);
     entity.set<GUIComponent>(guiComp);
     //Time
-    timeID = eManager->createEntity();
+    timeID = eManager.createEntity();
     entity.id = timeID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
-    eManager->addComponent(timeID, ComponentType::Render);
-    eManager->addComponent(timeID, ComponentType::Type);
-    eManager->addComponent(timeID, ComponentType::GUI);
+    eManager.addComponent(timeID, ComponentType::Render);
+    eManager.addComponent(timeID, ComponentType::Type);
+    eManager.addComponent(timeID, ComponentType::GUI);
     guiComp.pos = FPair(GUI::screenCenter.x - timeTexture.getWidth() / 2, 46);
     textureComp.texture = &timeTexture;
     entity.set<TransformComponent>(trComp);
@@ -97,7 +97,7 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.set<RenderComponent>(textureComp);
     entity.set<GUIComponent>(guiComp);
     //Level
-    levelID = eManager->createEntity();
+    levelID = eManager.createEntity();
     entity.id = levelID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
@@ -109,7 +109,7 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.set<RenderComponent>(textureComp);
     entity.set<GUIComponent>(guiComp);
     //Pause
-    pauseID = eManager->createEntity();
+    pauseID = eManager.createEntity();
     entity.id = pauseID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
@@ -128,7 +128,7 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.set<GUIComponent>(guiComp);
     entity.set<CollisionComponent>(colComp);
     // Current Gold
-    goldID = eManager->createEntity();
+    goldID = eManager.createEntity();
     entity.id = goldID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
@@ -140,7 +140,7 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.set<RenderComponent>(textureComp);
     entity.set<GUIComponent>(guiComp);
     // Current enemies
-    enemiesID = eManager->createEntity();
+    enemiesID = eManager.createEntity();
     entity.id = enemiesID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
@@ -152,7 +152,7 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.set<RenderComponent>(textureComp);
     entity.set<GUIComponent>(guiComp);
     // Current health
-    currentHealthID = eManager->createEntity();
+    currentHealthID = eManager.createEntity();
     entity.id = currentHealthID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
@@ -167,7 +167,7 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.set<RenderComponent>(textureComp);
     entity.set<GUIComponent>(guiComp);
     // HealthBar
-    healthBarID = eManager->createEntity();
+    healthBarID = eManager.createEntity();
     entity.id = healthBarID;
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
@@ -180,15 +180,15 @@ void PlayingScreen::create(EntityManager* eManager, SDL_Renderer* renderer) {
     entity.set<GUIComponent>(guiComp);
 }
 
-void PlayingScreen::destroy(EntityManager* eManager) {
-    eManager->destroyEntityLater(xpContainerID);
-    eManager->destroyEntityLater(currentXpID);
-    eManager->destroyEntityLater(timeID);
-    eManager->destroyEntityLater(abilitiesContainersID);
-    eManager->destroyEntityLater(levelID);
-    eManager->destroyEntityLater(pauseID);
-    eManager->destroyEntityLater(healthBarID);
-    eManager->destroyEntityLater(currentHealthID);
+void PlayingScreen::destroy(EntityManager& eManager) {
+    eManager.destroyEntityLater(xpContainerID);
+    eManager.destroyEntityLater(currentXpID);
+    eManager.destroyEntityLater(timeID);
+    eManager.destroyEntityLater(abilitiesContainersID);
+    eManager.destroyEntityLater(levelID);
+    eManager.destroyEntityLater(pauseID);
+    eManager.destroyEntityLater(healthBarID);
+    eManager.destroyEntityLater(currentHealthID);
 }
 
 void PlayingScreen::handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) {
@@ -201,7 +201,7 @@ void PlayingScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
     });
 }
 
-void PlayingScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
+void PlayingScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
     //Time
     Uint32 newSeconds = GameStateManager::instance().getGameTimeSeconds();
     if (GameStateManager::instance().getState() == GameState::Playing && currentSeconds != newSeconds) {
@@ -211,9 +211,9 @@ void PlayingScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
     }
     //Experience, lvl & health
     std::ostringstream lvlText;
-    auto players = eManager->getEntitiesWithComponent(ComponentType::Player);
+    auto players = eManager.getEntitiesWithComponent(ComponentType::Player);
     for (uint32_t player : players) {
-        PlayerComponent* playerComp = eManager->getComponentDataPtr<PlayerComponent>(player);
+        PlayerComponent* playerComp = eManager.getComponentDataPtr<PlayerComponent>(player);
         drawCurrentXp(renderer, playerComp->currentXp, playerComp->xpToNextLevel);
         if (previousLvl != playerComp->level) {
             previousLvl = playerComp->level;
@@ -221,7 +221,7 @@ void PlayingScreen::update(EntityManager* eManager, SDL_Renderer* renderer) {
             levelTexture.loadFromText(lvlText.str(), Colors::White, Fonts::Body);
         }
         // Health
-        HealthComponent* hComp = eManager->getComponentDataPtr<HealthComponent>(player);
+        HealthComponent* hComp = eManager.getComponentDataPtr<HealthComponent>(player);
         drawCurrentHealth(renderer, hComp->health, hComp->maxHealth);
     }
     // Gold

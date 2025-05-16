@@ -23,18 +23,18 @@ constexpr float ASTEROID_MAX_SPEED = 150.0f;
 
 class AsteroidSystem : public System {
 public:
-    AsteroidSystem(EntityManager* eManager, SDL_Renderer* renderer);
-    void update(EntityManager* eManager, double timePassed);
-    void generateAsteroids(EntityManager* eManager, double timePassed);
-    void restart(EntityManager* eManager);
+    AsteroidSystem(EntityManager& eManager, SDL_Renderer* renderer);
+    void update(EntityManager& eMgr, const double& dT) override;
+    void generateAsteroids(EntityManager& eManager, double timePassed);
+    void restart(EntityManager& eManager);
 
 private:
-    void generateSingleAsteroid(EntityManager* eManager, int lvl);
-    FPair generatePosition(EntityManager* eManager);
+    void generateSingleAsteroid(EntityManager& eManager, int lvl);
+    FPair generatePosition(EntityManager& eManager);
     void handleDestroyAsteroidMessage(std::shared_ptr<DestroyAsteroidMessage> msg);
     void handleAsteroidAsteroidCollision(std::shared_ptr<AsteroidAsteroidCollisionMessage> msg);
 
-    EntityManager* eManager;
+    EntityManager& eManager;
     SDL_Renderer* renderer;
     uint32_t asteroidCount {0};
     Uint32 previousT{1};

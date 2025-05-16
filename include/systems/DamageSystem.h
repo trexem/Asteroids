@@ -25,8 +25,8 @@ struct DamageContext {
 
 class DamageSystem : public System {
 public:
-    DamageSystem(EntityManager* eM);
-    void update(double dT);
+    DamageSystem(EntityManager& eM);
+    void update(EntityManager& eMgr, const double& dT) override;
 private:
     void applyDamage(const DamageContext& ctx);
     void handleCollisionMessage(std::shared_ptr<CollisionMessage> msg);
@@ -39,7 +39,7 @@ private:
     void handleAsteroidLaserCollision(uint32_t laser, uint32_t asteroid);
     void handleAsteroidExplosiveCollision(uint32_t explosive, uint32_t asteroid);
     void cleanupDeadEntities();
-    EntityManager* eManager;
+    EntityManager& eMgr;
     std::unordered_map<uint32_t, std::unordered_map<uint32_t, float>> entitiesDamageCooldown;
     static constexpr double DAMAGE_COOLDOWN = 0.2;
 };

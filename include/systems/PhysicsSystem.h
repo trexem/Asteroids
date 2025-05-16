@@ -6,5 +6,5 @@
 
 class PhysicsSystem : public System {
 public:
-    void update(EntityManager* eManager, double dT);
+    void update(EntityManager& eMgr, const double& dT) override;
 };

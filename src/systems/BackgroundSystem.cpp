@@ -1,4 +1,5 @@
 #include "BackgroundSystem.h"
+#include "GameStateManager.h"
 
 BackgroundSystem::BackgroundSystem(EntityManager& eManager, SDL_Renderer* renderer) {
     starTexture.m_renderer = renderer;
@@ -6,29 +7,31 @@ BackgroundSystem::BackgroundSystem(EntityManager& eManager, SDL_Renderer* render
     createBackground(eManager);
 }
 
-void BackgroundSystem::update(EntityManager& eManager) {
-    uint32_t player = eManager.getEntitiesWithComponent(ComponentType::Player)[0];
-    TransformComponent playerTr = eManager.getComponentData<TransformComponent>(player);
+void BackgroundSystem::update(EntityManager& eMgr, const double& dT) {
+    if (GameStateManager::instance().getState() == GameState::Playing) {
+        uint32_t player = eMgr.getEntitiesWithComponent(ComponentType::Player)[0];
+        TransformComponent playerTr = eMgr.getComponentData<TransformComponent>(player);
 
-    FPair delta = playerTr.position - lastPlayerPos;
-    lastPlayerPos = playerTr.position;
+        FPair delta = playerTr.position - lastPlayerPos;
+        lastPlayerPos = playerTr.position;
 
-    constexpr float MIN_POS = -5000.0f;
-    constexpr float MAX_POS =  5000.0f;
-    constexpr float RANGE = MAX_POS - MIN_POS;
+        constexpr float MIN_POS = -5000.0f;
+        constexpr float MAX_POS =  5000.0f;
+        constexpr float RANGE = MAX_POS - MIN_POS;
 
-    for (uint32_t e : eManager.getEntitiesWithComponent(ComponentType::Background)) {
-        TransformComponent tComp = eManager.getComponentData<TransformComponent>(e);
-        BackgroundComponent bComp = eManager.getComponentData<BackgroundComponent>(e);
-        
-        tComp.position -= delta * bComp.parallaxFactor;
+        for (uint32_t e : eMgr.getEntitiesWithComponent(ComponentType::Background)) {
+            TransformComponent tComp = eMgr.getComponentData<TransformComponent>(e);
+            BackgroundComponent bComp = eMgr.getComponentData<BackgroundComponent>(e);
+            
+            tComp.position -= delta * bComp.parallaxFactor;
 
-        if (tComp.position.x < lastPlayerPos.x + MIN_POS) tComp.position.x += RANGE;
-        if (tComp.position.x > lastPlayerPos.x + MAX_POS) tComp.position.x -= RANGE;
-        if (tComp.position.y < lastPlayerPos.y + MIN_POS) tComp.position.y += RANGE;
-        if (tComp.position.y > lastPlayerPos.y + MAX_POS) tComp.position.y -= RANGE;
+            if (tComp.position.x < lastPlayerPos.x + MIN_POS) tComp.position.x += RANGE;
+            if (tComp.position.x > lastPlayerPos.x + MAX_POS) tComp.position.x -= RANGE;
+            if (tComp.position.y < lastPlayerPos.y + MIN_POS) tComp.position.y += RANGE;
+            if (tComp.position.y > lastPlayerPos.y + MAX_POS) tComp.position.y -= RANGE;
 
-        eManager.setComponentData(e, tComp);
+            eMgr.setComponentData(e, tComp);
+        }
     }
 }
 
@@ -41,7 +44,7 @@ void BackgroundSystem::createBackground(EntityManager& eManager) {
         };
         float parallax = randFloat(0.01f, .1f);
         uint32_t e = eManager.createEntity();
-        EntityHandle eHandle {e, &eManager};
+        EntityHandle eHandle {e, eManager};
         eHandle.add<TransformComponent>();
         eHandle.add<RenderComponent>();
         eHandle.add<BackgroundComponent>();

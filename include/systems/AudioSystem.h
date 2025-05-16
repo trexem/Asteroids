@@ -20,7 +20,7 @@ public:
     int masterVolume, musicVolume, sfxVolume;
     AudioSystem();
     ~AudioSystem();
-    void update();
+    void update(EntityManager& eMgr, const double& dT) override;
     void setSfxVolume(int volume);
     void setMasterVolume(int volume);
     void setMusicVolume(int volume);

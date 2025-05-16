@@ -3,7 +3,7 @@
 #include "GUI.h"
 
 RenderSystem::RenderSystem(SDL_Window* window, const char * name, Camera* camera)
-    : renderer(std::make_unique<Renderer>(window, name)), camera(camera) {
+    : renderer(std::make_shared<Renderer>(window, name)), camera(camera) {
     renderer->changeColor(0x00, 0x00, 0x00, 0xFF);
     screenTexture = SDL_CreateTexture(renderer->getRenderer(), SDL_PIXELFORMAT_RGBA8888,
         SDL_TEXTUREACCESS_TARGET, 1920, 1080);
@@ -16,13 +16,13 @@ SDL_Renderer* RenderSystem::getRenderer() {
 	return renderer->getRenderer();
 }
 
-void RenderSystem::render(EntityManager& eM) {
+void RenderSystem::render(EntityManager& eMgr) {
     renderer->clear();
     SDL_SetRenderTarget(renderer->getRenderer(), screenTexture);
     SDL_SetRenderDrawColor(renderer->getRenderer(), 0, 0, 0, 255);
     renderer->clear();
-    drawGameEntities(eM);
-    drawGUI(eM);
+    drawGameEntities(eMgr);
+    drawGUI(eMgr);
     renderer->render();
     SDL_SetRenderTarget(renderer->getRenderer(), nullptr);
     FPair screenSize = SettingsManager::instance().currentScreenSize;

@@ -9,7 +9,7 @@
 #include "PlayerSystem.h"
 #include "PickupPickedMessage.h"
 
-PlayerSystem::PlayerSystem(EntityManager* eManager) : eManager(eManager) {
+PlayerSystem::PlayerSystem(EntityManager& eMgr) : eMgr(eMgr) {
     // Subscribe to KeyboardMessages
     MessageManager::instance().subscribe<KeyboardMessage>(
         [this](std::shared_ptr<KeyboardMessage> msg) { handleKeyboardInput(msg); }
@@ -22,31 +22,33 @@ PlayerSystem::PlayerSystem(EntityManager* eManager) : eManager(eManager) {
     );
 }
 
-void PlayerSystem::update(double dT) {
-    for (uint32_t eID : eManager->getEntitiesWithComponent(ComponentType::Player)) {
-        updateMovement(eID);
-        updateAbilities(eID, dT);
+void PlayerSystem::update(EntityManager& eMgr, const double& dT) {
+    if (GameStateManager::instance().getState() == GameState::Playing) {
+        for (uint32_t eID : eMgr.getEntitiesWithComponent(ComponentType::Player)) {
+            updateMovement(eID);
+            updateAbilities(eID, dT);
+        }
     }
 }
 
 void PlayerSystem::handleKeyboardInput(std::shared_ptr<KeyboardMessage> msg) {
-    auto playerEntities = eManager->getEntitiesWithComponent(ComponentType::Player);
+    auto playerEntities = eMgr.getEntitiesWithComponent(ComponentType::Player);
 
     for (uint32_t eID : playerEntities) {
-        MovementComponent moveComp = eManager->getComponentData<MovementComponent>(eID);
+        MovementComponent moveComp = eMgr.getComponentData<MovementComponent>(eID);
         if (msg->key == SDLK_W) moveComp.moveState[MoveState::MOVE_UP] = msg->pressed;
         if (msg->key == SDLK_S) moveComp.moveState[MoveState::MOVE_DOWN] = msg->pressed;
         if (msg->key == SDLK_A) moveComp.moveState[MoveState::MOVE_LEFT] = msg->pressed;
         if (msg->key == SDLK_D) moveComp.moveState[MoveState::MOVE_RIGHT] = msg->pressed;
-        eManager->setComponentData<MovementComponent>(eID, moveComp);
+        eMgr.setComponentData<MovementComponent>(eID, moveComp);
     }
 }
 
 void PlayerSystem::updateMovement(uint32_t eID) {
-    MovementComponent moveComp = eManager->getComponentData<MovementComponent>(eID);
-    PhysicsComponent physics = eManager->getComponentData<PhysicsComponent>(eID);
-    PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(eID);
-    StatsComponent stats = eManager->getComponentData<StatsComponent>(eID);
+    MovementComponent moveComp = eMgr.getComponentData<MovementComponent>(eID);
+    PhysicsComponent physics = eMgr.getComponentData<PhysicsComponent>(eID);
+    PlayerComponent playerComp = eMgr.getComponentData<PlayerComponent>(eID);
+    StatsComponent stats = eMgr.getComponentData<StatsComponent>(eID);
     
     if (playerComp.type == ShipType::TANK) {
         if (moveComp.moveState[MoveState::MOVE_UP]) {
@@ -119,12 +121,12 @@ void PlayerSystem::updateMovement(uint32_t eID) {
     } else if (physics.rotVelocity < -stats.maxRotationSpeed) { 
         physics.rotVelocity = -stats.maxRotationSpeed;
     }
-    eManager->setComponentData<PhysicsComponent>(eID, physics);
+    eMgr.setComponentData<PhysicsComponent>(eID, physics);
 }
 
 void PlayerSystem::updateAbilities(uint32_t eID, double dT) {
-    PlayerComponent player = eManager->getComponentData<PlayerComponent>(eID);
-    StatsComponent stats = eManager->getComponentData<StatsComponent>(eID);
+    PlayerComponent player = eMgr.getComponentData<PlayerComponent>(eID);
+    StatsComponent stats = eMgr.getComponentData<StatsComponent>(eID);
     constexpr double burstInterval = 0.25;
 
     for (size_t i = 0; i < static_cast<size_t>(WeaponAbilities::WeaponAbilitiesCount); i++) {
@@ -162,18 +164,18 @@ void PlayerSystem::updateAbilities(uint32_t eID, double dT) {
             }
         }
     }
-    eManager->setComponentData<PlayerComponent>(eID, player);
+    eMgr.setComponentData<PlayerComponent>(eID, player);
 }
 
 void PlayerSystem::addAbility(uint32_t eID, WeaponAbilities ability) {
-    PlayerComponent player = eManager->getComponentData<PlayerComponent>(eID);
+    PlayerComponent player = eMgr.getComponentData<PlayerComponent>(eID);
     player.ownedWeapons[static_cast<size_t>(ability)] = true;
-    eManager->setComponentData<PlayerComponent>(eID, player);
+    eMgr.setComponentData<PlayerComponent>(eID, player);
 }
 
 void PlayerSystem::handlePickupPickedMessage(std::shared_ptr<PickupPickedMessage> msg) {
     if (msg->type & EntityType::Experience) {
-        PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(msg->playerID);
+        PlayerComponent playerComp = eMgr.getComponentData<PlayerComponent>(msg->playerID);
         playerComp.currentXp += msg->amount;
         if (playerComp.currentXp >= playerComp.xpToNextLevel) {
             playerComp.level++;
@@ -181,7 +183,7 @@ void PlayerSystem::handlePickupPickedMessage(std::shared_ptr<PickupPickedMessage
             playerComp.xpToNextLevel = 50 + playerComp.level * 50;
             GameStateManager::instance().setState(GameState::LevelUp);
         }
-        eManager->setComponentData<PlayerComponent>(msg->playerID, playerComp);
+        eMgr.setComponentData<PlayerComponent>(msg->playerID, playerComp);
     } else if (msg->type & EntityType::Gold) {
         GameSessionManager::instance().getStats().gold += msg->amount;
     }
@@ -189,8 +191,8 @@ void PlayerSystem::handlePickupPickedMessage(std::shared_ptr<PickupPickedMessage
 
 void PlayerSystem::handleLevelUpMessage(std::shared_ptr<LevelUpMessage> msg) {
     size_t ability = msg->choice.index;
-    uint32_t player = eManager->getEntitiesWithComponent(ComponentType::Player).at(0);
-    PlayerComponent playerComp = eManager->getComponentData<PlayerComponent>(player);
+    uint32_t player = eMgr.getEntitiesWithComponent(ComponentType::Player).at(0);
+    PlayerComponent playerComp = eMgr.getComponentData<PlayerComponent>(player);
     if (msg->choice.type == AbilityType::Passive) {
         if (playerComp.ownedPassives[ability]) {
             playerComp.passiveLevels[ability]++;
@@ -210,20 +212,20 @@ void PlayerSystem::handleLevelUpMessage(std::shared_ptr<LevelUpMessage> msg) {
     } else if (msg->choice.type == AbilityType::Money) {
         // #TODO add money to gameStats manager 
     } else if (msg->choice.type == AbilityType::Health) {
-        HealthComponent hComp = eManager->getComponentData<HealthComponent>(player);
-        float maxHealth = eManager->getComponentDataPtr<StatsComponent>(player)->maxHealth;
+        HealthComponent hComp = eMgr.getComponentData<HealthComponent>(player);
+        float maxHealth = eMgr.getComponentDataPtr<StatsComponent>(player)->maxHealth;
         hComp.health += 50.0f;
         if (hComp.health > maxHealth) {
             hComp.health = maxHealth;
         }
-        eManager->setComponentData(player, hComp);
+        eMgr.setComponentData(player, hComp);
     }
-    eManager->setComponentData<PlayerComponent>(player, playerComp);
+    eMgr.setComponentData<PlayerComponent>(player, playerComp);
 }
 
 void PlayerSystem::levelUpPassive(uint32_t player, size_t passive, uint8_t level) {
-    StatsComponent stats = eManager->getComponentData<StatsComponent>(player);
-    HealthComponent hComp = eManager->getComponentData<HealthComponent>(player);
+    StatsComponent stats = eMgr.getComponentData<StatsComponent>(player);
+    HealthComponent hComp = eMgr.getComponentData<HealthComponent>(player);
     const float value = passiveValues[passive][level];
     switch (passive) {
         case static_cast<size_t>(PassiveAbilities::PickupRadius):
@@ -239,12 +241,12 @@ void PlayerSystem::levelUpPassive(uint32_t player, size_t passive, uint8_t level
             stats.maxHealth = SHIP_BASE_HEALTH + value;
             hComp.maxHealth = stats.maxHealth;
             hComp.health += value;
-            eManager->setComponentData(player, hComp);
+            eMgr.setComponentData(player, hComp);
             break;
         case static_cast<size_t>(PassiveAbilities::HealthRegen):
             stats.healthRegen = value;
             hComp.regen = value;
-            eManager->setComponentData(player, hComp);
+            eMgr.setComponentData(player, hComp);
             break;
         case static_cast<size_t>(PassiveAbilities::MovementSpeed):
             stats.maxSpeed = static_cast<float>(SHIP_TOP_SPEED * value);
@@ -265,5 +267,5 @@ void PlayerSystem::levelUpPassive(uint32_t player, size_t passive, uint8_t level
         default:
             break;
     }
-    eManager->setComponentData<StatsComponent>(player, stats);
+    eMgr.setComponentData<StatsComponent>(player, stats);
 }

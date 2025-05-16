@@ -2,22 +2,22 @@
 
 #include <iostream>
 
-AnimationSystem::AnimationSystem(EntityManager* eManager) : eManager(eManager) {
+AnimationSystem::AnimationSystem(EntityManager& eManager) : eMgr(eManager) {
     MessageManager::instance().subscribe<AnimationMessage>(
         [this](std::shared_ptr<AnimationMessage> msg) { handleAnimationMessage(msg); }
     );
 }
 
 void AnimationSystem::handleAnimationMessage(std::shared_ptr<AnimationMessage> msg) {
-    AnimationComponent anim = eManager->getComponentData<AnimationComponent>(msg->eID);
+    AnimationComponent anim = eMgr.getComponentData<AnimationComponent>(msg->eID);
     anim.playingAnimation[static_cast<size_t>(msg->animation)] = true;
-    eManager->setComponentData<AnimationComponent>(msg->eID, anim);
+    eMgr.setComponentData<AnimationComponent>(msg->eID, anim);
 }
 
-void AnimationSystem::update(double dT) {
-    for (uint32_t eID : eManager->getEntitiesWithComponent(ComponentType::Animation)) {
-        AnimationComponent anim = eManager->getComponentData<AnimationComponent>(eID);
-        RenderComponent texture = eManager->getComponentData<RenderComponent>(eID);
+void AnimationSystem::update(EntityManager& eMgr, const double& dT) {
+    for (uint32_t eID : eMgr.getEntitiesWithComponent(ComponentType::Animation)) {
+        AnimationComponent anim = eMgr.getComponentData<AnimationComponent>(eID);
+        RenderComponent texture = eMgr.getComponentData<RenderComponent>(eID);
         if (anim.playingAnimation[static_cast<size_t>(Animation::Damage)]) {
             // std::cout << "Animating eID: " << eID;
             anim.frameTime += dT;
@@ -40,6 +40,6 @@ void AnimationSystem::update(double dT) {
         } else {
             texture.texture->setAlphaMod(0);
         }
-        eManager->setComponentData<AnimationComponent>(eID, anim);
+        eMgr.setComponentData<AnimationComponent>(eID, anim);
     }
 }

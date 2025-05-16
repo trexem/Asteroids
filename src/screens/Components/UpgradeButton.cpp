@@ -5,7 +5,7 @@
 #include "Fonts.h"
 
 UpgradeButton::UpgradeButton(
-    EntityManager* em,
+    EntityManager& em,
     const std::string& label,
     FPair pos,
     FPair size,
@@ -24,13 +24,13 @@ UpgradeButton::UpgradeButton(
             GameStatsManager::instance().save("data/stats.json");
         }
     };
-    em->addComponent(id, ComponentType::ClickCallback);
-    em->setComponentData<ClickCallbackComponent>(id, callback);
+    em.addComponent(id, ComponentType::ClickCallback);
+    em.setComponentData<ClickCallbackComponent>(id, callback);
     //Cost Text
     GUIComponent guiComp;
     RenderComponent render;
     TypeComponent typeComp {EntityType::GUI};
-    costId = em->createEntity();
+    costId = em.createEntity();
     EntityHandle handle {costId, em};
     handle.add<GUIComponent>();
     handle.add<RenderComponent>();
@@ -52,18 +52,18 @@ UpgradeButton::UpgradeButton(
 
     if (level >= maxLevel) {
         level = maxLevel;
-        GUIStateComponent state = em->getComponentData<GUIStateComponent>(id);
+        GUIStateComponent state = em.getComponentData<GUIStateComponent>(id);
         state.state = GUIState::Disabled;
-        em->setComponentData(id, state);
+        em.setComponentData(id, state);
     }
 }
 
-void UpgradeButton::destroy(EntityManager* em) {
+void UpgradeButton::destroy(EntityManager& em) {
     Button::destroy(em);
-    em->destroyEntityLater(costId);
+    em.destroyEntityLater(costId);
 }
 
-void UpgradeButton::updateCost(EntityManager* em) {
+void UpgradeButton::updateCost(EntityManager& em) {
     level = GameStatsManager::instance().getUpgradeLevel(type);
     if (level != lastlevel) {
         const int cost = level < maxLevel ? upgradesCost[static_cast<size_t>(type)][level] : 0;
@@ -73,8 +73,8 @@ void UpgradeButton::updateCost(EntityManager* em) {
     }
     if (level >= maxLevel) {
         level = maxLevel;
-        GUIStateComponent state = em->getComponentData<GUIStateComponent>(id);
+        GUIStateComponent state = em.getComponentData<GUIStateComponent>(id);
         state.state = GUIState::Disabled;
-        em->setComponentData(id, state);
+        em.setComponentData(id, state);
     }
 }

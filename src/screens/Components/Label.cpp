@@ -2,11 +2,11 @@
 #include "screens/Components/Label.h"
 #include "texture.hpp"
 
-Label::Label(EntityManager* em, const std::string& label, FPair pos, FPair size,
+Label::Label(EntityManager& em, const std::string& label, FPair pos, FPair size,
         SDL_Renderer* renderer, uint32_t parent, TTF_Font* font, SDL_Color color,
         bool interactive) : text(label), originalPos(pos), originalSize(size),
         font(font), color(color), interactive(interactive) {
-    id = em->createEntity();
+    id = em.createEntity();
     EntityHandle handle {id, em};
 
     GUIComponent guiComp {pos, size, parent};
@@ -30,8 +30,8 @@ Label::Label(EntityManager* em, const std::string& label, FPair pos, FPair size,
     handle.set(type);
 }
 
-void Label::destroy(EntityManager* em) {
-    em->destroyEntityLater(id);
+void Label::destroy(EntityManager& em) {
+    em.destroyEntityLater(id);
 }
 
 void Label::setText(const std::string& t) {

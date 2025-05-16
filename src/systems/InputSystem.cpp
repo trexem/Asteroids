@@ -7,7 +7,9 @@
 #include "MessageManager.h"
 #include "SettingsManager.h"
 
-void InputSystem::update() {
+void InputSystem::update(EntityManager& eMgr, const double& dT) {
+    (void) eMgr; // unused
+    (void) dT; // unused
     while (SDL_PollEvent(&e)) {
 		//Quit if the X button is pressed
         switch (e.type) {

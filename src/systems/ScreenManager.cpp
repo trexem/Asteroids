@@ -1,33 +1,28 @@
 #include "ScreenManager.h"
 #include "UpgradeStoreScreen.h"
 
-ScreenManager::ScreenManager(EntityManager* eM, SDL_Renderer* renderer) 
-    : eManager(eM), renderer(renderer) {
+ScreenManager::ScreenManager(EntityManager& eM, SDL_Renderer* renderer) 
+    : eMgr(eM), renderer(renderer) {
 }
 
 ScreenManager::~ScreenManager() {
     if (overlayScreen) {
         overlayScreen->clearSubscriptions();
-        overlayScreen->destroy(eManager);
+        overlayScreen->destroy(eMgr);
     }
     screen->clearSubscriptions();
-    screen->destroy(eManager);
+    screen->destroy(eMgr);
     overlayScreen = nullptr;
     screen = nullptr;
 }
 
-void ScreenManager::update() {
-    auto start = std::chrono::high_resolution_clock::now();
+void ScreenManager::update(EntityManager& eMgr, const double& dT) {
+    (void)dT; // unused
     updateState();
-    auto end = std::chrono::high_resolution_clock::now();
-    // std::cout << "ScreenManager updateState time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
     if (overlayScreen) {
-        overlayScreen->update(eManager, renderer);
+        overlayScreen->update(eMgr, renderer);
     }
-    start = std::chrono::high_resolution_clock::now();
-    screen->update(eManager, renderer);
-    end = std::chrono::high_resolution_clock::now();
-    // std::cout << "ScreenManager screenUpdate time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+    screen->update(eMgr, renderer);
 }
 
 void ScreenManager::updateState() {
@@ -43,49 +38,49 @@ void ScreenManager::changeScreen(GameState newState) {
         if (!overlayScreen || newState != currentOverlayState) {
                 if (overlayScreen) {
                 overlayScreen->clearSubscriptions();
-                overlayScreen->destroy(eManager);
+                overlayScreen->destroy(eMgr);
             }
             switch (newState) {
             case GameState::LevelUp:
-                overlayScreen = std::make_shared<LevelUpScreen>(eManager);
+                overlayScreen = std::make_shared<LevelUpScreen>(eMgr);
                 break;
             case GameState::Paused:
-                overlayScreen = std::make_shared<PauseScreen>(eManager);
+                overlayScreen = std::make_shared<PauseScreen>(eMgr);
             default:
                 break;
             }
             overlayScreen->initSubscriptions();
-            overlayScreen->create(eManager, renderer);
+            overlayScreen->create(eMgr, renderer);
             currentOverlayState = newState;
         }
     } else {
         // Destroy overlay if it exists
         if (overlayScreen) {
             overlayScreen->clearSubscriptions();
-            overlayScreen->destroy(eManager);
+            overlayScreen->destroy(eMgr);
             overlayScreen = nullptr;
         }
         // Only recreate base screen if different
         if (!screen || newState != currentMainState) {
             if (screen) {
                 screen->clearSubscriptions();
-                screen->destroy(eManager);
+                screen->destroy(eMgr);
             }
             switch (newState) {
                 case GameState::MainMenu:
-                    screen = std::make_shared<MainMenuScreen>(eManager);
+                    screen = std::make_shared<MainMenuScreen>(eMgr);
                     break;
                 case GameState::Settings:
-                    screen = std::make_shared<SettingsScreen>(eManager);
+                    screen = std::make_shared<SettingsScreen>(eMgr);
                     break;
                 case GameState::Playing:
-                    screen = std::make_shared<PlayingScreen>(eManager);
+                    screen = std::make_shared<PlayingScreen>(eMgr);
                     break;
                 case GameState::UpgradeStore:
-                    screen = std::make_shared<UpgradeStoreScreen>(eManager, renderer);
+                    screen = std::make_shared<UpgradeStoreScreen>(eMgr, renderer);
                     break;
                 case GameState::GameOver:
-                    screen = std::make_shared<GameOverScreen>(eManager);
+                    screen = std::make_shared<GameOverScreen>(eMgr);
                     break;
                 default:
                     break;
@@ -94,7 +89,7 @@ void ScreenManager::changeScreen(GameState newState) {
             // Initialize all screens
             if (screen) {
                 screen->initSubscriptions();
-                screen->create(eManager, renderer);
+                screen->create(eMgr, renderer);
             }
             currentMainState = newState;
         }

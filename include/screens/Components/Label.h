@@ -21,10 +21,10 @@ public:
     GUIState lastState {GUIState::Idle};
     TTF_Font* font;
     SDL_Color color;
-    Label(EntityManager* em, const std::string& label, FPair pos, FPair size,
+    Label(EntityManager& em, const std::string& label, FPair pos, FPair size,
         SDL_Renderer* renderer, uint32_t parent = 0, TTF_Font* font = Fonts::Body, 
         SDL_Color color = Colors::White, bool interactive = false);
-    void destroy(EntityManager* em);
+    void destroy(EntityManager& em);
     void setText(const std::string& t);
 private:
     std::string text;

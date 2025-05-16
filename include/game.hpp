@@ -26,26 +26,10 @@ const uint32_t MAX_ENTITIES = 5000;
 #include "GameStateManager.h"
 
 //Forward declaring systems
-class ScreenManager;
-class PlayerSystem;
-class InputSystem;
-class RenderSystem;
-class PhysicsSystem;
-class MovementSystem;
-class CollisionSystem;
-class AbilitySystem;
-class DamageSystem;
-class AnimationSystem;
-class AsteroidSystem;
-class PickupsSystem;
-class LifeTimeSystem;
-class OrbitSystem;
-class FollowSystem;
-class HealthSystem;
-class BackgroundSystem;
-class GUIInteractionSystem;
-class AudioSystem;
 class GraphicsSettingsMessage;
+class RenderSystem;
+class AsteroidSystem;
+class SystemManager;
 
 class Game {
 public:
@@ -69,25 +53,9 @@ public:
 private:
 	Texture g_particle_shimmer_texture;
 	Window m_window;
-	std::unique_ptr<InputSystem> inputSystem;
-	std::unique_ptr<ScreenManager> screenManager;
-	std::unique_ptr<PlayerSystem> playerSystem;
-	std::unique_ptr<PhysicsSystem> physicsSystem;
-	std::unique_ptr<MovementSystem> movementSystem;
-	std::unique_ptr<CollisionSystem> collisionSystem;
-	std::unique_ptr<AbilitySystem> abilitySystem;
-	std::unique_ptr<DamageSystem> damageSystem;
-	std::unique_ptr<AnimationSystem> animationSystem;
-	std::unique_ptr<AsteroidSystem> asteroidSystem;
-	std::unique_ptr<RenderSystem> renderSystem;
-	std::unique_ptr<PickupsSystem> pickupsSystem;
-	std::unique_ptr<LifeTimeSystem> lifeTimeSystem;
-	std::unique_ptr<OrbitSystem> orbitSystem;
-	std::unique_ptr<FollowSystem> followSystem;
-	std::unique_ptr<HealthSystem> healthSystem;
-	std::unique_ptr<BackgroundSystem> bgSystem;
-	std::unique_ptr<GUIInteractionSystem> guiInteractionSystem;
-	std::unique_ptr<AudioSystem> audioSystem;
+	std::unique_ptr<SystemManager> systemManager;
+	RenderSystem* renderSystem;
+	AsteroidSystem* asteroidSystem;
 	bool shouldUpdateSettings{ false }, pendingFullScreenChange{ false };
 	std::shared_ptr<GraphicsSettingsMessage> graphicsSettings;
 	Camera camera;

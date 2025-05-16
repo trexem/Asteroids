@@ -2,7 +2,7 @@
 #include "GameSessionManager.h"
 #include "GUI.h"
 
-AsteroidSystem::AsteroidSystem(EntityManager* eManager, SDL_Renderer* renderer) :
+AsteroidSystem::AsteroidSystem(EntityManager& eManager, SDL_Renderer* renderer) :
 	renderer(renderer), eManager(eManager) {
 	MessageManager::instance().subscribe<AsteroidAsteroidCollisionMessage>(
 		[this](std::shared_ptr<AsteroidAsteroidCollisionMessage> msg) { handleAsteroidAsteroidCollision(msg); }
@@ -12,12 +12,13 @@ AsteroidSystem::AsteroidSystem(EntityManager* eManager, SDL_Renderer* renderer) 
 	);
 }
 
-void AsteroidSystem::update(EntityManager* eManager, double timePassed) {
-    //delete far asteroids
-    generateAsteroids(eManager, timePassed);
+void AsteroidSystem::update(EntityManager& eMgr, const double& dT) {
+    if (GameStateManager::instance().getState() == GameState::Playing) {
+    	generateAsteroids(eManager, dT);
+	}
 }
 
-void AsteroidSystem::generateAsteroids(EntityManager* eManager, double timePassed) {
+void AsteroidSystem::generateAsteroids(EntityManager& eManager, double timePassed) {
     // insert logic with timing
     int lvl = 1;
 	const Uint32& time = GameStateManager::instance().getGameTimeSeconds();
@@ -29,65 +30,65 @@ void AsteroidSystem::generateAsteroids(EntityManager* eManager, double timePasse
 	previousT = time;
 }
 
-void AsteroidSystem::generateSingleAsteroid(EntityManager* eManager, int lvl) {
+void AsteroidSystem::generateSingleAsteroid(EntityManager& eManager, int lvl) {
 	if (asteroids.size() >= MAX_ASTEROIDS) return;
     // std::cout << "Generating Asteroids: ";
-	uint32_t asteroid = eManager->createEntity();
+	uint32_t asteroid = eManager.createEntity();
 	// std::cout <<" with eID: " << asteroid << std::endl;
-	eManager->addComponent(asteroid, ComponentType::Render);
-	eManager->addComponent(asteroid, ComponentType::Physics);
-	eManager->addComponent(asteroid, ComponentType::Collision);
-	eManager->addComponent(asteroid, ComponentType::Type);
-	eManager->addComponent(asteroid, ComponentType::Health);
-	eManager->addComponent(asteroid, ComponentType::Animation);
-	eManager->addComponent(asteroid, ComponentType::Damage);
+	eManager.addComponent(asteroid, ComponentType::Render);
+	eManager.addComponent(asteroid, ComponentType::Physics);
+	eManager.addComponent(asteroid, ComponentType::Collision);
+	eManager.addComponent(asteroid, ComponentType::Type);
+	eManager.addComponent(asteroid, ComponentType::Health);
+	eManager.addComponent(asteroid, ComponentType::Animation);
+	eManager.addComponent(asteroid, ComponentType::Damage);
 	// Asteroid Texture
 	RenderComponent astTexture(renderer, g_asteroid_big_surface);
 	astTexture.texture->colorMod(Colors::Asteroid);
-	eManager->setComponentData<RenderComponent>(asteroid, astTexture);
+	eManager.setComponentData<RenderComponent>(asteroid, astTexture);
 	// Asteroid Transform
 	TransformComponent astTransform;
 	astTransform.position = generatePosition(eManager);
-	uint32_t player = eManager->getEntitiesWithComponent(ComponentType::Player)[0];
-	FPair playerPos = eManager->getComponentDataPtr<TransformComponent>(player)->position;
+	uint32_t player = eManager.getEntitiesWithComponent(ComponentType::Player)[0];
+	FPair playerPos = eManager.getComponentDataPtr<TransformComponent>(player)->position;
 	astTransform.rotDegrees = static_cast<double>(rand()) / RAND_MAX * 45 
 	+ astTransform.position.angleTowards(playerPos) * RAD2DEG; //Angle between 180 and -180
-	eManager->setComponentData<TransformComponent>(asteroid, astTransform);
+	eManager.setComponentData<TransformComponent>(asteroid, astTransform);
 	// Asteroid Physics
 	PhysicsComponent astPhys;
 	astPhys.velocity = rand() % 100 + 50;
-	eManager->setComponentData<PhysicsComponent>(asteroid, astPhys);
+	eManager.setComponentData<PhysicsComponent>(asteroid, astPhys);
 	// Asteroid Collider
 	CollisionComponent astCollision;
 	astCollision.shape = Shape::Circle;
 	astCollision.radius = astTexture.texture->getWidth() / 2.0f;
-	eManager->setComponentData<CollisionComponent>(asteroid, astCollision);
+	eManager.setComponentData<CollisionComponent>(asteroid, astCollision);
 	// Asteroid type
 	TypeComponent type = EntityType::Asteroid;
-	eManager->setComponentData<TypeComponent>(asteroid, type);
+	eManager.setComponentData<TypeComponent>(asteroid, type);
 	//Health
 	HealthComponent health;
 	health.health = ASTEROID_BASE_HEALTH * lvl;
 	health.maxHealth = ASTEROID_BASE_HEALTH * lvl;
-	eManager->setComponentData<HealthComponent>(asteroid, health);
+	eManager.setComponentData<HealthComponent>(asteroid, health);
 	//Animation
 	AnimationComponent anim;
 	asteroids.emplace(asteroid);
-	eManager->setComponentData<AnimationComponent>(asteroid, anim);
+	eManager.setComponentData<AnimationComponent>(asteroid, anim);
 	//Damage to Player
 	DamageComponent damageC;
 	damageC.damage = 10 * lvl;
-	eManager->setComponentData(asteroid, damageC);
+	eManager.setComponentData(asteroid, damageC);
 }
 
-FPair AsteroidSystem::generatePosition(EntityManager* eManager) {
+FPair AsteroidSystem::generatePosition(EntityManager& eManager) {
 	const int maxAttempts = 50;
 	int attempts = 0;
     // Missing logic if there are more than one player
     // srand(time(NULL));
-    for (uint32_t playerID : eManager->getEntitiesWithComponent(ComponentType::Player)) {
-        const TransformComponent* playerTransform = eManager->getComponentDataPtr<TransformComponent>(playerID);
-        const PhysicsComponent* playerPhys = eManager->getComponentDataPtr<PhysicsComponent>(playerID);
+    for (uint32_t playerID : eManager.getEntitiesWithComponent(ComponentType::Player)) {
+        const TransformComponent* playerTransform = eManager.getComponentDataPtr<TransformComponent>(playerID);
+        const PhysicsComponent* playerPhys = eManager.getComponentDataPtr<PhysicsComponent>(playerID);
 
 		while (attempts < maxAttempts) {
 			double movementAngle = playerTransform->rotDegrees * DEG2RAD; //Bias to spawn asteroids only in this direction
@@ -109,7 +110,7 @@ FPair AsteroidSystem::generatePosition(EntityManager* eManager) {
 			SDL_FRect newAsteroidRect = { x, y, g_asteroid_big_surface.getWidth(), g_asteroid_big_surface.getHeight() };
 			bool collisionFound = false;
 			for (uint32_t existingAst : asteroids) {
-				TransformComponent* existTr = eManager->getComponentDataPtr<TransformComponent>(existingAst);
+				TransformComponent* existTr = eManager.getComponentDataPtr<TransformComponent>(existingAst);
 				SDL_FRect existingRect = { 
 					existTr->position.x,
 					existTr->position.y,
@@ -131,12 +132,12 @@ void AsteroidSystem::handleAsteroidAsteroidCollision(std::shared_ptr<AsteroidAst
     const uint32_t b = msg->entityID[1];
     
     // Get components by reference to avoid copies
-    PhysicsComponent pA = eManager->getComponentData<PhysicsComponent>(a);
-    PhysicsComponent pB = eManager->getComponentData<PhysicsComponent>(b);
-    TransformComponent tA = eManager->getComponentData<TransformComponent>(a);
-    TransformComponent tB = eManager->getComponentData<TransformComponent>(b);
-    const auto& cA = eManager->getComponentData<CollisionComponent>(a);
-    const auto& cB = eManager->getComponentData<CollisionComponent>(b);
+    PhysicsComponent pA = eManager.getComponentData<PhysicsComponent>(a);
+    PhysicsComponent pB = eManager.getComponentData<PhysicsComponent>(b);
+    TransformComponent tA = eManager.getComponentData<TransformComponent>(a);
+    TransformComponent tB = eManager.getComponentData<TransformComponent>(b);
+    const auto& cA = eManager.getComponentData<CollisionComponent>(a);
+    const auto& cB = eManager.getComponentData<CollisionComponent>(b);
 
     // Calculate centers (assuming position is center)
     FPair centerA = tA.position - cA.radius;
@@ -189,14 +190,14 @@ void AsteroidSystem::handleAsteroidAsteroidCollision(std::shared_ptr<AsteroidAst
 	pB.velocity = dirB.length();
 
    	// Update components
-	eManager->setComponentData(a, pA);
-	eManager->setComponentData(b, pB);
-	eManager->setComponentData(a, tA);
-	eManager->setComponentData(b, tB);
+	eManager.setComponentData(a, pA);
+	eManager.setComponentData(b, pB);
+	eManager.setComponentData(a, tA);
+	eManager.setComponentData(b, tB);
 }
 
 void AsteroidSystem::handleDestroyAsteroidMessage(std::shared_ptr<DestroyAsteroidMessage> msg) {
-	TransformComponent* trComp = eManager->getComponentDataPtr<TransformComponent>(msg->id);
+	TransformComponent* trComp = eManager.getComponentDataPtr<TransformComponent>(msg->id);
 	if (msg->playerDestroyed) {
 		GameSessionManager::instance().getStats().asteroidsDestroyed++;
 		FPair center = { trComp->position.x + g_asteroid_big_surface.getWidth() / 2,
@@ -208,10 +209,10 @@ void AsteroidSystem::handleDestroyAsteroidMessage(std::shared_ptr<DestroyAsteroi
 			randomChance < goldProb ? EntityType::Gold : EntityType::Experience ));
 	}
 	asteroids.erase(msg->id);
-	eManager->destroyEntityLater(msg->id);
+	eManager.destroyEntityLater(msg->id);
 }
 
-void AsteroidSystem::restart(EntityManager* eManager) {
+void AsteroidSystem::restart(EntityManager& eManager) {
 	asteroidCount = 0;
 	asteroids.clear();
 }

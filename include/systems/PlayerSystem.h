@@ -10,8 +10,8 @@ class LevelUpMessage;
 
 class PlayerSystem : public System {
 public:
-    PlayerSystem(EntityManager* eManager);
-    void update(double dT);
+    PlayerSystem(EntityManager& eMgr);
+    void update(EntityManager& eMgr, const double& dT) override;
 
     void updateMovement(uint32_t eID);
     void updateAbilities(uint32_t eID, double dT);
@@ -22,5 +22,5 @@ private:
     void handlePickupPickedMessage(std::shared_ptr<PickupPickedMessage> msg);
     void handleLevelUpMessage(std::shared_ptr<LevelUpMessage> msg);
     void levelUpPassive(uint32_t player, size_t pasive, uint8_t level);
-    EntityManager* eManager;
+    EntityManager& eMgr;
 };

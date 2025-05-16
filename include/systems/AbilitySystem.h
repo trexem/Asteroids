@@ -28,10 +28,10 @@ class AbilitySystem : public System {
 public:
     static constexpr double EXPLOSION_LIFETIME = 0.5;
 
-    AbilitySystem(EntityManager* eManager, SDL_Renderer* renderer);
+    AbilitySystem(EntityManager& eManager, SDL_Renderer* renderer);
     ~AbilitySystem();
     auto getPlayerComponents(uint32_t eID);
-    void update();
+    void update(EntityManager& eMgr, const double& dT) override;
     
 private:
     void handleAbilityMessage(std::shared_ptr<AbilityMessage> msg);
@@ -50,7 +50,7 @@ private:
     void spawnGravitySaws(uint32_t eID);
     void spawnLaser(uint32_t eID);
     void spawnExplosives(uint32_t eID);
-    EntityManager* eManager;
+    EntityManager& eMgr;
     std::vector<ExplosionConfig> explosions;
     Texture explosionTexture, gravitySawTexture, laserTexture, explosiveTexture;
     FPair laserSize;

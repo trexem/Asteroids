@@ -14,12 +14,12 @@ struct PickupConfig {
 
 class PickupsSystem : public System {
 public:
-    PickupsSystem(EntityManager* eMgr, SDL_Renderer* renderer);
-    void update();
+    PickupsSystem(EntityManager& eMgr, SDL_Renderer* renderer);
+    void update(EntityManager& eMgr, const double& dT) override;
 
 private:
     void handlePickupsSpawnMessage(std::shared_ptr<PickupsSpawnMessage> msg);
-    EntityManager* eManager;
+    EntityManager& eMgr;
     Texture experienceTexture;
     Texture goldTexture;
 

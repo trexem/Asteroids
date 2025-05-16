@@ -16,7 +16,7 @@ public:
     uint32_t iconId, textId, containerId;
 
     LevelUpContainer(
-        EntityManager* eManager,
+        EntityManager& eManager,
         AbilityChoice choice,
         std::string text,
         FPair pos,
