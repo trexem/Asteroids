@@ -44,7 +44,7 @@ void AsteroidSystem::generateSingleAsteroid(EntityManager& eManager, int lvl) {
 	eManager.addComponent(asteroid, ComponentType::Damage);
 	// Asteroid Texture
 	RenderComponent astTexture(renderer, g_asteroid_big_surface);
-	astTexture.texture->colorMod(Colors::Asteroid);
+	//astTexture.texture->colorMod(Colors::Asteroid);
 	eManager.setComponentData<RenderComponent>(asteroid, astTexture);
 	// Asteroid Transform
 	TransformComponent astTransform;
