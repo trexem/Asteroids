@@ -5,6 +5,7 @@
 #include "MessageManager.h"
 #include "GraphicsSettingsMessage.h"
 #include "SettingsManager.h"
+#include "TextureManager.h"
 
 #include <iostream>
 #include <SDL3/SDL_init.h>
@@ -94,6 +95,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y) {
 				systemManager->registerSystem<PickupsSystem>(entityManager, renderSystem->getRenderer());
 				systemManager->registerSystem<AbilitySystem>(entityManager, renderSystem->getRenderer());
 				systemManager->registerSystem<BackgroundSystem>(entityManager, renderSystem->getRenderer());
+				TextureManager::instance().init(renderSystem->getRenderer());
 				g_shot_texture.m_renderer = renderSystem->getRenderer();
 				g_rocket_texture.m_renderer = renderSystem->getRenderer();
 				//init SDL_ttf
@@ -156,7 +158,7 @@ void Game::restart() {
 	entityManager.clearGameEntities();
 	GameSessionManager::instance().reset();
 	counted_frames = 0;
-	createShip(ShipType::FREE_MOVE);
+	createShip(ShipType::TANK);
 	asteroidSystem->restart(entityManager);
 	asteroidSystem->generateAsteroids(entityManager, 0.0);
 	GameStateManager::instance().setState(GameState::Playing);
@@ -223,10 +225,13 @@ void Game::createShip(ShipType shipType) {
 	TransformComponent shipTransform;
 	shipTransform.position = GUI::screenCenter;
 	//Render
-	RenderComponent shipTexture = RenderComponent(renderSystem->getRenderer(), g_ship_surface);
+	RenderComponent shipTexture;
+	shipTexture.texture = TextureManager::instance().get("atreyu001");
+	shipTexture.exactSize = {50.0f, 50.0f};
+	shipTexture.isStretched = true;
 	entityManager.setComponentData<RenderComponent>(ship, shipTexture);
-	shipTransform.position.x -= g_ship_surface.getWidth() / 2;
-	shipTransform.position.y -= g_ship_surface.getHeight() / 2;
+	shipTransform.position.x -= shipTexture.exactSize.x / 2;
+	shipTransform.position.y -= shipTexture.exactSize.y / 2;
 	entityManager.setComponentData<TransformComponent>(ship, shipTransform);
 	// Stats
 	StatsComponent shipStats;
@@ -266,8 +271,8 @@ void Game::createShip(ShipType shipType) {
 	entityManager.setComponentData<MovementComponent>(ship, shipMovement);
 	// Collision
 	CollisionComponent shipCollider;
-	shipCollider.height = shipTexture.texture->getHeight();
-	shipCollider.width = shipTexture.texture->getWidth();
+	shipCollider.height = shipTexture.exactSize.x;
+	shipCollider.width = shipTexture.exactSize.y;
 	entityManager.setComponentData<CollisionComponent>(ship, shipCollider);
 	// Type
 	TypeComponent type = EntityType::Player;

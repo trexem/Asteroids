@@ -138,7 +138,7 @@ void AbilitySystem::spawnProjectile(uint32_t eID, WeaponAbilities ability) {
     auto [player, stats, transform, render] = getPlayerComponents(eID);
     unsigned int level = player->weaponLevels[abilityIndex];
     const FPair playerPos = transform->position;
-    const FPair playerWH = {render->texture->getWidth(), render->texture->getHeight()};
+    const FPair playerWH = {render->exactSize.x, render->exactSize.y};
     
     float speed = abilitiesProjectileSpeed[abilityIndex][level]  * stats->projectileSpeed;
     float damage = abilitiesDamage[abilityIndex][level] * stats->baseDamage;
@@ -201,8 +201,8 @@ void AbilitySystem::spawnProjectile(uint32_t eID, WeaponAbilities ability) {
             follow.parentId = eID;
             follow.offsetAngle = 0;
             follow.offsetPosition = { 
-                render->texture->getWidth() / 2.0f - colComp.width / 2.0f,
-                render->texture->getHeight() / 2.0f
+                render->exactSize.x / 2.0f - colComp.width / 2.0f,
+                render->exactSize.y / 2.0f
             };
             entity.set<FollowComponent>(follow);
         } else if (ability == WeaponAbilities::Rocket) {

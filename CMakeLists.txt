@@ -20,6 +20,7 @@ foreach(SUBDIR ${SUBDIRS})
         include_directories(${SUBDIR})
     endif()
 endforeach()
+include_directories(${PROJECT_SOURCE_DIR}/vendored/nlohmann)
 
 file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
@@ -49,7 +50,7 @@ add_subdirectory(vendored/sdl_mixer EXCLUDE_FROM_ALL)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
  
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
 set(DATA_SOURCE_DIR "${PROJECT_SOURCE_DIR}/data")
 set(DATA_DEBUG_DIR "${CMAKE_BINARY_DIR}/Debug/data")

@@ -50,6 +50,7 @@ void MovementSystem::update(EntityManager& eMgr, const double& dT) {
 
 void MovementSystem::updatePlayer(EntityManager& eMgr, const double& dT, uint32_t eID) {
     const PhysicsComponent* physComp = eMgr.getComponentDataPtr<PhysicsComponent>(eID);
+    const RenderComponent* render = eMgr.getComponentDataPtr<RenderComponent>(eID);
     StatsComponent statsComp = eMgr.getComponentData<StatsComponent>(eID);
     TransformComponent transComp = eMgr.getComponentData<TransformComponent>(eID);
     PlayerComponent playerComp = eMgr.getComponentData<PlayerComponent>(eID);
@@ -67,7 +68,7 @@ void MovementSystem::updatePlayer(EntityManager& eMgr, const double& dT, uint32_
         transComp.position.x += physComp->speed.x * dT;
         transComp.position.y += physComp->speed.y * dT;
     }
-    camera->position.x = transComp.position.x - GUI::screenCenter.x + g_ship_surface.getWidth() /2 ;
-    camera->position.y = transComp.position.y - GUI::screenCenter.y + g_ship_surface.getHeight() /2 ;
+    camera->position.x = transComp.position.x - GUI::screenCenter.x + render->exactSize.x / 2;
+    camera->position.y = transComp.position.y - GUI::screenCenter.y + render->exactSize.y / 2;
     eMgr.setComponentData<TransformComponent>(eID, transComp);
 }
