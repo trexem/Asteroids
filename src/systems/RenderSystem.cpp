@@ -88,7 +88,8 @@ void RenderSystem::drawGameEntities(EntityManager& eM) {
                     static_cast<int>(trComp.rotDegrees),
                     &pivot,
                     SDL_FLIP_NONE,
-                    rComp.exactSize
+                    rComp.exactSize,
+                    rComp.color
                 );
             } else {
                 rComp.texture->renderEx(
@@ -98,7 +99,8 @@ void RenderSystem::drawGameEntities(EntityManager& eM) {
                     static_cast<int>(trComp.rotDegrees),
                     &pivot,
                     SDL_FLIP_NONE,
-                    rComp.size
+                    rComp.size,
+                    rComp.color
                 );
             }
             // Debug oriented bounding box (no circles though)
@@ -142,6 +144,9 @@ void RenderSystem::drawGUI(EntityManager& eM) {
                 pos = guiComp->pos;
             }
         }
+        if (rComp->color) {
+            std::cout << "Rendering with special color: " << int(rComp->color->r) << int(rComp->color->g) << int(rComp->color->b) << std::endl;
+        }
         rComp->texture->renderEx(
             static_cast<int>(pos.x),
             static_cast<int>(pos.y),
@@ -149,7 +154,8 @@ void RenderSystem::drawGUI(EntityManager& eM) {
             static_cast<int>(rot),
             nullptr,
             SDL_FLIP_NONE,
-            rComp->size
+            rComp->size,
+            rComp->color
         );
     }
 }

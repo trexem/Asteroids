@@ -27,11 +27,14 @@ public:
 
 	bool loadFromFile(std::string t_path);
 	bool loadFromText(std::string t_texture_text, SDL_Color t_text_color, TTF_Font* g_font);
+	bool loadFromSurface(SDL_Surface* surface);
 	void createEmptyTexture(int w, int h);
 	void free(void);
 	void render(int t_x, int t_y, float t_scale = 1.0f);
-	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, SDL_FlipMode t_flip, float t_scale = 1.0f);
-	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, SDL_FlipMode t_flip, FPair size);
+	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, 
+		SDL_FlipMode t_flip, float t_scale = 1.0f, const SDL_Color* color = nullptr);
+	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, 
+		SDL_FlipMode t_flip, FPair size, const SDL_Color* color = nullptr);
 	void setAlphaMod(int alpha);
 	void colorMod(const SDL_Color& color);
 

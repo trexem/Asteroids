@@ -1,14 +1,11 @@
 #include "PickupsSystem.h"
 #include "GameStateManager.h"
+#include "TextureManager.h"
 
 PickupsSystem::PickupsSystem(EntityManager& eMgr, SDL_Renderer* renderer) : eMgr(eMgr) {
     MessageManager::instance().subscribe<PickupsSpawnMessage>(
         [this](std::shared_ptr<PickupsSpawnMessage> msg) { handlePickupsSpawnMessage(msg); }
     );
-    experienceTexture.m_renderer = renderer;
-    experienceTexture.loadFromFile("data/img/experience.bmp");
-    goldTexture.m_renderer = renderer;
-    goldTexture.loadFromFile("data/img/gold.bmp");
 }
 
 void PickupsSystem::handlePickupsSpawnMessage(std::shared_ptr<PickupsSpawnMessage> msg) {
@@ -19,11 +16,11 @@ void PickupsSystem::handlePickupsSpawnMessage(std::shared_ptr<PickupsSpawnMessag
     TypeComponent type = msg->type;
     PickupComponent pickComponent;
     if (msg->type & EntityType::Experience) {
-        renderComp.texture = &experienceTexture;
+        renderComp.texture = TextureManager::instance().get("experience");
         int lvl = GameStatsManager::instance().getUpgradeLevel(UpgradeType::EXPERIENCE);
         pickComponent.value *= (1.0f + upgradesValues[static_cast<size_t>(UpgradeType::EXPERIENCE)][lvl]);
     } else if (msg->type & EntityType::Gold) {
-        renderComp.texture = &goldTexture;
+        renderComp.texture = TextureManager::instance().get("gold");
         int lvl = GameStatsManager::instance().getUpgradeLevel(UpgradeType::GoldValue);
         pickComponent.value *= (1.0f + upgradesValues[static_cast<size_t>(UpgradeType::GoldValue)][lvl]);
         std::cout << "lvl and gold value: " << lvl << ": " << pickComponent.value << std::endl;

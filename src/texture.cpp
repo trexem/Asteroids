@@ -40,14 +40,7 @@ bool Texture::loadFromFile(std::string t_path) {
 	if (!loaded_surface) {
 		std::cout << "Unable to load image " << t_path.c_str() << "! SDL ERROR: " << SDL_GetError() << '\n';
 	} else {
-		SDL_SetSurfaceColorKey(&*loaded_surface, true, SDL_MapSurfaceRGBA(&*loaded_surface, 0, 0xFF, 0xFF, 0));
-		new_texture = SDL_CreateTextureFromSurface(m_renderer, &*loaded_surface);
-		if (new_texture == NULL) {
-			std::cout << "Unable to create texture from " << t_path.c_str() << "! SDL Eerror: " << SDL_GetError() << '\n';
-		} else{
-			m_width = static_cast<float>(loaded_surface->w);
-			m_height = static_cast<float>(loaded_surface->h);
-		}
+		loadFromSurface(loaded_surface.get());
 	}
 	// std::cout << "[LOAD] Created texture @ " << (void*)m_texture << "\n";
 	m_texture = new_texture;
@@ -93,7 +86,10 @@ void Texture::render(int t_x, int t_y, float t_scale) {
 }
 
 void Texture::renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle
-	, SDL_FPoint* t_center, SDL_FlipMode t_flip, float t_scale) {
+	, SDL_FPoint* t_center, SDL_FlipMode t_flip, float t_scale, const SDL_Color* color) {
+	if (color) {
+        SDL_SetTextureColorMod(m_texture, color->r, color->g, color->b);
+    }
 	SDL_FRect render_quad = {
         static_cast<float>(t_x),
         static_cast<float>(t_y),
@@ -101,10 +97,16 @@ void Texture::renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle
         m_height * t_scale
     };
 	SDL_RenderTextureRotated(m_renderer, m_texture, t_clip, &render_quad, t_angle, t_center, t_flip);
+	if (color) {
+        SDL_SetTextureColorMod(m_texture, 255, 255, 255);
+    }
 }
 
 void Texture::renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle
-	, SDL_FPoint* t_center, SDL_FlipMode t_flip, FPair size) {
+	, SDL_FPoint* t_center, SDL_FlipMode t_flip, FPair size, const SDL_Color* color) {
+	if (color) {
+        SDL_SetTextureColorMod(m_texture, color->r, color->g, color->b);
+    }
 	SDL_FRect render_quad = {
         static_cast<float>(t_x),
         static_cast<float>(t_y),
@@ -112,6 +114,9 @@ void Texture::renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle
         size.y
     };
 	SDL_RenderTextureRotated(m_renderer, m_texture, t_clip, &render_quad, t_angle, t_center, t_flip);
+	if (color) {
+        SDL_SetTextureColorMod(m_texture, 255, 255, 255);
+    }
 }
 
 float Texture::getWidth() {
@@ -142,4 +147,16 @@ SDL_Texture* Texture::getTexture() {
 
 void Texture::colorMod(const SDL_Color& color) {
 	SDL_SetTextureColorMod(m_texture, color.r, color.g, color.b);
+}
+
+bool Texture::loadFromSurface(SDL_Surface* surface) {
+	SDL_SetSurfaceColorKey(surface, true, SDL_MapSurfaceRGBA(surface, 0, 0xFF, 0xFF, 0));
+	m_texture = SDL_CreateTextureFromSurface(m_renderer, surface);
+	if (m_texture == NULL) {
+		std::cout << "Unable to create texture from surface! SDL Error: " << SDL_GetError() << '\n';
+	} else {
+		m_width = static_cast<float>(surface->w);
+		m_height = static_cast<float>(surface->h);
+	}
+	return m_texture != nullptr;
 }

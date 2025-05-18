@@ -1,4 +1,5 @@
 #include "TextureManager.h"
+#include "PackReader.h"
 
 #include <filesystem>
 
@@ -9,11 +10,15 @@ TextureManager& TextureManager::instance() {
 
 void TextureManager::init(SDL_Renderer* r) {
     renderer = r;
-    loadAllFromFolder("data/img");
+    if (assetMode == AssetMode::FileSystem) {
+        loadAllFromFolder("data/img");
+    } else {
+        loadAllFromPack("img/");
+    }
 }
 bool TextureManager::load(const std::string& id, const std::string& path) {
     if (textures.contains(id)) {
-        std::cerr << "Texture IID already exists: " << id << std::endl;
+        std::cerr << "Texture ID already exists: " << id << std::endl;
         return false; 
     }
 
@@ -48,4 +53,55 @@ void TextureManager::loadAllFromFolder(const std::string& folder) {
 
 void TextureManager::clear() {
     textures.clear();
+}
+
+void TextureManager::loadAllFromPack(const std::string& prefix) {
+    auto files = PackReader::instance().listFiles(prefix);
+    for (const auto& path : files) {
+        std::string id = path.substr(prefix.length()); // Remove "img/" to use as id
+        //Remove extension as well
+        size_t dotPos = id.find_last_of('.');
+        if (dotPos != std::string::npos) {
+            id = id.substr(0, dotPos);
+        }
+        loadFromPack(id, path);
+    }
+}
+
+bool TextureManager::loadFromPack(const std::string& id, const std::string& virtualPath) {
+    if (textures.contains(id)) {
+        std::cerr << "Texture ID already exists (from pack): " << id << std::endl;
+        return false; 
+    }
+
+    auto data = PackReader::instance().readFile(virtualPath);
+    if (data.empty()) return false;
+
+    SDL_IOStream* io = SDL_IOFromMem(data.data(), data.size());
+    if (!io) {
+        std::cerr << "[ERROR] SDL_IOFromMem failed for " << virtualPath << std::endl;
+        return false;
+    }
+
+    SDL_Surface* surface = IMG_Load_IO(io, 0);
+    SDL_CloseIO(io);
+
+    if (!surface) {
+        std::cerr << "[ERROR] IMG_Load_IO failed for " << virtualPath << ": " << SDL_GetError() << std::endl;
+        return false;
+    }
+
+    auto tex = std::make_unique<Texture>();
+    tex->m_renderer = renderer;
+    tex->loadFromSurface(surface);
+    SDL_DestroySurface(surface);
+
+    if (!tex->getTexture()) {
+        std::cerr << "[ERROR] SDL_CreateTextureFromSurface failed for " << virtualPath << ": " << SDL_GetError() << std::endl;
+        return false;
+    }
+
+    textures.emplace(id, std::move(tex));
+    std::cout << "[LOADED] Packed Texture: " << id << " from " << virtualPath << std::endl;
+    return true;
 }

@@ -9,6 +9,7 @@
 #include "MouseMotionMessage.h"
 #include "PlayingScreen.h"
 #include "texture.hpp"
+#include "TextureManager.h"
 
 PlayingScreen::~PlayingScreen() {
     GameStatsManager::instance().addCoins(GameSessionManager::instance().getStats().gold);
@@ -116,10 +117,10 @@ void PlayingScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     entity.add<GUIComponent>();
     entity.add<CollisionComponent>();
     guiComp.pos = FPair(GUI::screenWidth - pauseTexture.getWidth() - 18, 46);
+    textureComp.texture = TextureManager::instance().get("gui/pause");
     colComp.position = {guiComp.pos.x - hoveredOffset, guiComp.pos.y - hoveredOffset};
-    colComp.height = pauseTexture.getHeight() + 2 * hoveredOffset;
-    colComp.width = pauseTexture.getWidth() + 2 * hoveredOffset;
-    textureComp.texture = &pauseTexture;
+    colComp.height = textureComp.texture->getHeight() + 2 * hoveredOffset;
+    colComp.width = textureComp.texture->getWidth() + 2 * hoveredOffset;
     // guiComponent.clickable = true;
     // guiComponent.hoverable = true;
     entity.set<TransformComponent>(trComp);
@@ -173,7 +174,7 @@ void PlayingScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
     guiComp.pos.y -= 1;
-    textureComp.texture = &healthBarTexture;
+    textureComp.texture = TextureManager::instance().get("healthBar");
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
     entity.set<RenderComponent>(textureComp);

@@ -5,6 +5,7 @@
 #include "ExplodeMessage.h"
 #include "EntityHandle.h"
 #include "MessageManager.h"
+#include "TextureManager.h"
 #include "System.h"
 #include "utils.hpp"
 
@@ -52,33 +53,32 @@ private:
     void spawnExplosives(uint32_t eID);
     EntityManager& eMgr;
     std::vector<ExplosionConfig> explosions;
-    Texture explosionTexture, gravitySawTexture, laserTexture, explosiveTexture;
     FPair laserSize;
 
     std::unordered_map<WeaponAbilities, ProjectileConfig> abilityConfigs = {
         {WeaponAbilities::LaserGun, {
             .type = EntityType::Shot,
-            .texture = &g_shot_texture
+            .texture = TextureManager::instance().get("shot")
         }},
         {WeaponAbilities::Rocket, {
             .type = EntityType::Rocket,
-            .texture = &g_rocket_texture,
+            .texture = TextureManager::instance().get("rocket"),
             .hasLifetime = true,
             .accelerates = true
         }},
         {WeaponAbilities::Laser, {
             .type = EntityType::Laser,
-            .texture = &laserTexture,
+            .texture = TextureManager::instance().get("laserBeam"),
             .hasLifetime = true
         }},
         {WeaponAbilities::Explosives, {
             .type = EntityType::Explosive,
-            .texture = &explosiveTexture,
+            .texture = TextureManager::instance().get("explosive"),
             .hasLifetime = true
         }},
         {WeaponAbilities::GravitySaws, {
             .type = EntityType::GravitySaw,
-            .texture = &gravitySawTexture,
+            .texture = TextureManager::instance().get("gravitySaw"),
             .shape = Shape::Circle,
             .hasLifetime = true
         }}

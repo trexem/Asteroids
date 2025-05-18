@@ -5,6 +5,7 @@
 #include "GameStatsManager.h"
 #include "GameStateManager.h"
 #include "GUI.h"
+#include "TextureManager.h"
 
 UpgradeStoreScreen::UpgradeStoreScreen(EntityManager& eManager, SDL_Renderer* renderer) : Screen(eManager) {
     pressedButtonTexture.m_renderer = renderer;
@@ -18,9 +19,10 @@ UpgradeStoreScreen::UpgradeStoreScreen(EntityManager& eManager, SDL_Renderer* re
 
 void UpgradeStoreScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     //BackButton
-    FPair size {backButtonTexture.getWidth(), backButtonTexture.getHeight()};
+    Texture* backTexture = TextureManager::instance().get("gui/backButton");
+    FPair size {backTexture->getWidth(), backTexture->getHeight()};
     FPair pos {40.0f, 40.0f};
-    backButton = std::make_shared<Button>(eManager, "", pos, size, &backButtonTexture, renderer);
+    backButton = std::make_shared<Button>(eManager, "", pos, size, backTexture, renderer);
     ClickCallbackComponent callback;
     callback.onClick = [&] (uint32_t entity) {
         GameStateManager::instance().setState(GameState::MainMenu);
@@ -37,7 +39,7 @@ void UpgradeStoreScreen::create(EntityManager& eManager, SDL_Renderer* renderer)
                    (i / 2) * size.y + 40};
         std::string label = to_string(type);
         upgradeButtons.push_back(std::make_shared<UpgradeButton>(
-            eManager, label, pos, size, &idleButtonTexture, renderer, type));
+            eManager, label, pos, size, TextureManager::instance().get("gui/buttonIdle"), renderer, type));
     }
 }
 

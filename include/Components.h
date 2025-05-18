@@ -101,6 +101,7 @@ struct RenderComponent {
     FPair exactSize{1.0f, 1.0f};
     int visibility{255};
     bool free {false};
+    const SDL_Color* color {nullptr};
 
     RenderComponent() = default;
     RenderComponent(SDL_Renderer* renderer, const Surface& surface) {

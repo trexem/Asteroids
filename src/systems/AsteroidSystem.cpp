@@ -1,5 +1,6 @@
 #include "AsteroidSystem.h"
 #include "GameSessionManager.h"
+#include "TextureManager.h"
 #include "GUI.h"
 
 AsteroidSystem::AsteroidSystem(EntityManager& eManager, SDL_Renderer* renderer) :
@@ -43,7 +44,8 @@ void AsteroidSystem::generateSingleAsteroid(EntityManager& eManager, int lvl) {
 	eManager.addComponent(asteroid, ComponentType::Animation);
 	eManager.addComponent(asteroid, ComponentType::Damage);
 	// Asteroid Texture
-	RenderComponent astTexture(renderer, g_asteroid_big_surface);
+	RenderComponent astTexture;
+	astTexture.texture = TextureManager::instance().get("asteroid001");
 	//astTexture.texture->colorMod(Colors::Asteroid);
 	eManager.setComponentData<RenderComponent>(asteroid, astTexture);
 	// Asteroid Transform
@@ -107,15 +109,15 @@ FPair AsteroidSystem::generatePosition(EntityManager& eManager) {
 			float distance = minRadius + static_cast<float>(rand()) / RAND_MAX * (maxRadius - minRadius);
 			float x = playerTransform->position.x + distance * sin(angle);
 			float y = playerTransform->position.y - distance * cos(angle);
-			SDL_FRect newAsteroidRect = { x, y, g_asteroid_big_surface.getWidth(), g_asteroid_big_surface.getHeight() };
+			SDL_FRect newAsteroidRect = { x, y, 100.0f, 100.0f };
 			bool collisionFound = false;
 			for (uint32_t existingAst : asteroids) {
 				TransformComponent* existTr = eManager.getComponentDataPtr<TransformComponent>(existingAst);
 				SDL_FRect existingRect = { 
 					existTr->position.x,
 					existTr->position.y,
-					g_asteroid_big_surface.getWidth(),
-					g_asteroid_big_surface.getHeight()
+					100.0f,
+					100.0f
 				};
 				collisionFound = SDL_HasRectIntersectionFloat(&newAsteroidRect, &existingRect);
 				if (collisionFound) break;
@@ -200,8 +202,8 @@ void AsteroidSystem::handleDestroyAsteroidMessage(std::shared_ptr<DestroyAsteroi
 	TransformComponent* trComp = eManager.getComponentDataPtr<TransformComponent>(msg->id);
 	if (msg->playerDestroyed) {
 		GameSessionManager::instance().getStats().asteroidsDestroyed++;
-		FPair center = { trComp->position.x + g_asteroid_big_surface.getWidth() / 2,
-			trComp->position.y + g_asteroid_big_surface.getHeight() / 2 };
+		FPair center = { trComp->position.x + 100.0f / 2,
+			trComp->position.y + 100.0f / 2 };
 		int goldProbLevel = GameStatsManager::instance().getStats().upgrades[UpgradeType::GoldProb];
 		float goldProb = upgradesValues[static_cast<size_t>(UpgradeType::GoldProb)][goldProbLevel];
 		int randomChance = rand() % 100;

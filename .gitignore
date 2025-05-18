@@ -45,3 +45,4 @@ out/*
 /Asteroids/Asteroids.vcxproj
 build/*
 CMakeSettings.json
+assets.pak

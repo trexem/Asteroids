@@ -18,8 +18,8 @@ class SettingsScreen : public Screen {
     std::shared_ptr<Label> resolutionLabel, fullscreenLabel;
     std::shared_ptr<Label> vsyncLabel, masterLabel;
     std::shared_ptr<Label> musicLabel, sfxLabel;
-    Texture backButtonTexture, leftButtonTexture, rightButtonTexture;
-    Texture checkBoxFalseTexture, checkBoxTrueTexture;
+    Texture *backButtonTexture, *leftButtonTexture, *rightButtonTexture;
+    Texture *checkBoxFalseTexture, *checkBoxTrueTexture;
     std::string resolutionText, masterText, musicText, sfxText;
     GameSettings settings;
     void handleMouseHover(std::shared_ptr<MouseMotionMessage> msg);

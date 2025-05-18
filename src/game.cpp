@@ -6,6 +6,7 @@
 #include "GraphicsSettingsMessage.h"
 #include "SettingsManager.h"
 #include "TextureManager.h"
+#include "PackReader.h"
 
 #include <iostream>
 #include <SDL3/SDL_init.h>
@@ -34,6 +35,10 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	MessageManager::instance().subscribe<GraphicsSettingsMessage>(
         [this](std::shared_ptr<GraphicsSettingsMessage> msg) { handleGraphicsSettingsMessage(msg); }
     );
+
+	if (!PackReader::instance().init("assets.pak")) {
+		std::cerr << "Failed to load asset pack!" << std::endl;
+	}
 }
 
 Game::~Game() {
@@ -91,13 +96,6 @@ bool Game::initialize(const char* t_title, int t_x, int t_y) {
 				std::cout << "Renderer could not be created! SDL Error: " << SDL_GetError() << '\n';
 				success = false;
 			} else {
-				systemManager->registerSystem<ScreenManager>(entityManager, renderSystem->getRenderer());
-				systemManager->registerSystem<PickupsSystem>(entityManager, renderSystem->getRenderer());
-				systemManager->registerSystem<AbilitySystem>(entityManager, renderSystem->getRenderer());
-				systemManager->registerSystem<BackgroundSystem>(entityManager, renderSystem->getRenderer());
-				TextureManager::instance().init(renderSystem->getRenderer());
-				g_shot_texture.m_renderer = renderSystem->getRenderer();
-				g_rocket_texture.m_renderer = renderSystem->getRenderer();
 				//init SDL_ttf
 				if (!TTF_Init()) {
 					std::cout << "SDL_ttf could not initialize! SDL_ttf Error: " << SDL_GetError() << '\n';
@@ -114,31 +112,11 @@ bool Game::loadMedia() {
 	bool success = true;
 
 	Fonts::loadFonts();
-	if (!g_ship_surface.loadFromFile("data/img/atreyu001.png")) {
-		printf("Failed to load ship texture");
-		success = false;
-	}
-	if (!g_shot_texture.loadFromFile("data/img/shot.png")) {
-		printf("Failed to load shot texture");
-		success = false;
-	}
-	if (!g_rocket_texture.loadFromFile("data/img/rocket.bmp")) {
-		printf("Failed to load rocket texture");
-		success = false;
-	}
-	if (!g_particle_surface.loadFromFile("data/img/star1.bmp")) {
-		printf("Failed to load ship particle texture");
-		success = false;
-	}
-	if (!g_particle_shimmer_surface.loadFromFile("data/img/ship_particle_shimmer.bmp")) {
-		printf("Failed to load ship shimmer particle texture");
-		success = false;
-	}
-	if (!g_asteroid_big_surface.loadFromFile("data/img/asteroid001.png")) {
-		printf("Failed to load asteroid big 1 texture");
-		success = false;
-	}
-
+	TextureManager::instance().init(renderSystem->getRenderer());
+	systemManager->registerSystem<ScreenManager>(entityManager, renderSystem->getRenderer());
+	systemManager->registerSystem<PickupsSystem>(entityManager, renderSystem->getRenderer());
+	systemManager->registerSystem<AbilitySystem>(entityManager, renderSystem->getRenderer());
+	systemManager->registerSystem<BackgroundSystem>(entityManager, renderSystem->getRenderer());
 	return success;
 }
 
@@ -255,14 +233,14 @@ void Game::createShip(ShipType shipType) {
 	// shipPlayer.passiveLevels[static_cast<size_t>(PassiveAbilities::PickupRadius)] = 8;
 	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::LaserGun)] = true;
 	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::LaserGun)] = 0;
-	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::GravitySaws)] = true;
-	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::GravitySaws)] = 1;
-	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Rocket)] = true;
-	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Rocket)] = 9;
-	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Laser)] = true;
-	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Laser)] = 9;
-	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Explosives)] = true;
-	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Explosives)] = 9;
+	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::GravitySaws)] = true;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::GravitySaws)] = 1;
+	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Rocket)] = true;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Rocket)] = 9;
+	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Laser)] = true;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Laser)] = 9;
+	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Explosives)] = true;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Explosives)] = 9;
 	shipPlayer.ownedWeaponsCount = 1;
 	// shipPlayer.currentXp = 100;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);

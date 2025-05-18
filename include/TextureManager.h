@@ -6,14 +6,19 @@
 
 #include "texture.hpp"
 
+enum class AssetMode { FileSystem, Packed };
+inline AssetMode assetMode = AssetMode::FileSystem;
+
 class TextureManager {
 public:
     static TextureManager& instance();
     void init(SDL_Renderer* r);
     bool load(const std::string& id, const std::string& path);
+    bool loadFromPack(const std::string& id, const std::string& virtualPath);
     Texture* get(const std::string& id);
 
     void loadAllFromFolder(const std::string& folder);
+    void loadAllFromPack(const std::string& prefix);
     void clear();
 
 private:

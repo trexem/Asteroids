@@ -10,21 +10,9 @@ AbilitySystem::AbilitySystem(EntityManager& eManager, SDL_Renderer* renderer) : 
     MessageManager::instance().subscribe<ExplodeMessage>(
         [this](std::shared_ptr<ExplodeMessage> msg) { handleExplodeMessage(msg); }
     );
-    explosionTexture.m_renderer = renderer;
-    gravitySawTexture.m_renderer = renderer;
-    explosiveTexture.m_renderer = renderer;
-    laserTexture.m_renderer = renderer;
-    explosionTexture.loadFromFile("data/img/explosion.bmp");
-    gravitySawTexture.loadFromFile("data/img/gravitySaw.bmp");
-    explosiveTexture.loadFromFile("data/img/explosive.bmp");
-    laserTexture.loadFromFile("data/img/laserBeam.bmp");
 }
 
 AbilitySystem::~AbilitySystem() {
-    explosionTexture.free();
-    gravitySawTexture.free();
-    explosiveTexture.free();
-    laserTexture.free();
 }
 
 void AbilitySystem::handleAbilityMessage(std::shared_ptr<AbilityMessage> msg) {
@@ -85,10 +73,10 @@ void AbilitySystem::createExplosion(const ExplosionConfig& exp) {
     LifeTimeComponent lifeComp;
     DamageComponent damageComp;
     PhysicsComponent physComp;
-    rendComp.texture = &explosionTexture;
+    rendComp.texture = TextureManager::instance().get("explosion");
     rendComp.size = abilitiesSize[ability][playerComp->weaponLevels[ability]] * statsComp->extraSize + 1;
-    float w = explosionTexture.getWidth() * rendComp.size;
-    float h = explosionTexture.getHeight() * rendComp.size;
+    float w = rendComp.texture->getWidth() * rendComp.size;
+    float h = rendComp.texture->getHeight() * rendComp.size;
     transComp.position = {exp.pos.x - w / 2, exp.pos.y - h / 2};
     colComp.shape = Shape::Circle;
     colComp.radius = std::max(w, h);
@@ -190,7 +178,7 @@ void AbilitySystem::spawnProjectile(uint32_t eID, WeaponAbilities ability) {
             entity.set<OrbitComponent>(orbit);
         } else if (ability == WeaponAbilities::Laser) {
             textureComp.isStretched = true;
-            textureComp.exactSize = {size * laserTexture.getWidth(), size * 250.0f};
+            textureComp.exactSize = {size * textureComp.texture->getWidth(), size * 250.0f};
             textureComp.texture->rotationPoint = RotationPoint::BottomCenter;
             colComp.rotationPoint = RotationPoint::BottomCenter;
             colComp.width = textureComp.exactSize.x;

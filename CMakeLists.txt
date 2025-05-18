@@ -4,6 +4,8 @@ set(NAME asteroids)
 
 project(${NAME} VERSION 0.0.01)
 
+enable_language(C) #For miniz library
+
 if (CMAKE_GENERATOR STREQUAL "MinGW Makefiles")
     if (NOT MINGW_PATH) 
       message(FATAL_ERROR "MINGW_PATH not set in .env.cmake")
@@ -21,6 +23,8 @@ foreach(SUBDIR ${SUBDIRS})
     endif()
 endforeach()
 include_directories(${PROJECT_SOURCE_DIR}/vendored/nlohmann)
+
+add_library(miniz STATIC ${PROJECT_SOURCE_DIR}/vendored/miniz/miniz.c)
 
 file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
@@ -92,10 +96,12 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CM
   message(STATUS "CREATING BUILD FOR UNIX")
   target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/vendored/miniz
   )
   target_link_libraries(${PROJECT_NAME} PRIVATE 
     SDL3_ttf::SDL3_ttf 
     SDL3_image::SDL3_image
     SDL3_mixer::SDL3_mixer
     SDL3::SDL3
+    miniz
   )

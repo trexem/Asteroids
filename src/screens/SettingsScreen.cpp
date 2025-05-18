@@ -4,15 +4,15 @@
 #include "SettingsManager.h"
 #include "GameStateManager.h"
 #include "GUI.h"
+#include "TextureManager.h"
 
 void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     settings = SettingsManager::instance().get();
     // BackButton
-    backButtonTexture.m_renderer = renderer;
-    backButtonTexture.loadFromFile("data/img/gui/backButton.bmp");
-    FPair size {backButtonTexture.getWidth(), backButtonTexture.getHeight()};
+    backButtonTexture = TextureManager::instance().get("gui/backButton");
+    FPair size {backButtonTexture->getWidth(), backButtonTexture->getHeight()};
     FPair pos {75.0f, 75.0f};
-    backButton = std::make_shared<Button>(eManager, "", pos, size, &backButtonTexture, renderer);
+    backButton = std::make_shared<Button>(eManager, "", pos, size, backButtonTexture, renderer);
     ClickCallbackComponent callback;
     callback.onClick = [&] (uint32_t entity) {
         GameStateManager::instance().setState(GameState::MainMenu);
@@ -24,9 +24,8 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     pos.x = GUI::screenWidth / 2.0f - 500.0f;
     pos.y = GUI::screenHeight / 2.0f - 300.0f;
     size = 75.0f;
-    leftButtonTexture.m_renderer = renderer;
-    leftButtonTexture.loadFromFile("data/img/gui/leftButton.bmp");
-    leftResolutionButton = std::make_shared<Button>(eManager, "", pos, size, &leftButtonTexture, renderer);
+    leftButtonTexture = TextureManager::instance().get("gui/leftButton");
+    leftResolutionButton = std::make_shared<Button>(eManager, "", pos, size, leftButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().backResolution();
     };
@@ -40,9 +39,8 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     // Right Button
     pos.x += 700.0f;
     size = 75.0f;
-    rightButtonTexture.m_renderer = renderer;
-    rightButtonTexture.loadFromFile("data/img/gui/rightButton.bmp");
-    rightResolutionButton = std::make_shared<Button>(eManager, "", pos, size, &rightButtonTexture, renderer);
+    rightButtonTexture = TextureManager::instance().get("gui/rightButton");
+    rightResolutionButton = std::make_shared<Button>(eManager, "", pos, size, rightButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().nextResolution();
     };
@@ -56,13 +54,11 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     size = 400.0f;
     fullscreenLabel = std::make_shared<Label>(eManager, "Full Screen", pos, size, renderer, 0, Fonts::Subtitle);
     // Button
-    checkBoxFalseTexture.m_renderer = renderer;
-    checkBoxFalseTexture.loadFromFile("data/img/gui/checkBoxFalse.bmp");
-    checkBoxTrueTexture.m_renderer = renderer;
-    checkBoxTrueTexture.loadFromFile("data/img/gui/checkBoxTrue.bmp");
+    checkBoxFalseTexture = TextureManager::instance().get("gui/checkBoxFalse");
+    checkBoxTrueTexture = TextureManager::instance().get("gui/checkBoxTrue");
     pos.x += 700.0f;
     size = 75.0f;
-    fullScreenButton = std::make_shared<Button>(eManager, "", pos, size, &checkBoxFalseTexture, renderer);
+    fullScreenButton = std::make_shared<Button>(eManager, "", pos, size, checkBoxFalseTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().get().fullscreen = !SettingsManager::instance().get().fullscreen;
         SettingsManager::instance().updateResolution();
@@ -79,7 +75,7 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     // Button
     pos.x += 700.0f;
     size = 75.0f;
-    vsyncButton = std::make_shared<Button>(eManager, "", pos, size, &checkBoxFalseTexture, renderer);
+    vsyncButton = std::make_shared<Button>(eManager, "", pos, size, checkBoxFalseTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().get().vsync = !SettingsManager::instance().get().vsync;
         SettingsManager::instance().updateResolution();
@@ -92,7 +88,7 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     pos.x = GUI::screenWidth / 2.0f - 500.0f;
     pos.y += 150;
     size = 75.0f;
-    leftMasterVolume = std::make_shared<Button>(eManager, "", pos, size, &leftButtonTexture, renderer);
+    leftMasterVolume = std::make_shared<Button>(eManager, "", pos, size, leftButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().decreaseVolume(VolumeSource::MasterVolume);
     };
@@ -107,7 +103,7 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     // Right Button
     pos.x += 700.0f;
     size = 75.0f;
-    rightMasterVolume = std::make_shared<Button>(eManager, "", pos, size, &rightButtonTexture, renderer);
+    rightMasterVolume = std::make_shared<Button>(eManager, "", pos, size, rightButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().increaseVolume(VolumeSource::MasterVolume);
     };
@@ -119,7 +115,7 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     pos.x = GUI::screenWidth / 2.0f - 500.0f;
     pos.y += 150;
     size = 75.0f;
-    leftMusicVolume = std::make_shared<Button>(eManager, "", pos, size, &leftButtonTexture, renderer);
+    leftMusicVolume = std::make_shared<Button>(eManager, "", pos, size, leftButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().decreaseVolume(VolumeSource::MusicVolume);
     };
@@ -134,7 +130,7 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     // Right Button
     pos.x += 700.0f;
     size = 75.0f;
-    rightMusicVolume = std::make_shared<Button>(eManager, "", pos, size, &rightButtonTexture, renderer);
+    rightMusicVolume = std::make_shared<Button>(eManager, "", pos, size, rightButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().increaseVolume(VolumeSource::MusicVolume);
     };
@@ -146,7 +142,7 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     pos.x = GUI::screenWidth / 2.0f - 500.0f;
     pos.y += 150;
     size = 75.0f;
-    leftSfxVolume = std::make_shared<Button>(eManager, "", pos, size, &leftButtonTexture, renderer);
+    leftSfxVolume = std::make_shared<Button>(eManager, "", pos, size, leftButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().decreaseVolume(VolumeSource::SFXVolume);
     };
@@ -161,7 +157,7 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     // Right Button
     pos.x += 700.0f;
     size = 75.0f;
-    rightSfxVolume = std::make_shared<Button>(eManager, "", pos, size, &rightButtonTexture, renderer);
+    rightSfxVolume = std::make_shared<Button>(eManager, "", pos, size, rightButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().increaseVolume(VolumeSource::SFXVolume);
     };
@@ -211,11 +207,11 @@ void SettingsScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
     }
     fullScreenButton->updateState(eManager);
     RenderComponent* fullScreenCheck = eManager.getComponentDataPtr<RenderComponent>(fullScreenButton->id);
-    fullScreenCheck->texture = SettingsManager::instance().get().fullscreen ? &checkBoxTrueTexture : &checkBoxFalseTexture;
+    fullScreenCheck->texture = SettingsManager::instance().get().fullscreen ? checkBoxTrueTexture : checkBoxFalseTexture;
 
     vsyncButton->updateState(eManager);
     RenderComponent* vsyncCheck = eManager.getComponentDataPtr<RenderComponent>(vsyncButton->id);
-    vsyncCheck->texture = SettingsManager::instance().get().vsync ? &checkBoxTrueTexture : &checkBoxFalseTexture;
+    vsyncCheck->texture = SettingsManager::instance().get().vsync ? checkBoxTrueTexture : checkBoxFalseTexture;
 
     leftMasterVolume->updateState(eManager);
     rightMasterVolume->updateState(eManager);
