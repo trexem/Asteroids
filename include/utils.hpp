@@ -52,3 +52,5 @@ SDL_FPoint getPivotFromRotationPoint(RotationPoint rp, int texW, int texH);
 inline float randFloat(float min, float max) {
     return min + static_cast<float>(rand()) / RAND_MAX * (max - min);
 }
+
+std::string normalizePath(const std::string& path);

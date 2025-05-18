@@ -1,6 +1,8 @@
 #include "utils.hpp"
 #include "GUI.h"
 
+#include <algorithm>
+
 float getSquaredDistanceBetweenCenters(const SDL_FRect& rect1, const SDL_FRect& rect2) {
     float centerX1 = rect1.x + rect1.w / 2.0f;
     float centerY1 = rect1.y + rect1.h / 2.0f;
@@ -74,4 +76,10 @@ float lerpAngle(float a, float b, float t) {
     if (difference > 180.0f) difference -= 360.0f;
     if (difference < -180.0f) difference += 360.0f;
     return a + difference * t;
+}
+
+std::string normalizePath(const std::string& path) {
+    std::string fixed = path;
+    std::replace(fixed.begin(), fixed.end(), '\\', '/');
+    return fixed;
 }

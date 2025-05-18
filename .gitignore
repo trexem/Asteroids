@@ -46,3 +46,5 @@ out/*
 build/*
 CMakeSettings.json
 assets.pak
+.env
+data.bin

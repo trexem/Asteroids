@@ -10,7 +10,7 @@
 
 class LevelUpContainer {
 public:
-    Texture abilityIcon;
+    Texture* abilityIcon;
     Texture abilityText;
     Texture abilityContainer;
     uint32_t iconId, textId, containerId;

@@ -9,8 +9,6 @@
 enum class AssetMode { FileSystem, Packed };
 inline AssetMode assetMode = AssetMode::Packed;
 
-std::string normalizePath(const std::string& path);
-
 class TextureManager {
 public:
     static TextureManager& instance();

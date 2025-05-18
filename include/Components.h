@@ -234,7 +234,7 @@ struct ContainerComponent {
 };
 
 struct GUIStateComponent {
-    GUIState state;
+    GUIState state {GUIState::Idle};
 };
 
 struct ClickCallbackComponent {

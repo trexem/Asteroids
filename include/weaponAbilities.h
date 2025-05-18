@@ -72,12 +72,21 @@ constexpr double abilitiesLifeTime[static_cast<size_t>(WeaponAbilities::WeaponAb
     {     1.0f, 1.0f, 1.2f,   1.2f,  1.4f,  1.4f,  1.7f,  1.7f,  1.7f,  2.0f},  //GravitySaw
 };
 
-constexpr std::array<const char*, static_cast<size_t>(WeaponAbilities::WeaponAbilitiesCount)> weaponIconLocation = {
-    "data/img/laserGunIcon.bmp",
-    "data/img/rocketIcon.bmp",
-    "data/img/laserIcon.bmp",
-    "data/img/explosivesIcon.bmp",
-    "data/img/gravitySawIcon.bmp",
+constexpr std::array<const char*, static_cast<size_t>(WeaponAbilities::WeaponAbilitiesCount)> weaponIconId = {
+    "laserGunIcon",
+    "rocketIcon",
+    "laserIcon",
+    "explosivesIcon",
+    "gravitySawIcon",
+    
+};
+
+constexpr std::array<const char*, static_cast<size_t>(WeaponAbilities::WeaponAbilitiesCount)> weaponSoundId = {
+    "laserGun",
+    "rocket",
+    "laser",
+    "explosives",
+    "gravitySaw",
     
 };
 

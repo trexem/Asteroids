@@ -18,5 +18,6 @@ public:
 private:
     PackReader() = default;
     mz_zip_archive archive;
+    std::vector<uint8_t> raw;
     bool initialized {false};
 };

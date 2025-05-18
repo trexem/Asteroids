@@ -1,4 +1,5 @@
 #include "PackReader.h"
+#include "ObfuscateReader.h"
 
 #include <iostream>
 
@@ -8,15 +9,17 @@ PackReader& PackReader::instance() {
 }
 
 bool PackReader::init(const std::string& archivePath) {
-    if (!initialized) {
-        mz_bool init;
-        init = mz_zip_reader_init_file(&archive, archivePath.c_str(), 0);
-        initialized = (init == MZ_TRUE);
+    if (initialized) return true;
+    if (!ObfuscatedReader::load(archivePath, raw)) {
+        std::cerr << "Failed to read or decode pack file!" << std::endl;
+        return false;
     }
-    if (!initialized) {
-        std::cerr << "Failed to init pack: " << archivePath << std::endl;
+    if (!mz_zip_reader_init_mem(&archive, raw.data(), raw.size(), 0)) {
+        std::cerr << "Failed to init ZIP reader from memory!" << std::endl;
+        return false;
     }
-    return initialized;
+    initialized = true;
+    return true;
 }
 
 std::vector<uint8_t> PackReader::readFile(const std::string& virtualPath) {

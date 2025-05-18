@@ -13,9 +13,6 @@ class VolumeMessage;
 class AudioSystem : public System {
 public:
     SDL_AudioSpec spec;
-    Mix_Chunk *explosion;
-    std::unordered_map<WeaponAbilities, Mix_Chunk*> sounds;
-    Mix_Music *music;
     std::deque<Mix_Chunk*> toPlay;
     int masterVolume, musicVolume, sfxVolume;
     AudioSystem();

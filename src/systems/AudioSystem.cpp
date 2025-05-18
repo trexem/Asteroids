@@ -4,6 +4,7 @@
 #include "AbilityMessage.h"
 #include "VolumeMessage.h"
 #include "SettingsManager.h"
+#include "AudioManager.h"
 
 AudioSystem::AudioSystem() {
     Mix_Init(MIX_INIT_OGG | MIX_INIT_MP3);
@@ -16,25 +17,7 @@ AudioSystem::AudioSystem() {
 
     }
 
-    //Load wav and mp3
-    sounds[WeaponAbilities::LaserGun] = Mix_LoadWAV("data/sounds/laserGun.wav");
-    if (!sounds[WeaponAbilities::LaserGun]) std::cerr << "Failed to load laserGun.wav: " << SDL_GetError() << '\n';
-    
-    sounds[WeaponAbilities::Rocket] = Mix_LoadWAV("data/sounds/rocket.wav");
-    if (!sounds[WeaponAbilities::Rocket]) std::cerr << "Failed to load rocket.wav: " << SDL_GetError() << '\n';
-    
-    sounds[WeaponAbilities::Explosives] = Mix_LoadWAV("data/sounds/explosive.wav");
-    if (!sounds[WeaponAbilities::Explosives]) std::cerr << "Failed to load explosive.wav: " << SDL_GetError() << '\n';
-    
-    sounds[WeaponAbilities::Laser] = Mix_LoadWAV("data/sounds/laser.wav");
-    if (!sounds[WeaponAbilities::Laser]) std::cerr << "Failed to load laser.wav: " << SDL_GetError() << '\n';
-    
-    sounds[WeaponAbilities::GravitySaws] = Mix_LoadWAV("data/sounds/gravitySaw.wav");
-    if (!sounds[WeaponAbilities::GravitySaws]) std::cerr << "Failed to load gravitySaw.wav: " << SDL_GetError() << '\n';
-    
-    explosion = Mix_LoadWAV("data/sounds/explosion.wav");
-    if (!explosion) std::cerr << "Failed to load explosion.wav: " << SDL_GetError() << '\n';
-
+    AudioManager::instance().loadAllFromPack("sounds/");
     MessageManager::instance().subscribe<ExplodeMessage>(
         [this](std::shared_ptr<ExplodeMessage> msg) { handleExplodeMessage(msg); }
     );
@@ -52,22 +35,18 @@ AudioSystem::AudioSystem() {
 }
 
 AudioSystem::~AudioSystem() {
-    for (auto c : sounds) {
-        Mix_FreeChunk(c.second);
-    }
-    Mix_FreeChunk(explosion);
+    AudioManager::instance().clear();
     Mix_CloseAudio();
     Mix_Quit();
 }
 
 void AudioSystem::handleExplodeMessage(std::shared_ptr<ExplodeMessage> msg) {
-    toPlay.push_back(explosion);
+    toPlay.push_back(AudioManager::instance().getSound("explosion"));
 }
 
 void AudioSystem::handleAbilityMessage(std::shared_ptr<AbilityMessage> msg) {
-    if (auto it = sounds.find(msg->ability); it != sounds.end()) {
-        toPlay.push_back(it->second);
-    }
+    std::string id = weaponSoundId[static_cast<size_t>(msg->ability)];
+    toPlay.push_back(AudioManager::instance().getSound(id));
 }
 
 void AudioSystem::update(EntityManager& eMgr, const double& dT) {
@@ -78,10 +57,7 @@ void AudioSystem::update(EntityManager& eMgr, const double& dT) {
 }
 
 void AudioSystem::setSfxVolume(int volume) {
-    for (auto c : sounds) {
-        Mix_VolumeChunk(c.second, volume);
-    }
-    Mix_VolumeChunk(explosion, volume);
+    AudioManager::instance().setSoundsVolume(volume);
 }
 
 void AudioSystem::setMasterVolume(int volume) {

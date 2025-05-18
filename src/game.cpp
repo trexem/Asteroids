@@ -36,7 +36,7 @@ Game::Game() : entityManager(MAX_ENTITIES) {
         [this](std::shared_ptr<GraphicsSettingsMessage> msg) { handleGraphicsSettingsMessage(msg); }
     );
 
-	if (!PackReader::instance().init("assets.pak")) {
+	if (!PackReader::instance().init("data.bin")) {
 		std::cerr << "Failed to load asset pack!" << std::endl;
 	}
 }

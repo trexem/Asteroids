@@ -1,8 +1,8 @@
 #include "TextureManager.h"
 #include "PackReader.h"
+#include "utils.hpp"
 
 #include <filesystem>
-#include <algorithm>
 
 TextureManager& TextureManager::instance() {
     static TextureManager instance;
@@ -17,6 +17,7 @@ void TextureManager::init(SDL_Renderer* r) {
         loadAllFromPack("img/");
     }
 }
+
 bool TextureManager::load(const std::string& id, const std::string& path) {
     std::string p = normalizePath(path);
     if (textures.contains(id)) {
@@ -36,6 +37,7 @@ bool TextureManager::load(const std::string& id, const std::string& path) {
     std::cout << "Texture loaded, id & path: " << id << " & " << p << std::endl;
     return true;
 }
+
 Texture* TextureManager::get(const std::string& id) {
     auto it = textures.find(id);
     if (it != textures.end()) return it->second.get();
@@ -107,10 +109,4 @@ bool TextureManager::loadFromPack(const std::string& id, const std::string& virt
     textures.emplace(id, std::move(tex));
     std::cout << "[LOADED] Packed Texture: " << id << " from " << path << std::endl;
     return true;
-}
-
-std::string normalizePath(const std::string& path) {
-    std::string fixed = path;
-    std::replace(fixed.begin(), fixed.end(), '\\', '/');
-    return fixed;
 }

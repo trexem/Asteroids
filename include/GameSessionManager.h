@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stdint.h"
+#include "cstdint"
 
 struct GameSessionStats {
     uint32_t gold = 0;

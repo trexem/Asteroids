@@ -1,7 +1,7 @@
 #include "LevelUpContainer.h"
+#include "TextureManager.h"
 
 LevelUpContainer::LevelUpContainer(EntityManager& eManager, AbilityChoice choice, std::string text, FPair pos, SDL_Renderer* renderer) {
-    abilityIcon.m_renderer = renderer;
     abilityText.m_renderer = renderer;
     abilityContainer.m_renderer = renderer;
     TypeComponent type = EntityType::GUI;
@@ -13,8 +13,8 @@ LevelUpContainer::LevelUpContainer(EntityManager& eManager, AbilityChoice choice
     
 
     abilityText.loadFromText(text, Colors::White, Fonts::Body);
-    abilityIcon.loadFromFile(choice.type == AbilityType::Weapon ?
-         weaponIconLocation[choice.index] : passiveIconLocation[choice.index]);
+    abilityIcon = TextureManager::instance().get(choice.type == AbilityType::Weapon ?
+         weaponIconId[choice.index] : passiveIconId[choice.index]);
     abilityContainer.createEmptyTexture(GUI::containerWidth, GUI::containerHeight);
     SDL_SetRenderTarget(renderer, abilityContainer.getTexture());
     SDL_SetRenderDrawColor(renderer, Colors::Black.r, Colors::Black.g, Colors::Black.b, Colors::Black.a);
@@ -39,8 +39,8 @@ LevelUpContainer::LevelUpContainer(EntityManager& eManager, AbilityChoice choice
     eManager.addComponent(iconId, ComponentType::Render);
     eManager.addComponent(iconId, ComponentType::Type);
     eManager.addComponent(iconId, ComponentType::GUI);
-    textureComp.texture = &abilityIcon;
-    guiComp.pos.x += GUI::containerWidth / 2 - abilityIcon.getWidth();
+    textureComp.texture = abilityIcon;
+    guiComp.pos.x += GUI::containerWidth / 2 - abilityIcon->getWidth();
     guiComp.pos.y += GUI::containerGap;
     eManager.setComponentData<TransformComponent>(iconId, trComp);
     eManager.setComponentData<TypeComponent>(iconId, type);
@@ -53,7 +53,7 @@ LevelUpContainer::LevelUpContainer(EntityManager& eManager, AbilityChoice choice
     eManager.addComponent(textId, ComponentType::Type);
     eManager.addComponent(textId, ComponentType::GUI);
     textureComp.texture = &abilityText;
-    guiComp.pos.y += GUI::containerGap + abilityIcon.getHeight();
+    guiComp.pos.y += GUI::containerGap + abilityIcon->getHeight();
     eManager.setComponentData<TransformComponent>(textId, trComp);
     eManager.setComponentData<TypeComponent>(textId, type);
     eManager.setComponentData<RenderComponent>(textId, textureComp);

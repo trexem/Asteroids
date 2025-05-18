@@ -66,6 +66,13 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         ${DATA_RELEASE_DIR}
 )
 
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/obfuscateAssets.py
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Packing and obfuscating assets into data.bin"
+)
+
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${DATA_SOURCE_DIR}
