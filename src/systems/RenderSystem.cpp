@@ -80,6 +80,7 @@ void RenderSystem::drawGameEntities(EntityManager& eM) {
             
             SDL_FPoint pivot = getPivotFromRotationPoint(
                 rComp.texture->rotationPoint, w, h);
+            rComp.texture->setAlphaMod(rComp.visibility);
             if (rComp.isStretched) {
                 rComp.texture->renderEx(
                     static_cast<int>(position.x),
@@ -144,9 +145,7 @@ void RenderSystem::drawGUI(EntityManager& eM) {
                 pos = guiComp->pos;
             }
         }
-        if (rComp->color) {
-            std::cout << "Rendering with special color: " << int(rComp->color->r) << int(rComp->color->g) << int(rComp->color->b) << std::endl;
-        }
+        rComp->texture->setAlphaMod(rComp->visibility);
         rComp->texture->renderEx(
             static_cast<int>(pos.x),
             static_cast<int>(pos.y),

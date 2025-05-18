@@ -127,7 +127,7 @@ float Texture::getHeight() {
 	return m_height;
 }
 
-void Texture::setAlphaMod(int alpha) {
+void Texture::setAlphaMod(Uint8 alpha) {
 	SDL_SetTextureAlphaMod(m_texture, alpha);
 }
 

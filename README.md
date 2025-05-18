@@ -37,6 +37,11 @@ Then just open the asteroids program.
 Open `Visual Studio 2022` and clone the repo through the initial options. It should download the submodules and everything necessary for the project to compile. 
 After it finishes downloading and `cmake` stops working you will have to choose `asteroids.exe` solution (besides the "Play" button). Then just press the "Play" button.
 
+### Assets
+Right now loading assets is being made trough a PackReader, I'm not adding the assets.pak as it would be redundant, but you might need to have that, so for now just zip 
+the directories inside `data/` and rename that zip to `assets.pak` and save that in the main directory of the project.
+
+
 ## TODO
 ### Audio
  - [ ] Implement it

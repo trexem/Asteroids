@@ -233,14 +233,14 @@ void Game::createShip(ShipType shipType) {
 	// shipPlayer.passiveLevels[static_cast<size_t>(PassiveAbilities::PickupRadius)] = 8;
 	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::LaserGun)] = true;
 	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::LaserGun)] = 0;
-	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::GravitySaws)] = true;
+	/*shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::GravitySaws)] = true;
 	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::GravitySaws)] = 1;
 	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Rocket)] = true;
 	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Rocket)] = 9;
 	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Laser)] = true;
 	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Laser)] = 9;
 	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Explosives)] = true;
-	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Explosives)] = 9;
+	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Explosives)] = 9;*/
 	shipPlayer.ownedWeaponsCount = 1;
 	// shipPlayer.currentXp = 100;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);

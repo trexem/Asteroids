@@ -7,7 +7,9 @@
 #include "texture.hpp"
 
 enum class AssetMode { FileSystem, Packed };
-inline AssetMode assetMode = AssetMode::FileSystem;
+inline AssetMode assetMode = AssetMode::Packed;
+
+std::string normalizePath(const std::string& path);
 
 class TextureManager {
 public:

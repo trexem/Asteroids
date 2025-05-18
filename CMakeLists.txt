@@ -74,6 +74,12 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 
 if (MSVC)
   target_compile_options(${PROJECT_NAME} PRIVATE /std:c++latest)
+   add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${PROJECT_SOURCE_DIR}/assets.pak
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets.pak
+        COMMENT "Copying assets.pak to output directory"
+    )
 endif()
 
 if (USE_MINGW)

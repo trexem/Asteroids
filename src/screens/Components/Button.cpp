@@ -76,12 +76,14 @@ void Button::setSizeFromState(EntityManager& em, uint32_t e, GUIState state) {
     GUIComponent gComp = em.getComponentData<GUIComponent>(e);
     switch (state) {
     case GUIState::Hovered:
+        render.color = &Colors::White;
         gComp.pos = e == id ? originalPos - originalSize * 0.05f 
             : labelPos - labelSize * 0.05f;
         render.size = 1.1f;
         break;
     case GUIState::Pressed:
     case GUIState::Clicked:
+        render.color = &Colors::White;
         gComp.pos = e == id ? originalPos + originalSize * 0.05f 
             : labelPos + labelSize * 0.05f;
         render.size = 0.9f;

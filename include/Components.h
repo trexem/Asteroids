@@ -99,7 +99,7 @@ struct RenderComponent {
     float size{1.0f}; //Percentage, 1 is original size
     bool isStretched {false};
     FPair exactSize{1.0f, 1.0f};
-    int visibility{255};
+    Uint8 visibility{255};
     bool free {false};
     const SDL_Color* color {nullptr};
 

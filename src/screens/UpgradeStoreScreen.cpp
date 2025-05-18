@@ -64,11 +64,6 @@ void UpgradeStoreScreen::update(EntityManager& eManager, SDL_Renderer* renderer)
         b->updateState(eManager);
         GUIState state = eManager.getComponentData<GUIStateComponent>(b->id).state;
         RenderComponent render = eManager.getComponentData<RenderComponent>(b->id);
-        if (state == GUIState::Pressed) {
-            render.texture = &pressedButtonTexture;
-        } else if (state == GUIState::Idle || state == GUIState::Hovered) {
-            render.texture = &idleButtonTexture;
-        }
         eManager.setComponentData(b->id, render);
     }
     backButton->updateState(eManager);

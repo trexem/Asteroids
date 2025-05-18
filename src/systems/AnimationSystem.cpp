@@ -36,10 +36,11 @@ void AnimationSystem::update(EntityManager& eMgr, const double& dT) {
         }
 
         if (anim.visible) {
-            texture.texture->setAlphaMod(255);
+            texture.visibility = 255;
         } else {
-            texture.texture->setAlphaMod(0);
+            texture.visibility = 0;
         }
-        eMgr.setComponentData<AnimationComponent>(eID, anim);
+        eMgr.setComponentData(eID, texture);
+        eMgr.setComponentData(eID, anim);
     }
 }
