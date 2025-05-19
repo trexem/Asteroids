@@ -1,9 +1,8 @@
 #include "BackgroundSystem.h"
 #include "GameStateManager.h"
+#include "TextureManager.h"
 
 BackgroundSystem::BackgroundSystem(EntityManager& eManager, SDL_Renderer* renderer) {
-    starTexture.m_renderer = renderer;
-    starTexture.loadFromFile("data/img/star1.bmp");
     createBackground(eManager);
 }
 
@@ -53,7 +52,7 @@ void BackgroundSystem::createBackground(EntityManager& eManager) {
         tComp.position = pos;
         BackgroundComponent bComp = parallax;
         RenderComponent rComp;
-        rComp.texture = &starTexture;
+        rComp.texture = TextureManager::instance().get("star1");
         eHandle.set(type);
         eHandle.set(tComp);
         eHandle.set(bComp);

@@ -19,7 +19,7 @@ class PlayingScreen : public Screen {
     uint32_t timeID, levelID, pauseID, healthBarID, currentHealthID;
     uint32_t goldID, enemiesID, lastGold, lastEnemies; 
     Uint32 currentSeconds{0};
-    int previousXp, previousLvl;
+    int previousXp{ 100 }, previousLvl{ 100 };
     float previousHealth;
 
     void handleMouseHover(std::shared_ptr<MouseMotionMessage> msg);

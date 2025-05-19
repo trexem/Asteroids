@@ -64,7 +64,6 @@ void AbilitySystem::createExplosion(const ExplosionConfig& exp) {
     PlayerComponent* playerComp = eMgr.getComponentDataPtr<PlayerComponent>(playerID);
     StatsComponent* statsComp = eMgr.getComponentDataPtr<StatsComponent>(playerID);
     size_t ability = static_cast<size_t>(exp.source);
-    std::cout << "Creating explosion at: " << exp.pos << std::endl;
     uint32_t eID = eMgr.createEntity();
     TransformComponent transComp;
     RenderComponent rendComp;
@@ -79,7 +78,7 @@ void AbilitySystem::createExplosion(const ExplosionConfig& exp) {
     float h = rendComp.texture->getHeight() * rendComp.size;
     transComp.position = {exp.pos.x - w / 2, exp.pos.y - h / 2};
     colComp.shape = Shape::Circle;
-    colComp.radius = std::max(w, h);
+    colComp.radius = std::max(w / 2.0f, h / 2.0f);
     lifeComp.lifeTime = EXPLOSION_LIFETIME;
     damageComp.damage = abilitiesDamage[ability][playerComp->weaponLevels[ability]] * statsComp->baseDamage;
     eMgr.addComponent(eID, ComponentType::Transform);

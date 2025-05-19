@@ -10,5 +10,4 @@ public:
     void createBackground(EntityManager& eManager);
 private:
     FPair lastPlayerPos;
-    Texture starTexture, galaxyTexture, nebulaTexture;
 };

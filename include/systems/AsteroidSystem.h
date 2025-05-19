@@ -10,7 +10,6 @@
 #include "GameStateManager.h"
 #include "GameStatsManager.h"
 #include "MessageManager.h"
-#include "PickupsSpawnMessage.h"
 #include "System.h"
 #include "timer.hpp"
 #include "utils.hpp"

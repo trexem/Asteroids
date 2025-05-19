@@ -1,6 +1,7 @@
 #include "AsteroidSystem.h"
 #include "GameSessionManager.h"
 #include "TextureManager.h"
+#include "PickupsSpawnMessage.h"
 #include "GUI.h"
 
 AsteroidSystem::AsteroidSystem(EntityManager& eManager, SDL_Renderer* renderer) :
@@ -207,6 +208,7 @@ void AsteroidSystem::handleDestroyAsteroidMessage(std::shared_ptr<DestroyAsteroi
 		int goldProbLevel = GameStatsManager::instance().getStats().upgrades[UpgradeType::GoldProb];
 		float goldProb = upgradesValues[static_cast<size_t>(UpgradeType::GoldProb)][goldProbLevel];
 		int randomChance = rand() % 100;
+		std::cout << "GoldProb and this chance" << goldProb << ", " << randomChance << std::endl;
 		MessageManager::instance().sendMessage(std::make_shared<PickupsSpawnMessage>(center, 1, 
 			randomChance < goldProb ? EntityType::Gold : EntityType::Experience ));
 	}
