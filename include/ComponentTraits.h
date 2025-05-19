@@ -98,3 +98,11 @@ template <> struct ComponentTraits<GUIStateComponent> {
 template <> struct ComponentTraits<ClickCallbackComponent> {
     static constexpr ComponentType type = ComponentType::ClickCallback;
 };
+
+template <> struct ComponentTraits<TooltipComponent> {
+    static constexpr ComponentType type = ComponentType::Tooltip;
+};
+
+template <> struct ComponentTraits<NineGridComponent> {
+    static constexpr ComponentType type = ComponentType::NineGrid;
+};

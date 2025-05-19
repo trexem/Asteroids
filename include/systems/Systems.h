@@ -19,3 +19,4 @@
 #include "BackgroundSystem.h"
 #include "GUIInteractionSystem.h"
 #include "AudioSystem.h"
+#include "TooltipSystem.h"
