@@ -27,6 +27,7 @@ public:
 
 	bool loadFromFile(std::string t_path);
 	bool loadFromText(std::string t_texture_text, SDL_Color t_text_color, TTF_Font* g_font);
+	bool loadMultilineText(const std::string& text, SDL_Color color, TTF_Font* font, int maxWidth);
 	bool loadFromSurface(SDL_Surface* surface);
 	void createEmptyTexture(int w, int h);
 	void free(void);
@@ -35,11 +36,14 @@ public:
 		SDL_FlipMode t_flip, float t_scale = 1.0f, const SDL_Color* color = nullptr);
 	void renderEx(int t_x, int t_y, SDL_FRect* t_clip, double t_angle, SDL_FPoint* t_center, 
 		SDL_FlipMode t_flip, FPair size, const SDL_Color* color = nullptr);
+	void render9Grid(const SDL_FRect* srcrect, float left, float right, float top, float bottom,
+		float scale, const SDL_FRect* destrect);
 	void setAlphaMod(Uint8 alpha);
 	void colorMod(const SDL_Color& color);
 
 	float getWidth();
 	float getHeight();
+	FPair getSize();
 	SDL_Texture* getTexture();
 
 	SDL_Renderer* m_renderer{nullptr};

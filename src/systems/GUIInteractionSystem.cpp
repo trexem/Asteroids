@@ -26,7 +26,12 @@ void GUIInteractionSystem::handleMouseMotionMessage(std::shared_ptr<MouseMotionM
             msg->mousePos.y >= bounds.y && msg->mousePos.y <= bounds.y + bounds.h) {
             if (state.state == GUIState::Idle) {
                 state.state = GUIState::Hovered;
-            } 
+            }
+            if (state.state == GUIState::Hovered && eM.hasComponent<TooltipComponent>(e)) {
+                auto tip = eM.getComponentData<TooltipComponent>(e);
+                tip.mousePos = msg->mousePos;
+                eM.setComponentData(e, tip);
+            }
         } else {
             if (state.state != GUIState::Pressed) {
                 state.state = GUIState::Idle;

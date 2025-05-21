@@ -20,6 +20,7 @@ public:
     void loadAllFromFolder(const std::string& folder);
     void loadAllFromPack(const std::string& prefix);
     void clear();
+    SDL_Renderer* getRenderer() { return renderer; }
 
 private:
     TextureManager() = default;

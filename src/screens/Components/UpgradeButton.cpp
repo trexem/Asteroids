@@ -26,6 +26,10 @@ UpgradeButton::UpgradeButton(
     };
     em.addComponent(id, ComponentType::ClickCallback);
     em.setComponentData<ClickCallbackComponent>(id, callback);
+    TooltipComponent tip;
+    tip.text = "This is a long text for testing, let's see how this looks like. Longer than yo mama, HA goteeee.";
+    em.addComponent(id, ComponentType::Tooltip);
+    em.setComponentData(id, tip);
     //Cost Text
     GUIComponent guiComp;
     RenderComponent render;
@@ -34,6 +38,7 @@ UpgradeButton::UpgradeButton(
     EntityHandle handle {costId, em};
     handle.add<GUIComponent>();
     handle.add<RenderComponent>();
+    handle.add<TooltipComponent>();
     level = GameStatsManager::instance().getUpgradeLevel(type);
     maxLevel = upgradesMaxLevel[static_cast<size_t>(type)];
     lastlevel = level;

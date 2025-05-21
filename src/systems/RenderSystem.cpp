@@ -1,6 +1,8 @@
 #include "RenderSystem.h"
 #include "SettingsManager.h"
 #include "GUI.h"
+#include "Fonts.h"
+#include "TextureManager.h"
 
 RenderSystem::RenderSystem(SDL_Window* window, const char * name, Camera* camera)
     : renderer(std::make_shared<Renderer>(window, name)), camera(camera) {
@@ -147,15 +149,27 @@ void RenderSystem::drawGUI(EntityManager& eM) {
             }
         }
         rComp->texture->setAlphaMod(rComp->visibility);
-        rComp->texture->renderEx(
-            static_cast<int>(pos.x),
-            static_cast<int>(pos.y),
-            nullptr,
-            static_cast<int>(rot),
-            nullptr,
-            SDL_FLIP_NONE,
-            rComp->size,
-            rComp->color
-        );
+        if (eM.hasComponent<NineGridComponent>(eID)) {
+            const NineGridComponent& grid = eM.getComponentData<NineGridComponent>(eID);
+            SDL_FRect dst = { pos.x, pos.y, rComp->exactSize.x, rComp->exactSize.y };
+            rComp->texture->render9Grid(
+                nullptr,                // full texture
+                grid.left, grid.right,
+                grid.top, grid.bottom,
+                0.0f,                   // no scaling of corners
+                &dst
+            );
+        } else {
+            rComp->texture->renderEx(
+                static_cast<int>(pos.x),
+                static_cast<int>(pos.y),
+                nullptr,
+                static_cast<int>(rot),
+                nullptr,
+                SDL_FLIP_NONE,
+                rComp->size,
+                rComp->color
+            );
+        }
     }
 }

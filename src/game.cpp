@@ -33,6 +33,7 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	systemManager->registerSystem<FollowSystem>();
 	systemManager->registerSystem<HealthSystem>();
 	systemManager->registerSystem<GUIInteractionSystem>(entityManager);
+	systemManager->registerSystem<TooltipSystem>();
 
 	MessageManager::instance().subscribe<GraphicsSettingsMessage>(
         [this](std::shared_ptr<GraphicsSettingsMessage> msg) { handleGraphicsSettingsMessage(msg); }

@@ -46,6 +46,8 @@ enum class ComponentType {
     Container,
     GUIState,
     ClickCallback,
+    Tooltip,
+    NineGrid,
 
     Count
 };
@@ -239,6 +241,19 @@ struct GUIStateComponent {
 
 struct ClickCallbackComponent {
     std::function<void(uint32_t)> onClick;
+};
+
+struct TooltipComponent {
+    std::string text = "";
+    FPair mousePos = {0, 0};
+};
+
+struct NineGridComponent {
+    float left {0};
+    float right {0};
+    float top {0};
+    float bottom {0};
+
 };
 
 std::vector<AbilityChoice> getRandomAbilityChoices(const PlayerComponent& player);

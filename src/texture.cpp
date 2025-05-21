@@ -161,3 +161,30 @@ bool Texture::loadFromSurface(SDL_Surface* surface) {
 	}
 	return m_texture != nullptr;
 }
+
+void Texture::render9Grid(const SDL_FRect* srcrect, float left, float right, float top, float bottom,
+		float scale, const SDL_FRect* destrect) {
+	if (!SDL_RenderTexture9Grid(
+		m_renderer, m_texture, srcrect, left, right, top, bottom, scale, destrect)
+	) {
+		std::cerr << "SDL_RenderTexture9Grid failed: " << SDL_GetError() << std::endl;
+	}
+}
+
+bool Texture::loadMultilineText(const std::string& text, SDL_Color color, TTF_Font* font, int maxWidth) {
+	free();
+	auto sur = std::unique_ptr<SDL_Surface, SDL_Surface_Deleter>(TTF_RenderText_Blended_Wrapped(
+		font, text.c_str(), text.size(), color, maxWidth));
+	if (!sur) {
+		std::cerr << "Failed to render multiline text: " << SDL_GetError() << std::endl;
+        return false;
+	}
+	m_texture = SDL_CreateTextureFromSurface(m_renderer, sur.get());
+	m_width = sur->w;
+	m_height = sur->h;
+    return m_texture != nullptr;
+}
+
+FPair Texture::getSize() {
+	return {m_width, m_height};
+}
