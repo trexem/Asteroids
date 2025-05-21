@@ -75,7 +75,7 @@ void TextureManager::loadAllFromPack(const std::string& prefix) {
 bool TextureManager::loadFromPack(const std::string& id, const std::string& virtualPath) {
     std::string path = normalizePath(virtualPath);
     if (textures.contains(id)) {
-        std::cerr << "Texture ID already exists (from pack): " << id << std::endl;
+        SDL_Log("Texture ID already exists (from pack): %s", id.c_str());
         return false; 
     }
 
@@ -84,7 +84,7 @@ bool TextureManager::loadFromPack(const std::string& id, const std::string& virt
 
     SDL_IOStream* io = SDL_IOFromMem(data.data(), data.size());
     if (!io) {
-        std::cerr << "[ERROR] SDL_IOFromMem failed for " << path << std::endl;
+        SDL_Log("[ERROR] SDL_IOFromMem failed for %s", path.c_str());
         return false;
     }
 
@@ -92,7 +92,7 @@ bool TextureManager::loadFromPack(const std::string& id, const std::string& virt
     SDL_CloseIO(io);
 
     if (!surface) {
-        std::cerr << "[ERROR] IMG_Load_IO failed for " << path << ": " << SDL_GetError() << std::endl;
+        SDL_Log("[ERROR] IMG_Load_IO failed for %s: %s", path.c_str(), SDL_GetError());
         return false;
     }
 
@@ -102,11 +102,11 @@ bool TextureManager::loadFromPack(const std::string& id, const std::string& virt
     SDL_DestroySurface(surface);
 
     if (!tex->getTexture()) {
-        std::cerr << "[ERROR] SDL_CreateTextureFromSurface failed for " << path << ": " << SDL_GetError() << std::endl;
+        SDL_Log("[ERROR] SDL_CreateTextureFromSurface failed for %s: %s", path.c_str(), SDL_GetError());
         return false;
     }
 
     textures.emplace(id, std::move(tex));
-    std::cout << "[LOADED] Packed Texture: " << id << " from " << path << std::endl;
+    SDL_Log("[LOADED] Packed Texture: %s from %s", id.c_str(), path.c_str());
     return true;
 }

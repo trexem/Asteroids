@@ -4,6 +4,13 @@ set(NAME asteroids)
 
 project(${NAME} VERSION 0.0.01)
 
+if (ANDROID)
+    message(STATUS "Configuring for Android build")
+    set(IS_ANDROID TRUE)
+else()
+    set(IS_ANDROID FALSE)
+endif()
+
 enable_language(C) #For miniz library
 
 if (CMAKE_GENERATOR STREQUAL "MinGW Makefiles")
@@ -26,15 +33,14 @@ include_directories(${PROJECT_SOURCE_DIR}/vendored/nlohmann)
 
 add_library(miniz STATIC ${PROJECT_SOURCE_DIR}/vendored/miniz/miniz.c)
 
-file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
 add_subdirectory(vendored/sdl EXCLUDE_FROM_ALL)
-set(SDLTTF_VENDORED ON)
 
+set(SDLTTF_VENDORED ON)
 add_subdirectory(vendored/sdl_ttf EXCLUDE_FROM_ALL)
+
 set(SDLIMAGE_AVIF OFF)
 set(SDLIMAGE_BMP ON)
 set(SDLIMAGE_JPEG OFF)
@@ -52,18 +58,34 @@ set(SDLMIXER_OPUS OFF)
 set(SDLMIXER_VENDORED ON)   # tell SDL_mixer to build its own dependencies
 add_subdirectory(vendored/sdl_mixer EXCLUDE_FROM_ALL)
 
+file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
+
+if (IS_ANDROID)
+  function(add_executable TARGET)
+    add_library(${TARGET} SHARED ${ARGN})
+  endfunction()
+endif()
+
 add_executable(${PROJECT_NAME} ${SOURCES})
- 
+
+if (IS_ANDROID)
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${PROJECT_SOURCE_DIR}/data.bin
+            ${PROJECT_SOURCE_DIR}/android/app/src/main/assets/data.bin
+        COMMENT "Copying data.bin to android assets"
+    )
+endif()
+
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
 set(DATA_SOURCE_DIR "${PROJECT_SOURCE_DIR}/data")
-set(DATA_DEBUG_DIR "${CMAKE_BINARY_DIR}/Debug/data")
-set(DATA_RELEASE_DIR "${CMAKE_BINARY_DIR}/Release/data")
+set(DATA_OUTPUT_DIR "${CMAKE_BINARY_DIR}/$<CONFIG>/data")
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${DATA_SOURCE_DIR}
-        ${DATA_RELEASE_DIR}
+        ${DATA_OUTPUT_DIR}
 )
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
@@ -73,25 +95,19 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMENT "Packing and obfuscating assets into data.bin"
 )
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${DATA_SOURCE_DIR}
-        ${DATA_DEBUG_DIR}
-)
-
 if (MSVC)
   target_compile_options(${PROJECT_NAME} PRIVATE /std:c++latest)
   add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${PROJECT_SOURCE_DIR}/data.bin
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/data.bin
-        COMMENT "Copying assets.pak to output directory"
+        COMMENT "Copying data.bin to output directory"
     )
   add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${PROJECT_SOURCE_DIR}/.env
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/.env
-        COMMENT "Copying assets.pak to output directory"
+        COMMENT "Copying .env to output directory"
     )
 endif()
 
@@ -106,21 +122,21 @@ endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(${PROJECT_NAME} PRIVATE -g -O0)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 endif()
  
-set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/release")
+set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/$<CONFIG>")
  
-  message(STATUS "CREATING BUILD FOR UNIX")
-  target_include_directories(${PROJECT_NAME} PUBLIC
-    ${PROJECT_SOURCE_DIR}/include
-    ${PROJECT_SOURCE_DIR}/vendored/miniz
-  )
-  target_link_libraries(${PROJECT_NAME} PRIVATE 
-    SDL3_ttf::SDL3_ttf 
-    SDL3_image::SDL3_image
-    SDL3_mixer::SDL3_mixer
-    SDL3::SDL3
-    miniz
-  )
+target_include_directories(${PROJECT_NAME} PUBLIC
+  ${PROJECT_SOURCE_DIR}/include
+  ${PROJECT_SOURCE_DIR}/vendored/miniz
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE 
+  SDL3_ttf::SDL3_ttf 
+  SDL3_image::SDL3_image
+  SDL3_mixer::SDL3_mixer
+  SDL3::SDL3
+  miniz
+)

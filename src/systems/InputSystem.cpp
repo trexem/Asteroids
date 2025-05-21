@@ -39,6 +39,27 @@ void InputSystem::update(EntityManager& eMgr, const double& dT) {
             clickHandler.handleClick(mousePos, isDown, e.button.button);
             break;
         }
+        case SDL_EVENT_FINGER_DOWN:
+        case SDL_EVENT_FINGER_MOTION:
+        case SDL_EVENT_FINGER_UP: {
+            float normX = e.tfinger.x;
+            float normY = e.tfinger.y;
+            float screenX = normX * SettingsManager::instance().currentScreenSize.x;
+            float screenY = normY * SettingsManager::instance().currentScreenSize.y;
+            FPair pos(screenX, screenY);
+
+            bool isDown = (e.type == SDL_EVENT_FINGER_DOWN || e.type == SDL_EVENT_FINGER_MOTION);
+
+            // Example: left side of screen = joystick
+            if (screenX < SettingsManager::instance().currentScreenSize.x * 0.4f) {
+                // send to JoystickSystem (to be created)
+                // maybe store fingerId and position for dragging logic
+            } else {
+                // treat it as a click
+                clickHandler.handleClick(pos, isDown, 1); // simulate left mouse button
+            }
+            break;
+        }
         default:
             break;
         } 

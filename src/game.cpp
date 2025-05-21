@@ -18,6 +18,8 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	last_tick = 0;
 	tick = 0;
 	systemManager = std::make_unique<SystemManager>();
+	const char* savePath = SDL_GetPrefPath("trexem", "WeNeedMoreAsteroids");
+	SDL_Log("SavePath is: %s", savePath);
 	GameStatsManager::instance().load("data/stats.json");
 	systemManager->registerSystem<InputSystem>();
 	systemManager->registerSystem<PlayerSystem>(entityManager);
@@ -37,12 +39,12 @@ Game::Game() : entityManager(MAX_ENTITIES) {
     );
 
 	if (!PackReader::instance().init("data.bin")) {
-		std::cerr << "Failed to load asset pack!" << std::endl;
+		SDL_Log("Failed to load asset pack!");
 	}
 }
 
 Game::~Game() {
-	std::cout << "Destroying Game...\n";
+	SDL_Log("Destroying Game...");
 
 	g_ship_texture.free();
 	g_particle_texture.free();
@@ -84,27 +86,36 @@ bool Game::initialize(const char* t_title, int t_x, int t_y) {
 			SDL_SetWindowFullscreen(m_window.getWindow(), true);
 			int w, h;
 			SDL_GetWindowSize(m_window.getWindow(), &w, &h);
-			std::cout << "Window Creation size: " << w << ", " << h << std::endl;
+			SDL_Log("Window Creation size: %d, %d", w, h);
 			SettingsManager::instance().setWindowSize(w, h);
 		}
 		if (!m_window.getWindow()) {
-			std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << '\n';
+			SDL_Log("Window could not be created! SDL_Error: %s", SDL_GetError());
 			success = false;
 		} else {
 			renderSystem = systemManager->registerSystem<RenderSystem>(m_window.getWindow(), "", &camera);
 			if (!renderSystem->getRenderer()) {
-				std::cout << "Renderer could not be created! SDL Error: " << SDL_GetError() << '\n';
+				SDL_Log("Renderer could not be created! SDL Error: %s", SDL_GetError());
 				success = false;
 			} else {
 				//init SDL_ttf
 				if (!TTF_Init()) {
-					std::cout << "SDL_ttf could not initialize! SDL_ttf Error: " << SDL_GetError() << '\n';
+					SDL_Log("SDL_ttf could not initialize! SDL_ttf Error: %s", SDL_GetError());
 					success = false;
+				} else {
+					SDL_Log("Fonts Loaded Successfully");
 				}
 			}
 		}
 		systemManager->registerSystem<AudioSystem>();
 	}
+#if defined(__ANDROID__)
+	int screenW, screenH;
+	SDL_Rect screenSize;
+	SDL_GetDisplayBounds(1, &screenSize);
+	SDL_Log("Android screen size: %dx%d", screenSize.w, screenSize.h);
+	SettingsManager::instance().setWindowSize(screenSize.w, screenSize.h);
+#endif
 	return success;
 }
 
@@ -189,7 +200,7 @@ void Game::gameLoop() {
 
 void Game::createShip(ShipType shipType) {
 	uint32_t ship = entityManager.createEntity();
-	std::cout << "Ship eID: " << ship << std::endl;
+	SDL_Log("Ship eID: %d", ship);
 	entityManager.addComponent(ship, ComponentType::Player);
 	entityManager.addComponent(ship, ComponentType::Physics);
 	entityManager.addComponent(ship, ComponentType::Stats);
@@ -286,7 +297,8 @@ void Game::updateGraphicsSettings() {
 void Game::updateFullScreen() {
 	int w, h;
 	SDL_GetRenderOutputSize(renderSystem->getRenderer(), &w, &h);
-	std::cout << "REAL Window size after fullscreen toggle: " << w << " x " << h << std::endl;
+	SDL_Log("REAL Window size after fullscreen toggle: %dx%d", w, h);
+	std::cout <<  std::endl;
 
 	SettingsManager::instance().setWindowSize(w, h);
 	pendingFullScreenChange = false;

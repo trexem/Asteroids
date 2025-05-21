@@ -1,0 +1,47 @@
+plugins {
+     id 'com.android.application'
+}
+
+android {
+    namespace "com.trexem.weneedmoreasteroids"
+    compileSdkVersion 35
+    defaultConfig {
+        applicationId "com.trexem.weneedmoreasteroids"
+        minSdkVersion 21
+        targetSdkVersion 35
+        versionCode 1
+        versionName "1.0"
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_PLATFORM=android-19", "-DANDROID_STL=c++_shared"
+                abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+                //abiFilters 'arm64-v8a'
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path '../../CMakeLists.txt'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        prefab true
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.getkeepsafe.relinker:relinker:1.4.5"
+}

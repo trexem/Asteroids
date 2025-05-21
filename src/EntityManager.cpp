@@ -141,13 +141,13 @@ uint32_t EntityManager::findAvailableEntityID() {
 }
 
 void EntityManager::printComponentPool(uint32_t entityID) {
-    std::cout << "Component Pools for Entity " << entityID << ":\n";
+    SDL_Log("Component Pools for Entity %d:", entityID);
     for (size_t typeIdx = 0; typeIdx < static_cast<size_t>(ComponentType::Count); ++typeIdx) {
         auto& pool = componentPools[typeIdx];
         if (entityID < pool.size() && pool[entityID]) {
-            std::cout << "  Component Type " << typeIdx << " at address " << pool[entityID].get() << std::endl;
+            SDL_Log("  Component Type %d  at address %d", typeIdx, pool[entityID].get());
         } else {
-            std::cout << "  Component Type " << typeIdx << " is empty for this entity.\n";
+            SDL_Log("  Component Type %d is empty for this entity.", typeIdx);
         }
     }
 }

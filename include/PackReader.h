@@ -9,7 +9,7 @@ class PackReader {
 public:
     static PackReader& instance();
 
-    bool init(const std::string& archivePath);
+    bool init(const std::string& archivePath, void* assetMgr = nullptr);
     std::vector<uint8_t> readFile(const std::string& virtualPath);
     std::vector<std::string> listFiles(const std::string& prefix = "");
 

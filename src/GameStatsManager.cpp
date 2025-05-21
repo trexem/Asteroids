@@ -1,5 +1,7 @@
 #include "GameStatsManager.h"
 
+#include <SDL3/SDL_log.h>
+
 GameStatsManager& GameStatsManager::instance()  {
     static GameStatsManager instance;
     return instance;
@@ -7,12 +9,15 @@ GameStatsManager& GameStatsManager::instance()  {
 
 void GameStatsManager::load(const std::string& path) {
     if (!GameSave::loadStatsFromFile(path, stats)) {
+        SDL_Log("Failed to load stats, defaulting.");
         stats = MetaStats();
     }
 }
 
 void GameStatsManager::save(const std::string& path) {
-    GameSave::saveStatsToFile(path, stats);
+    if (!GameSave::saveStatsToFile(path, stats)) {
+        SDL_Log("Failed to save stats to %s", path.c_str());
+    }
 }
 
 MetaStats& GameStatsManager::getStats() { return stats; }

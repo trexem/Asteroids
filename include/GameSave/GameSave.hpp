@@ -7,6 +7,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <SDL3/SDL_iostream.h>
 
 namespace GameSave {
     using json = nlohmann::json;
@@ -57,17 +58,33 @@ namespace GameSave {
     };
 
     inline bool saveStatsToFile(const std::string& path, MetaStats& stats) {
-        std::ofstream file(path, std::ios::binary);
-        if (!file) return false;
+        SDL_IOStream* io = SDL_IOFromFile(path.c_str(), "wb");
+        if (!io) return false;
         json j = stats.toJson();
-        file << simpleObfuscate(j.dump());
+        std::string obfuscated = simpleObfuscate(j.dump());
+        if (SDL_WriteIO(io, obfuscated.data(), obfuscated.size()) != obfuscated.size()) {
+            SDL_CloseIO(io);
+            return false;
+        }
+
+        SDL_CloseIO(io);
         return true;
     }
 
     inline bool loadStatsFromFile(const std::string& path, MetaStats& stats) {
-        std::ifstream file(path, std::ios::binary);
-        if (!file) return false;
-        std::string encrypted((std::istreambuf_iterator<char>(file)), {});
+        SDL_IOStream* io = SDL_IOFromFile(path.c_str(), "rb");
+        if (!io) return false;
+        Sint64 size = SDL_GetIOSize(io);
+        if (size <= 0) {
+            SDL_CloseIO(io);
+            return false;
+        }
+        std::string encrypted(size, '\0');
+        Sint64 read = SDL_ReadIO(io, encrypted.data(), size);
+        SDL_CloseIO(io);
+
+        if (read != size) return false;
+        
         try {
             stats.fromJson(json::parse(simpleObfuscate(encrypted)));
         } catch (...) { return false; }

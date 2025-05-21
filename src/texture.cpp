@@ -49,6 +49,7 @@ bool Texture::loadFromFile(std::string t_path) {
 
 bool Texture::loadFromText(std::string t_texture_text, SDL_Color t_text_color, TTF_Font* g_font) {
 	free();
+	SDL_Log("Loading texture text for text: %s", t_texture_text.c_str());
 	auto text_surface = std::unique_ptr<SDL_Surface, SDL_Surface_Deleter>(TTF_RenderText_Solid(g_font, t_texture_text.c_str(), 0, t_text_color));
 	if (text_surface) {
 		m_texture = SDL_CreateTextureFromSurface(m_renderer, &*text_surface);

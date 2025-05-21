@@ -14,8 +14,12 @@ public:
 
     void updateAll(EntityManager& eM, float dt) {
         for (auto& system : systems) {
+            auto start = std::chrono::high_resolution_clock::now();
             system->update(eM, dt);
+            auto end = std::chrono::high_resolution_clock::now();
+            // SDL_Log("System update time: %ld us", std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
         }
+        // SDL_Log("Finished updating Systems");
     }
 
     void resetAll() {

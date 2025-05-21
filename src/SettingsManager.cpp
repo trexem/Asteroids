@@ -4,6 +4,8 @@
 #include "MessageManager.h"
 #include "GUI.h"
 
+#include <SDL3/SDL_log.h>
+
 SettingsManager::SettingsManager() {
     resolutions = {
         {"800x600",    {800, 600}},
@@ -40,7 +42,7 @@ void SettingsManager::load() {
 void SettingsManager::save() {
     GameSave::saveSettings(settings);
     scale = {settings.screenWidth / SCREEN_WIDTH, settings.screenHeight / SCREEN_HEIGHT};
-    std::cout << "Scale: " << scale << std::endl;
+    SDL_Log("Scale: %f, %f", scale.x, scale.y);
     currentScreenSize = {static_cast<float>(settings.screenWidth), static_cast<float>(settings.screenHeight)};
     // GUI::update(currentScreenSize);
 }
@@ -131,25 +133,33 @@ int SettingsManager::getVolume(const VolumeSource& source) {
 }
 
 std::map<std::string, FPair>::iterator SettingsManager::findResolutionBySize(const FPair& size) {
-    auto closestIt = resolutions.begin();
+    auto bestFit = resolutions.end();
     float minDistanceSq = std::numeric_limits<float>::max();
 
     for (auto it = resolutions.begin(); it != resolutions.end(); ++it) {
-        float dx = it->second.x - size.x;
-        float dy = it->second.y - size.y;
-        float distanceSq = dx * dx + dy * dy;
-
-        if (distanceSq < minDistanceSq) {
-            minDistanceSq = distanceSq;
-            closestIt = it;
+        const FPair& res = it->second;
+        
+        if (res.x <= size.x && res.y <= size.y) {
+            if (bestFit == resolutions.end() || (res.x * res.y) > (bestFit->second.x * bestFit->second.y)) {
+                bestFit = it;
+            }
         }
     }
-
-    return closestIt;
+    if (bestFit == resolutions.end()) {
+        bestFit = std::min_element(
+            resolutions.begin(), resolutions.end(), [](const auto& a, const auto& b){
+                return (a.second.x * a.second.y) < (b.second.x * b.second.y);
+        });
+        SDL_Log("No resolution fits. Using smallest available: %fx%f", bestFit->second.x, bestFit->second.y);
+    } else {
+        SDL_Log("Best fit inside screen is: %fx%f", bestFit->second.x, bestFit->second.y);
+    }
+    return bestFit;
 }
 
 void SettingsManager::updateResolution() {
-    std::cout << currentScreenSize << " & " << currentResolution->second << std::endl;
+    SDL_Log("Updating resolution. CurrentScreenSize: (%dx%d). CurrentResolution: (%dx%d).",
+        currentScreenSize.x, currentScreenSize.y, currentResolution->second.x, currentResolution->second.y);
     MessageManager::instance().sendMessage(std::make_shared<GraphicsSettingsMessage>(
         settings.fullscreen, settings.vsync, currentScreenSize, currentResolution->second));
     currentScreenSize = currentResolution->second;

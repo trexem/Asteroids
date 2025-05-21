@@ -8,7 +8,7 @@ PackReader& PackReader::instance() {
     return instance;
 }
 
-bool PackReader::init(const std::string& archivePath) {
+bool PackReader::init(const std::string& archivePath, void* assetMgr) {
     if (initialized) return true;
     if (!ObfuscatedReader::load(archivePath, raw)) {
         std::cerr << "Failed to read or decode pack file!" << std::endl;

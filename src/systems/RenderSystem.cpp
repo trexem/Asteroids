@@ -26,6 +26,7 @@ void RenderSystem::render(EntityManager& eMgr) {
     renderer->render();
     SDL_SetRenderTarget(renderer->getRenderer(), nullptr);
     FPair screenSize = SettingsManager::instance().currentScreenSize;
+    SDL_Log("Rendering to screen size: %dx%d", screenSize.x, screenSize.y);
     SDL_FRect screenRect = {0, 0, screenSize.x, screenSize.y};
     SDL_RenderTexture(renderer->getRenderer(), screenTexture, nullptr, &screenRect);
     renderer->render();
