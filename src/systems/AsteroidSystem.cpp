@@ -46,7 +46,7 @@ void AsteroidSystem::generateSingleAsteroid(EntityManager& eManager, int lvl) {
 	eManager.addComponent(asteroid, ComponentType::Damage);
 	// Asteroid Texture
 	RenderComponent astTexture;
-	astTexture.texture = TextureManager::instance().get("asteroid001");
+	astTexture.texture = TextureManager::instance().get("asteroid");
 	//astTexture.texture->colorMod(Colors::Asteroid);
 	eManager.setComponentData<RenderComponent>(asteroid, astTexture);
 	// Asteroid Transform
@@ -76,8 +76,9 @@ void AsteroidSystem::generateSingleAsteroid(EntityManager& eManager, int lvl) {
 	eManager.setComponentData<HealthComponent>(asteroid, health);
 	//Animation
 	AnimationComponent anim;
-	asteroids.emplace(asteroid);
+	anim.animations[Animation::Damage].frames = TextureManager::instance().getAnimationFrames("asteroid", "Damage");
 	eManager.setComponentData<AnimationComponent>(asteroid, anim);
+	asteroids.emplace(asteroid);
 	//Damage to Player
 	DamageComponent damageC;
 	damageC.damage = 10 * lvl;

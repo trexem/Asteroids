@@ -3,6 +3,7 @@
 #include "utils.hpp"
 
 #include <filesystem>
+#include <algorithm>
 
 TextureManager& TextureManager::instance() {
     static TextureManager instance;
@@ -34,6 +35,7 @@ bool TextureManager::load(const std::string& id, const std::string& path) {
         return false;
     }
     textures.emplace(id, std::move(tex));
+    keys.push_back(id);
     std::cout << "Texture loaded, id & path: " << id << " & " << p << std::endl;
     return true;
 }
@@ -107,6 +109,45 @@ bool TextureManager::loadFromPack(const std::string& id, const std::string& virt
     }
 
     textures.emplace(id, std::move(tex));
+    keys.push_back(id);
     SDL_Log("[LOADED] Packed Texture: %s from %s", id.c_str(), path.c_str());
     return true;
+}
+
+std::vector<Texture*> TextureManager::getAnimationFrames(const std::string& fullPrefix) {
+    std::vector<std::string> matching;
+    for (const auto& k : keys) {
+        if (k.starts_with(fullPrefix)) {
+            matching.push_back(k);
+        }
+    }
+
+    std::sort(matching.begin(), matching.end());
+
+    std::vector<Texture*> frames;
+    for (const auto& k : matching) {
+        if (auto tex = get(k)) {
+            frames.push_back(tex);
+        }
+    }
+
+    if (frames.empty()) {
+        SDL_LogWarn(SDL_LOG_CATEGORY_RENDER, "No animation frames found for %s", fullPrefix.c_str());
+    }
+
+    return frames;
+}
+
+std::vector<Texture*> TextureManager::getAnimationFrames(const std::string& key, const std::string& prefix) {
+    std::vector<Texture*> frames;
+    if (auto tex = get(key)) {
+        frames.push_back(tex);
+    }
+    std::string fullPrefix = key + prefix;
+    std::vector<Texture*> f = getAnimationFrames(fullPrefix);
+    frames.insert(frames.end(), f.begin(), f.end());
+    if (auto tex = get(key)) {
+        frames.push_back(tex);
+    }
+    return frames;
 }

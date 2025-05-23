@@ -9,38 +9,44 @@ AnimationSystem::AnimationSystem(EntityManager& eManager) : eMgr(eManager) {
 }
 
 void AnimationSystem::handleAnimationMessage(std::shared_ptr<AnimationMessage> msg) {
-    AnimationComponent anim = eMgr.getComponentData<AnimationComponent>(msg->eID);
-    anim.playingAnimation[static_cast<size_t>(msg->animation)] = true;
-    eMgr.setComponentData<AnimationComponent>(msg->eID, anim);
+    auto anim = eMgr.getComponentData<AnimationComponent>(msg->eID);
+    if (anim.animations.count(msg->animation)) {
+        anim.current = msg->animation;
+        anim.playing = true;
+        anim.currentFrame = 0;
+        anim.timeAccumulator = 0;
+        eMgr.setComponentData(msg->eID, anim);
+    }
 }
 
 void AnimationSystem::update(EntityManager& eMgr, const double& dT) {
     for (uint32_t eID : eMgr.getEntitiesWithComponent(ComponentType::Animation)) {
-        AnimationComponent anim = eMgr.getComponentData<AnimationComponent>(eID);
-        RenderComponent texture = eMgr.getComponentData<RenderComponent>(eID);
-        if (anim.playingAnimation[static_cast<size_t>(Animation::Damage)]) {
-            // std::cout << "Animating eID: " << eID;
-            anim.frameTime += dT;
-            anim.elapsedTime += dT;
+        auto anim = eMgr.getComponentData<AnimationComponent>(eID);
+        auto render = eMgr.getComponentData<RenderComponent>(eID);
 
-            if (anim.frameTime >= BLINK_INTERVAL) {
-                anim.visible = !anim.visible;
-                anim.frameTime = 0;
-            }
-            if (anim.elapsedTime >= BLINK_DURATION) {
-                anim.playingAnimation[static_cast<size_t>(Animation::Damage)] = false;
-                anim.elapsedTime = 0;
-                anim.frameTime = 0;
-                anim.visible = true;
+        if (!anim.playing || anim.animations.empty()) continue;
+
+        auto& state = anim.animations[anim.current];
+        anim.timeAccumulator += dT;
+
+        if (anim.timeAccumulator >= state.frameDuration) {
+            anim.timeAccumulator -= state.frameDuration;
+            anim.currentFrame++;
+
+            if (anim.currentFrame >= static_cast<int>(state.frames.size())) {
+                if (state.looping) {
+                    anim.currentFrame = 0;
+                } else {
+                    anim.playing = false;
+                    anim.currentFrame = static_cast<int>(state.frames.size()) - 1;
+                }
             }
         }
 
-        if (anim.visible) {
-            texture.visibility = 255;
-        } else {
-            texture.visibility = 0;
-        }
-        eMgr.setComponentData(eID, texture);
+        render.texture = state.frames[anim.currentFrame];
+        render.visibility = anim.visible ? 255 : 0;
+
         eMgr.setComponentData(eID, anim);
+        eMgr.setComponentData(eID, render);
     }
 }

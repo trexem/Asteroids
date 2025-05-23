@@ -223,7 +223,7 @@ void Game::createShip(ShipType shipType) {
 	shipTransform.position = GUI::screenCenter;
 	//Render
 	RenderComponent shipTexture;
-	shipTexture.texture = TextureManager::instance().get("atreyu001");
+	shipTexture.texture = TextureManager::instance().get("ship");
 	shipTexture.exactSize = {50.0f, 50.0f};
 	shipTexture.isStretched = true;
 	entityManager.setComponentData<RenderComponent>(ship, shipTexture);
@@ -281,6 +281,7 @@ void Game::createShip(ShipType shipType) {
 	entityManager.setComponentData<HealthComponent>(ship, health);
 	//Animation
 	AnimationComponent anim;
+	anim.animations[Animation::Damage].frames = TextureManager::instance().getAnimationFrames("ship", "Damage");
 	entityManager.setComponentData<AnimationComponent>(ship, anim);
 }
 

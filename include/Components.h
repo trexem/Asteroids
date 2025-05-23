@@ -178,11 +178,11 @@ struct PickupComponent {
 };
 
 struct AnimationComponent {
-    std::bitset<static_cast<size_t>(Animation::AnimationCount)> playingAnimation;
-    std::array<Texture*, AnimationCount> frames;
-    double frameTime{0.0f};
-    double elapsedTime{0.0f};
-    int currentFrame{0};
+    std::unordered_map<Animation, AnimationState> animations;
+    Animation current = Animation::None;
+    float timeAccumulator = 0.0f;
+    int currentFrame = 0;
+    bool playing = false;
     bool visible = true;
 };
 
