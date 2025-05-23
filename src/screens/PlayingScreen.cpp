@@ -13,7 +13,7 @@
 
 PlayingScreen::~PlayingScreen() {
     GameStatsManager::instance().addCoins(GameSessionManager::instance().getStats().gold);
-    GameStatsManager::instance().save("data/stats.json");
+    GameStatsManager::instance().save();
     std::cout << "PlayingScreen destroyed\n";
 }
 
@@ -25,9 +25,7 @@ void PlayingScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     abilitiesContainersTexture.m_renderer = renderer;
     timeTexture.m_renderer = renderer;
     levelTexture.m_renderer = renderer;
-    pauseTexture.m_renderer = renderer;
     currentHealthTexture.m_renderer = renderer;
-    healthBarTexture.m_renderer = renderer;
     goldTexture.m_renderer = renderer;
     enemiesTexture.m_renderer = renderer;
     drawAbilityContainers(renderer);
@@ -35,9 +33,7 @@ void PlayingScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     currentXpTexture.createEmptyTexture(xpContainerTexture.getWidth() - 4, xpContainerTexture.getHeight() - 2);
     timeTexture.loadFromText("00:00", Colors::White, Fonts::Subtitle);
     levelTexture.loadFromText("lvl: 1" , Colors::White, Fonts::Body);
-    pauseTexture.loadFromFile("data/img/gui/pause.bmp");
     currentHealthTexture.createEmptyTexture(std::round(GUI::healthbarWidth), std::round(GUI::healtbarHeight));
-    healthBarTexture.loadFromFile("data/img/healthBar.bmp");
     goldTexture.loadFromText("gold: 0000", Colors::White, Fonts::Body);
     enemiesTexture.loadFromText("asteroids destroyed: 0000", Colors::White, Fonts::Body);
 
@@ -116,8 +112,8 @@ void PlayingScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
     entity.add<CollisionComponent>();
-    guiComp.pos = FPair(GUI::screenWidth - pauseTexture.getWidth() - 18, 46);
     textureComp.texture = TextureManager::instance().get("gui/pause");
+    guiComp.pos = FPair(GUI::screenWidth - textureComp.texture->getWidth() - 18, 46);
     colComp.position = {guiComp.pos.x - hoveredOffset, guiComp.pos.y - hoveredOffset};
     colComp.height = textureComp.texture->getHeight() + 2 * hoveredOffset;
     colComp.width = textureComp.texture->getWidth() + 2 * hoveredOffset;

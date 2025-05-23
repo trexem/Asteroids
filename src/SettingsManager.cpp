@@ -25,7 +25,10 @@ SettingsManager& SettingsManager::instance() {
 
 void SettingsManager::load() {
     if (!GameSave::loadSettings(settings)) {
+        SDL_Log("Failed to load settings. Defaulting settings.");
         settings = GameSettings();
+    } else {
+        SDL_Log("Successfully loaded settings.");
     }
     FPair loadedSize {static_cast<float>(settings.screenWidth), static_cast<float>(settings.screenHeight)};
     currentResolution = findResolutionBySize(loadedSize);
@@ -40,11 +43,13 @@ void SettingsManager::load() {
 }
 
 void SettingsManager::save() {
-    GameSave::saveSettings(settings);
-    scale = {settings.screenWidth / SCREEN_WIDTH, settings.screenHeight / SCREEN_HEIGHT};
+    if (!GameSave::saveSettings(settings)) {
+        SDL_Log("Failed to save settings.");
+    } else {
+        SDL_Log("Settings Successfully saved.");
+    }
+    scale = {currentResolution->second.x / SCREEN_WIDTH, currentResolution->second.y / SCREEN_HEIGHT};
     SDL_Log("Scale: %f, %f", scale.x, scale.y);
-    currentScreenSize = {static_cast<float>(settings.screenWidth), static_cast<float>(settings.screenHeight)};
-    // GUI::update(currentScreenSize);
 }
 
 GameSettings& SettingsManager::get() { return settings; }
@@ -158,7 +163,7 @@ std::map<std::string, FPair>::iterator SettingsManager::findResolutionBySize(con
 }
 
 void SettingsManager::updateResolution() {
-    SDL_Log("Updating resolution. CurrentScreenSize: (%dx%d). CurrentResolution: (%dx%d).",
+    SDL_Log("Updating resolution. CurrentScreenSize: (%fx%f). CurrentResolution: (%fx%f).",
         currentScreenSize.x, currentScreenSize.y, currentResolution->second.x, currentResolution->second.y);
     MessageManager::instance().sendMessage(std::make_shared<GraphicsSettingsMessage>(
         settings.fullscreen, settings.vsync, currentScreenSize, currentResolution->second));
@@ -169,9 +174,18 @@ void SettingsManager::updateResolution() {
 }
 
 void SettingsManager::setWindowSize(const int& w, const int& h) {
-    currentScreenSize = {static_cast<float>(w), static_cast<float>(h)};
+    currentScreenSize = { static_cast<float>(w), static_cast<float>(h) };
     currentResolution = findResolutionBySize(currentScreenSize);
+    SDL_Log("Setting window size. CurrentScreenSize: (%fx%f). CurrentResolution: (%fx%f).",
+        currentScreenSize.x, currentScreenSize.y, currentResolution->second.x, currentResolution->second.y);
     settings.screenWidth = currentScreenSize.x;
     settings.screenHeight = currentScreenSize.y;
+    if (currentScreenSize.x > currentResolution->second.x) {
+        screenPos.x = (currentScreenSize.x - currentResolution->second.x) / 2.0f;
+    }
+    if (currentScreenSize.y > currentResolution->second.y) {
+        screenPos.y = (currentScreenSize.y - currentResolution->second.y) / 2.0f;
+    }
+    SDL_Log("Screen pos updated to: %fx%f", screenPos.x, screenPos.y);
     save();
 }

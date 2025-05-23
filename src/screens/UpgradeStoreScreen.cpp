@@ -34,7 +34,7 @@ void UpgradeStoreScreen::create(EntityManager& eManager, SDL_Renderer* renderer)
     containerTexture.createEmptyTexture(GUI::screenWidth, GUI::screenHeight);
     for (int i = 0; i < static_cast<size_t>(UpgradeType::UpgradesCount); i++) {
         UpgradeType type = static_cast<UpgradeType>(i);
-        size = {200.0f};
+        size = 200.0f;
         pos = {i % 2 ? GUI::screenCenter.x + 240 : GUI::screenCenter.x + 20,
                    (i / 2) * size.y + 40};
         std::string label = to_string(type);

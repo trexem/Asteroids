@@ -20,7 +20,7 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	systemManager = std::make_unique<SystemManager>();
 	const char* savePath = SDL_GetPrefPath("trexem", "WeNeedMoreAsteroids");
 	SDL_Log("SavePath is: %s", savePath);
-	GameStatsManager::instance().load("data/stats.json");
+	GameStatsManager::instance().load();
 	systemManager->registerSystem<InputSystem>();
 	systemManager->registerSystem<PlayerSystem>(entityManager);
 	systemManager->registerSystem<PhysicsSystem>();
@@ -34,7 +34,6 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	systemManager->registerSystem<HealthSystem>();
 	systemManager->registerSystem<GUIInteractionSystem>(entityManager);
 	systemManager->registerSystem<TooltipSystem>();
-
 	MessageManager::instance().subscribe<GraphicsSettingsMessage>(
         [this](std::shared_ptr<GraphicsSettingsMessage> msg) { handleGraphicsSettingsMessage(msg); }
     );
@@ -80,13 +79,19 @@ bool Game::initialize(const char* t_title, int t_x, int t_y) {
 	} else {
 		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "software");
 		GameSettings settings = SettingsManager::instance().get();
+#if defined (__ANDROID__)
+		settings.fullscreen = true;
+#endif
 		Uint32 flags = SDL_WINDOW_BORDERLESS;
 		if (settings.fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
 		m_window = Window(t_title, t_x, t_y, settings.screenWidth, settings.screenHeight, flags);
 		if (settings.fullscreen) {
 			SDL_SetWindowFullscreen(m_window.getWindow(), true);
-			int w, h;
+			int w, h, aux;
 			SDL_GetWindowSize(m_window.getWindow(), &w, &h);
+			aux = std::max(w, h);
+			h = std::min(w, h);
+			w = aux;
 			SDL_Log("Window Creation size: %d, %d", w, h);
 			SettingsManager::instance().setWindowSize(w, h);
 		}
@@ -111,11 +116,10 @@ bool Game::initialize(const char* t_title, int t_x, int t_y) {
 		systemManager->registerSystem<AudioSystem>();
 	}
 #if defined(__ANDROID__)
-	int screenW, screenH;
 	SDL_Rect screenSize;
 	SDL_GetDisplayBounds(1, &screenSize);
 	SDL_Log("Android screen size: %dx%d", screenSize.w, screenSize.h);
-	SettingsManager::instance().setWindowSize(screenSize.w, screenSize.h);
+	SettingsManager::instance().setWindowSize(std::max(screenSize.w, screenSize.h), std::min(screenSize.w, screenSize.h));
 #endif
 	return success;
 }
@@ -129,6 +133,9 @@ bool Game::loadMedia() {
 	systemManager->registerSystem<PickupsSystem>(entityManager, renderSystem->getRenderer());
 	systemManager->registerSystem<AbilitySystem>(entityManager, renderSystem->getRenderer());
 	systemManager->registerSystem<BackgroundSystem>(entityManager, renderSystem->getRenderer());
+#if defined (__ANDROID__)
+	systemManager->registerSystem<TouchJoystickSystem>(entityManager);
+#endif
 	return success;
 }
 
@@ -148,7 +155,7 @@ void Game::restart() {
 	entityManager.clearGameEntities();
 	GameSessionManager::instance().reset();
 	counted_frames = 0;
-	createShip(ShipType::FREE_MOVE);
+	createShip(ShipType::TANK);
 	asteroidSystem->restart(entityManager);
 	asteroidSystem->generateAsteroids(entityManager, 0.0);
 	GameStateManager::instance().setState(GameState::Playing);

@@ -48,6 +48,7 @@ enum class ComponentType {
     ClickCallback,
     Tooltip,
     NineGrid,
+    TouckJoystick,
 
     Count
 };
@@ -254,6 +255,14 @@ struct NineGridComponent {
     float top {0};
     float bottom {0};
 
+};
+
+struct TouchJoystickComponent {
+    bool active = false;
+    SDL_FingerID fingerID = 0;
+    FPair origin;
+    FPair current;
+    float radius = 80.0f;
 };
 
 std::vector<AbilityChoice> getRandomAbilityChoices(const PlayerComponent& player);

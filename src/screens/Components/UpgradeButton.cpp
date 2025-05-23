@@ -21,7 +21,7 @@ UpgradeButton::UpgradeButton(
         const int maxLevel = upgradesMaxLevel[static_cast<size_t>(type)];
         if (GameStatsManager::instance().spendCoins(cost) && level < maxLevel) {
             GameStatsManager::instance().getStats().upgrades[type]++;
-            GameStatsManager::instance().save("data/stats.json");
+            GameStatsManager::instance().save();
         }
     };
     em.addComponent(id, ComponentType::ClickCallback);

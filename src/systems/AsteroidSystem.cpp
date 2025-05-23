@@ -99,15 +99,15 @@ FPair AsteroidSystem::generatePosition(EntityManager& eManager) {
 				movementAngle = -movementAngle;
 			}
 			else if (playerPhys->velocity == 0) { //If player is not moving we spawn it anywhere
-				movementAngle = static_cast<float>(rand()) / RAND_MAX * TAU;
+				movementAngle = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * TAU;
 			}
 
-			float angleOffset = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * ANGLE_BIAS_STRENGTH;
+			float angleOffset = (static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 0.5f) * ANGLE_BIAS_STRENGTH;
 			float angle = movementAngle + angleOffset;
 
 			float minRadius = std::max(GUI::screenWidth, GUI::screenHeight) * 0.75f;
 			float maxRadius = minRadius * OUTER_RADIUS;
-			float distance = minRadius + static_cast<float>(rand()) / RAND_MAX * (maxRadius - minRadius);
+			float distance = minRadius + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (maxRadius - minRadius);
 			float x = playerTransform->position.x + distance * sin(angle);
 			float y = playerTransform->position.y - distance * cos(angle);
 			SDL_FRect newAsteroidRect = { x, y, 100.0f, 100.0f };

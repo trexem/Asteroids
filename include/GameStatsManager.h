@@ -8,9 +8,9 @@ class GameStatsManager {
 public:
     static GameStatsManager& instance();
 
-    void load(const std::string& path);
+    void load();
 
-    void save(const std::string& path);
+    void save();
 
     MetaStats& getStats();
 

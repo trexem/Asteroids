@@ -1184,7 +1184,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         }
 
         Log.v(TAG, "setOrientation() requestedOrientation=" + req + " width=" + w +" height="+ h +" resizable=" + resizable + " hint=" + hint);
-        mSingleton.setRequestedOrientation(req);
+        mSingleton.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
     /**

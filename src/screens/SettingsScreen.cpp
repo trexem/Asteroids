@@ -7,6 +7,10 @@
 #include "TextureManager.h"
 
 void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
+    checkBoxFalseTexture = TextureManager::instance().get("gui/checkBoxFalse");
+    checkBoxTrueTexture = TextureManager::instance().get("gui/checkBoxTrue");
+    leftButtonTexture = TextureManager::instance().get("gui/leftButton");
+    rightButtonTexture = TextureManager::instance().get("gui/rightButton");
     settings = SettingsManager::instance().get();
     // BackButton
     backButtonTexture = TextureManager::instance().get("gui/backButton");
@@ -19,12 +23,12 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     };
     eManager.addComponent(backButton->id, ComponentType::ClickCallback);
     eManager.setComponentData<ClickCallbackComponent>(backButton->id, callback);
+#if not defined (__ANDROID__)
     //** Resolution **
     // Left Button
     pos.x = GUI::screenWidth / 2.0f - 500.0f;
     pos.y = GUI::screenHeight / 2.0f - 300.0f;
     size = 75.0f;
-    leftButtonTexture = TextureManager::instance().get("gui/leftButton");
     leftResolutionButton = std::make_shared<Button>(eManager, "", pos, size, leftButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().backResolution();
@@ -39,7 +43,6 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     // Right Button
     pos.x += 700.0f;
     size = 75.0f;
-    rightButtonTexture = TextureManager::instance().get("gui/rightButton");
     rightResolutionButton = std::make_shared<Button>(eManager, "", pos, size, rightButtonTexture, renderer);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().nextResolution();
@@ -54,8 +57,6 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     size = 400.0f;
     fullscreenLabel = std::make_shared<Label>(eManager, "Full Screen", pos, size, renderer, 0, Fonts::Subtitle);
     // Button
-    checkBoxFalseTexture = TextureManager::instance().get("gui/checkBoxFalse");
-    checkBoxTrueTexture = TextureManager::instance().get("gui/checkBoxTrue");
     pos.x += 700.0f;
     size = 75.0f;
     fullScreenButton = std::make_shared<Button>(eManager, "", pos, size, checkBoxFalseTexture, renderer);
@@ -65,7 +66,7 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     };
     eManager.addComponent(fullScreenButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(fullScreenButton->id, callback);
-
+#endif
     // ** VSync **
     //Label
     pos.y += 150;
@@ -168,11 +169,13 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
 void SettingsScreen::destroy(EntityManager& eManager) {
     SettingsManager::instance().save();
     backButton->destroy(eManager);
+#if not defined(__ANDROID__)
     leftResolutionButton->destroy(eManager);
     resolutionLabel->destroy(eManager);
     rightResolutionButton->destroy(eManager);
     fullscreenLabel->destroy(eManager);
     fullScreenButton->destroy(eManager);
+#endif
     vsyncLabel->destroy(eManager);
     vsyncButton->destroy(eManager);
     leftMasterVolume->destroy(eManager);
@@ -198,6 +201,7 @@ void SettingsScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
 
 void SettingsScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
     backButton->updateState(eManager);
+#if not defined(__ANDROID__)
     leftResolutionButton->updateState(eManager);
     rightResolutionButton->updateState(eManager);
     std::string newResText = "Resolution: " + SettingsManager::instance().getCurrentResolutionName();
@@ -208,7 +212,7 @@ void SettingsScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
     fullScreenButton->updateState(eManager);
     RenderComponent* fullScreenCheck = eManager.getComponentDataPtr<RenderComponent>(fullScreenButton->id);
     fullScreenCheck->texture = SettingsManager::instance().get().fullscreen ? checkBoxTrueTexture : checkBoxFalseTexture;
-
+#endif
     vsyncButton->updateState(eManager);
     RenderComponent* vsyncCheck = eManager.getComponentDataPtr<RenderComponent>(vsyncButton->id);
     vsyncCheck->texture = SettingsManager::instance().get().vsync ? checkBoxTrueTexture : checkBoxFalseTexture;

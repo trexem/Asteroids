@@ -13,6 +13,8 @@ public:
     static constexpr float SCREEN_HEIGHT = 1080;
     FPair scale;
     FPair currentScreenSize;
+    FPair screenPos;
+    std::map<std::string, FPair>::iterator currentResolution;
 
     void load();
     void save();
@@ -33,5 +35,5 @@ private:
     GameSettings settings;
     SettingsManager();
     std::map<std::string, FPair> resolutions;
-    std::map<std::string, FPair>::iterator currentResolution;
+    
 };

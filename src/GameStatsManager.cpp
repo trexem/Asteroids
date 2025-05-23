@@ -7,16 +7,16 @@ GameStatsManager& GameStatsManager::instance()  {
     return instance;
 }
 
-void GameStatsManager::load(const std::string& path) {
-    if (!GameSave::loadStatsFromFile(path, stats)) {
+void GameStatsManager::load() {
+    if (!GameSave::loadStatsFromFile(stats)) {
         SDL_Log("Failed to load stats, defaulting.");
         stats = MetaStats();
     }
 }
 
-void GameStatsManager::save(const std::string& path) {
-    if (!GameSave::saveStatsToFile(path, stats)) {
-        SDL_Log("Failed to save stats to %s", path.c_str());
+void GameStatsManager::save() {
+    if (!GameSave::saveStatsToFile(stats)) {
+        SDL_Log("Failed to save stats.");
     }
 }
 

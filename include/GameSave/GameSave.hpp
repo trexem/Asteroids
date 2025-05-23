@@ -7,7 +7,9 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <SDL3/SDL_filesystem.h>
 #include <SDL3/SDL_iostream.h>
+#include <SDL3/SDL_log.h>
 
 namespace GameSave {
     using json = nlohmann::json;
@@ -57,7 +59,19 @@ namespace GameSave {
         }
     };
 
-    inline bool saveStatsToFile(const std::string& path, MetaStats& stats) {
+    inline bool saveStatsToFile(MetaStats& stats) {
+#if defined (__ANDROID__)
+        char* prefPathCStr = SDL_GetPrefPath("trexem", "WeNeedMoreAsteroids");
+        if (!prefPathCStr) {
+            SDL_Log("SDL_GetPrefPath failed in saveSettings.");
+            return false;
+        }
+        std::string basePath = prefPathCStr;
+        SDL_free(prefPathCStr);
+        std::string path = basePath + "stats.json";
+#else
+        std::string path = "data/stats.json";
+#endif
         SDL_IOStream* io = SDL_IOFromFile(path.c_str(), "wb");
         if (!io) return false;
         json j = stats.toJson();
@@ -71,7 +85,19 @@ namespace GameSave {
         return true;
     }
 
-    inline bool loadStatsFromFile(const std::string& path, MetaStats& stats) {
+    inline bool loadStatsFromFile(MetaStats& stats) {
+#if defined (__ANDROID__)
+        char* prefPathCStr = SDL_GetPrefPath("trexem", "WeNeedMoreAsteroids");
+        if (!prefPathCStr) {
+            SDL_Log("SDL_GetPrefPath failed in saveSettings.");
+            return false;
+        }
+        std::string basePath = prefPathCStr;
+        SDL_free(prefPathCStr);
+        std::string path = basePath + "stats.json";
+#else
+        std::string path = "data/stats.json";
+#endif
         SDL_IOStream* io = SDL_IOFromFile(path.c_str(), "rb");
         if (!io) return false;
         Sint64 size = SDL_GetIOSize(io);
@@ -84,7 +110,7 @@ namespace GameSave {
         SDL_CloseIO(io);
 
         if (read != size) return false;
-        
+        SDL_Log("Raw content loaded from stats.json: [%s]", simpleObfuscate(encrypted.substr(0, read)).c_str());
         try {
             stats.fromJson(json::parse(simpleObfuscate(encrypted)));
         } catch (...) { return false; }

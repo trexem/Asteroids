@@ -9,6 +9,7 @@ class InputSystem : public System {
 public:
     void update(EntityManager& eMgr, const double& dT) override;
     FPair adjustMousePos(FPair mousePos);
+    FPair adjustTouchPos(FPair pos);
 private:
     SDL_Event e;
     ClickHandler clickHandler;

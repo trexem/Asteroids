@@ -145,9 +145,9 @@ void EntityManager::printComponentPool(uint32_t entityID) {
     for (size_t typeIdx = 0; typeIdx < static_cast<size_t>(ComponentType::Count); ++typeIdx) {
         auto& pool = componentPools[typeIdx];
         if (entityID < pool.size() && pool[entityID]) {
-            SDL_Log("  Component Type %d  at address %d", typeIdx, pool[entityID].get());
+            SDL_Log("  Component Type %zu  at address %d", typeIdx, pool[entityID].get());
         } else {
-            SDL_Log("  Component Type %d is empty for this entity.", typeIdx);
+            SDL_Log("  Component Type %zu is empty for this entity.", typeIdx);
         }
     }
 }
