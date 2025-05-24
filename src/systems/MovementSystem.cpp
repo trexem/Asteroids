@@ -51,7 +51,6 @@ void MovementSystem::update(EntityManager& eMgr, const double& dT) {
 void MovementSystem::updatePlayer(EntityManager& eMgr, const double& dT, uint32_t eID) {
     const PhysicsComponent* physComp = eMgr.getComponentDataPtr<PhysicsComponent>(eID);
     const RenderComponent* render = eMgr.getComponentDataPtr<RenderComponent>(eID);
-    StatsComponent statsComp = eMgr.getComponentData<StatsComponent>(eID);
     TransformComponent transComp = eMgr.getComponentData<TransformComponent>(eID);
     PlayerComponent playerComp = eMgr.getComponentData<PlayerComponent>(eID);
     if (playerComp.type == ShipType::TANK) {

@@ -229,39 +229,49 @@ void PlayerSystem::levelUpPassive(uint32_t player, size_t passive, uint8_t level
     const float value = passiveValues[passive][level];
     switch (passive) {
         case static_cast<size_t>(PassiveAbilities::PickupRadius):
-            stats.collectionRadius = value;
+            stats.collectionRadius = value +
+                GameStatsManager::instance().getUpgradeValue(UpgradeType::PickupRange);
             break;
         case static_cast<size_t>(PassiveAbilities::CooldownReduction):
-            stats.fireSpeed = value;
+            stats.fireSpeed = value + 
+                GameStatsManager::instance().getUpgradeValue(UpgradeType::FireRate);
             break;
         case static_cast<size_t>(PassiveAbilities::Armor):
-            stats.armor = value;
+            stats.armor = value +
+                GameStatsManager::instance().getUpgradeValue(UpgradeType::Armor);
             break;
-        case static_cast<size_t>(PassiveAbilities::MaxHealth):
-            stats.maxHealth = SHIP_BASE_HEALTH + value;
+        case static_cast<size_t>(PassiveAbilities::MaxHealth): {
+            float healthMult = GameStatsManager::instance().getUpgradeValue(UpgradeType::MaxHealth);
+            stats.maxHealth = SHIP_BASE_HEALTH * healthMult + value;
             hComp.maxHealth = stats.maxHealth;
             hComp.health += value;
             eMgr.setComponentData(player, hComp);
             break;
+        }
         case static_cast<size_t>(PassiveAbilities::HealthRegen):
-            stats.healthRegen = value;
-            hComp.regen = value;
+            stats.healthRegen = value + 
+                GameStatsManager::instance().getUpgradeValue(UpgradeType::HealthRegen);
+            hComp.regen = stats.healthRegen;
             eMgr.setComponentData(player, hComp);
             break;
-        case static_cast<size_t>(PassiveAbilities::MovementSpeed):
-            stats.maxSpeed = static_cast<float>(SHIP_TOP_SPEED * value);
-            stats.minSpeed = static_cast<float>(SHIP_MIN_SPEED * value);
+        case static_cast<size_t>(PassiveAbilities::MovementSpeed): {
+            float speedMult = GameStatsManager::instance().getUpgradeValue(UpgradeType::Speed);
+            stats.maxSpeed = static_cast<float>(SHIP_TOP_SPEED * value * speedMult);
+            stats.minSpeed = static_cast<float>(SHIP_MIN_SPEED * value * speedMult);
             break;
+        }
         case static_cast<size_t>(PassiveAbilities::ProjectileCount):
-            stats.projectileCount = value;
+            stats.projectileCount = value +
+                GameStatsManager::instance().getUpgradeValue(UpgradeType::ProjectileCount);
             break;
         case static_cast<size_t>(PassiveAbilities::Size):
             stats.extraSize = value;
             break;
         case static_cast<size_t>(PassiveAbilities::Damage):
-            stats.baseDamage = value;
+            stats.baseDamage = value + 
+                GameStatsManager::instance().getUpgradeValue(UpgradeType::Damage);
             break;
-            case static_cast<size_t>(PassiveAbilities::ProjectileSpeed):
+        case static_cast<size_t>(PassiveAbilities::ProjectileSpeed):
             stats.projectileSpeed = value;
             break;
         default:

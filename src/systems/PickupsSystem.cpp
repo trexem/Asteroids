@@ -17,8 +17,8 @@ void PickupsSystem::handlePickupsSpawnMessage(std::shared_ptr<PickupsSpawnMessag
     PickupComponent pickComponent;
     if (msg->type & EntityType::Experience) {
         renderComp.texture = TextureManager::instance().get("experience");
-        int lvl = GameStatsManager::instance().getUpgradeLevel(UpgradeType::EXPERIENCE);
-        pickComponent.value *= (1.0f + upgradesValues[static_cast<size_t>(UpgradeType::EXPERIENCE)][lvl]);
+        int lvl = GameStatsManager::instance().getUpgradeLevel(UpgradeType::Experience);
+        pickComponent.value *= (1.0f + upgradesValues[static_cast<size_t>(UpgradeType::Experience)][lvl]);
     } else if (msg->type & EntityType::Gold) {
         renderComp.texture = TextureManager::instance().get("gold");
         int lvl = GameStatsManager::instance().getUpgradeLevel(UpgradeType::GoldValue);

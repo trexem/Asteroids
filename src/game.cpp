@@ -232,14 +232,18 @@ void Game::createShip(ShipType shipType) {
 	entityManager.setComponentData<TransformComponent>(ship, shipTransform);
 	// Stats
 	StatsComponent shipStats;
-	shipStats.maxSpeed = SHIP_TOP_SPEED;
-	shipStats.minSpeed = SHIP_MIN_SPEED;
-	shipStats.maxRotationSpeed = SHIP_TOP_ROTATION_SPEED;
-	shipStats.speed = SHIP_SPEED;
-	shipStats.rotationSpeed = SHIP_ROT_SPEED;
-	shipStats.fireSpeed = SHIP_SHOT_DELAY;
-	// shipStats.collectionRadius = SHIP_BASE_RADIUS;
-	shipStats.collectionRadius = 0;
+	float speedMult = GameStatsManager::instance().getUpgradeValue(UpgradeType::Speed);
+	shipStats.maxSpeed = SHIP_TOP_SPEED * speedMult;
+	shipStats.minSpeed = SHIP_MIN_SPEED * speedMult;
+	shipStats.maxRotationSpeed = SHIP_TOP_ROTATION_SPEED * speedMult;
+	shipStats.speed = SHIP_SPEED * speedMult;
+	shipStats.rotationSpeed = SHIP_ROT_SPEED  * speedMult;
+	shipStats.fireSpeed = GameStatsManager::instance().getUpgradeValue(UpgradeType::FireRate);
+	shipStats.baseDamage = GameStatsManager::instance().getUpgradeValue(UpgradeType::Damage);
+	shipStats.armor = GameStatsManager::instance().getUpgradeValue(UpgradeType::Armor);
+	shipStats.collectionRadius = SHIP_BASE_RADIUS;
+	shipStats.collectionRadius = GameStatsManager::instance().getUpgradeValue(UpgradeType::PickupRange);
+	shipStats.projectileCount = GameStatsManager::instance().getUpgradeValue(UpgradeType::ProjectileCount);
 	entityManager.setComponentData<StatsComponent>(ship, shipStats);
 	// Physics
 	PhysicsComponent shipPhys;
@@ -276,8 +280,10 @@ void Game::createShip(ShipType shipType) {
 	entityManager.setComponentData<TypeComponent>(ship, type);
 	//Health
 	HealthComponent health;
-	health.health = SHIP_BASE_HEALTH;
-	health.maxHealth = SHIP_BASE_HEALTH;
+	float healthMult = GameStatsManager::instance().getUpgradeValue(UpgradeType::MaxHealth);
+	health.health = SHIP_BASE_HEALTH * healthMult;
+	health.maxHealth = SHIP_BASE_HEALTH * healthMult;
+	health.regen = GameStatsManager::instance().getUpgradeValue(UpgradeType::HealthRegen);
 	entityManager.setComponentData<HealthComponent>(ship, health);
 	//Animation
 	AnimationComponent anim;
