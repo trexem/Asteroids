@@ -18,8 +18,6 @@ const int SHIP_MIN_SPEED = -200; //Min speed in reverse (lower than forward spee
 const int SHIP_TOP_ROTATION_SPEED = 270;
 const int SHIP_SPEED = 15; //acceleration, instead of speed
 const int SHIP_ROT_SPEED = 5; //acceleration, instead of speed
-const float SHIP_SHOT_DELAY = .25; //How fast will the ship shoot?
-const float SHIP_BASE_RADIUS = 50;
 const float SHIP_BASE_HEALTH = 100.0f; 
 
 enum class ComponentType {
@@ -48,7 +46,7 @@ enum class ComponentType {
     ClickCallback,
     Tooltip,
     NineGrid,
-    TouckJoystick,
+    TouchJoystick,
 
     Count
 };

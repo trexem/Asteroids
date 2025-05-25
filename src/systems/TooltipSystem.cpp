@@ -40,9 +40,9 @@ void TooltipSystem::createTooltip(EntityManager& eM, uint32_t sourceId) {
     eM.addComponent(tooltipEntity, ComponentType::GUI);
     eM.addComponent(tooltipEntity, ComponentType::NineGrid);
         
-    Texture* textTex = new Texture(TextureManager::instance().getRenderer());
-    textTex->loadMultilineText(tip.text, Colors::White, Fonts::Body, 300);
-    FPair size = textTex->getSize() + 32.0f;
+    textTex = Texture(TextureManager::instance().getRenderer());
+    textTex.loadMultilineText(tip.text, Colors::White, Fonts::Body, 300);
+    FPair size = textTex.getSize() + 32.0f;
         
     GUIComponent gui;
     gui.pos = pos;
@@ -65,7 +65,7 @@ void TooltipSystem::createTooltip(EntityManager& eM, uint32_t sourceId) {
     eM.setComponentData(labelEntity, gui);
 
     RenderComponent label;
-    label.texture = textTex;
+    label.texture = &textTex;
     eM.setComponentData(labelEntity, label);
 }
 

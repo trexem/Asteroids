@@ -1,6 +1,6 @@
 #include "EntityHandle.h"
 #include "screens/Components/Label.h"
-#include "texture.hpp"
+
 
 Label::Label(EntityManager& em, const std::string& label, FPair pos, FPair size,
         SDL_Renderer* renderer, uint32_t parent, TTF_Font* font, SDL_Color color,

@@ -30,8 +30,8 @@ constexpr float upgradesValues[static_cast<size_t>(UpgradeType::UpgradesCount)][
     {  0.0f,   1.0f,   2.0f,    3.0f}, //Projectile Count
     {  0.0f, 0.025f,  0.05f,    0.1f,  0.15f,    0.3f,  0.5f,  1.0f,  1.5f,   2.5f,   5.0f}, //Experience
     {  1.0f,   2.0f,   3.0f,    4.0f,   5.0f,    6.0f,  7.0f,  8.0f,  9.0f,  10.0f,  15.0f}, //GoldProb
-    {  0.0f, 0.025f,  0.05f,    0.1f,  0.15f,    0.3f,  0.5f,  1.0f,  1.5f,   2.5f,   5.0f}, //GoldValue
-    { 50.0f,  75.0f, 100.0f,  150.0f, 200.0f, 300.0f}, //Collection Radius
+    {  0.0f,   0.1f,   0.2f,    0.3f,   0.5f,    0.8f,  1.0f,  1.5f,  2.0f,   2.5f,   5.0f}, //GoldValue
+    { 50.0f, 100.0f, 150.0f,  200.0f, 250.0f, 350.0f}, //Collection Radius
     { 0.01f,  0.05f,   0.1f,    0.2f,   0.5f,   0.75f,  1.0f,  1.5f,  2.5f,   5.0f,  10.0f}, //Health Regen  base health per secondd
     {  1.0f,  1.25f,   1.5f,   1.75f,   2.0f,   2.25f,  2.5f,  3.0f,  3.5f,   4.0f,   5.0f}, //Max Health multiplier for SHIP_BASE_HEALTH = 100
     {  0.0f,  0.01f,  0.05f,   0.10f,  0.15f,   0.20f, 0.25f, 0.30f, 0.35f,   0.40f, 0.50f}, //Armor

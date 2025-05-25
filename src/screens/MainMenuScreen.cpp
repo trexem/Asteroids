@@ -9,143 +9,68 @@
 #include "SettingsManager.h"
 #include "MainMenuScreen.h"
 #include "MouseMotionMessage.h"
+#include "screens/Components/Button.h"
+#include "screens/Components/Label.h"
 #include "texture.hpp"
 
 MainMenuScreen::~MainMenuScreen() {
 }
 
 void MainMenuScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
-    playTexture.m_renderer = renderer;
-    upgradesTexture.m_renderer = renderer;
-    settingsTexture.m_renderer = renderer;
-    quitTexture.m_renderer = renderer;
-    goldTexture.m_renderer = renderer;
-    playTexture.loadFromText("Play", Colors::White, Fonts::Title);
-    upgradesTexture.loadFromText("Upgrades", Colors::White, Fonts::Title);
-    settingsTexture.loadFromText("Settings", Colors::White, Fonts::Title);
-    quitTexture.loadFromText("Exit Game", Colors::White, Fonts::Title);
+    // Play button
+    FPair pos {GUI::screenCenter.x - 250.0f, GUI::screenCenter.y - 200.0f};
+    FPair size {500.0f, 100.0f};
+    ClickCallbackComponent callback;
+    callback.onClick = [&](uint32_t entity) {
+        onPlayClick();
+    };
+    playButton = std::make_unique<Button>(eManager, "Play", pos, size, nullptr, renderer, 0, Fonts::Title);
+    eManager.addComponent(playButton->id, ComponentType::ClickCallback);
+    eManager.setComponentData(playButton->id, callback);
+    //Upgrades
+    pos.y += 100.0f;
+    callback.onClick = [&](uint32_t entity) {
+        GameStateManager::instance().setState(GameState::UpgradeStore);
+    };
+    upgradesButton = std::make_unique<Button>(eManager, "Upgrades", pos, size, nullptr, renderer, 0, Fonts::Title);
+    eManager.addComponent(upgradesButton->id, ComponentType::ClickCallback);
+    eManager.setComponentData(upgradesButton->id, callback);
+    //Settings
+    pos.y += 100.0f;
+    callback.onClick = [&](uint32_t entity) {
+        GameStateManager::instance().setState(GameState::Settings);
+    };
+    settingsButton = std::make_unique<Button>(eManager, "Settings", pos, size, nullptr, renderer, 0, Fonts::Title);
+    eManager.addComponent(settingsButton->id, ComponentType::ClickCallback);
+    eManager.setComponentData(settingsButton->id, callback);
+    //Quit
+    pos.y += 100.0f;
+    callback.onClick = [&](uint32_t entity) {
+        GameStateManager::instance().setState(GameState::Quit);
+    };
+    quitButton = std::make_unique<Button>(eManager, "Exit", pos, size, nullptr, renderer, 0, Fonts::Title);
+    eManager.addComponent(quitButton->id, ComponentType::ClickCallback);
+    eManager.setComponentData(quitButton->id, callback);
+    //Global gold
     std::ostringstream goldText;
     goldText << "gold: " << GameStatsManager::instance().getStats().coins;
-    goldTexture.loadFromText(goldText.str(), Colors::White, Fonts::Body);
-    
-    TypeComponent type = EntityType::GUI;
-    TransformComponent trComp;
-    CollisionComponent colComp;
-    RenderComponent textureComp;
-    GUIComponent guiComp;
-    // Play button
-    playID = eManager.createEntity();
-    EntityHandle eHandle = {playID, eManager};
-    eHandle.add<RenderComponent>();
-    eHandle.add<TypeComponent>();
-    eHandle.add<GUIComponent>();
-    eHandle.add<CollisionComponent>();
-    guiComp.pos = FPair(
-        calculateCenteredX(playTexture.getWidth()), GUI::screenHeight / 3 - playTexture.getHeight());
-    colComp.position = {guiComp.pos.x - hoveredOffset, guiComp.pos.y - hoveredOffset};
-    colComp.height = playTexture.getHeight() + 2 * hoveredOffset;
-    colComp.width = playTexture.getWidth() + 2 * hoveredOffset;
-    textureComp.texture = &playTexture;
-    eHandle.set<TransformComponent>(trComp);
-    eHandle.set<TypeComponent>(type);
-    eHandle.set<RenderComponent>(textureComp);
-    eHandle.set<GUIComponent>(guiComp);
-    eHandle.set<CollisionComponent>(colComp);
-    //Settings
-    upgradesID = eManager.createEntity();
-    eHandle.id = upgradesID;
-    eHandle.add<RenderComponent>();
-    eHandle.add<TypeComponent>();
-    eHandle.add<GUIComponent>();
-    eHandle.add<CollisionComponent>();
-    guiComp.pos.x = calculateCenteredX(upgradesTexture.getWidth());
-    guiComp.pos.y += playTexture.getHeight() + 2 * hoveredOffset;
-    colComp.position = {guiComp.pos.x - hoveredOffset, guiComp.pos.y - hoveredOffset};
-    colComp.height = upgradesTexture.getHeight() + 2 * hoveredOffset;
-    colComp.width = upgradesTexture.getWidth() + 2 * hoveredOffset;
-    textureComp.texture = &upgradesTexture;
-    eHandle.set<TransformComponent>(trComp);
-    eHandle.set<TypeComponent>(type);
-    eHandle.set<RenderComponent>(textureComp);
-    eHandle.set<GUIComponent>(guiComp);
-    eHandle.set<CollisionComponent>(colComp);
-    //Settings
-    settingsID = eManager.createEntity();
-    eHandle.id = settingsID;
-    eHandle.add<RenderComponent>();
-    eHandle.add<TypeComponent>();
-    eHandle.add<GUIComponent>();
-    eHandle.add<CollisionComponent>();
-    guiComp.pos.x = calculateCenteredX(settingsTexture.getWidth());
-    guiComp.pos.y += upgradesTexture.getHeight() + 2 * hoveredOffset;
-    colComp.position = {guiComp.pos.x - hoveredOffset, guiComp.pos.y - hoveredOffset};
-    colComp.height = settingsTexture.getHeight() + 2 * hoveredOffset;
-    colComp.width = settingsTexture.getWidth() + 2 * hoveredOffset;
-    textureComp.texture = &settingsTexture;
-    eHandle.set<TransformComponent>(trComp);
-    eHandle.set<TypeComponent>(type);
-    eHandle.set<RenderComponent>(textureComp);
-    eHandle.set<GUIComponent>(guiComp);
-    eHandle.set<CollisionComponent>(colComp);
-    //Quit
-    quitID = eManager.createEntity();
-    eHandle.id = quitID;
-    eHandle.add<RenderComponent>();
-    eHandle.add<TypeComponent>();
-    eHandle.add<GUIComponent>();
-    eHandle.add<CollisionComponent>();
-    guiComp.pos.x = calculateCenteredX(quitTexture.getWidth());
-    guiComp.pos.y += settingsTexture.getHeight() + 2 * hoveredOffset;
-    colComp.position = {guiComp.pos.x - hoveredOffset, guiComp.pos.y - hoveredOffset};
-    colComp.height = quitTexture.getHeight() + 2 * hoveredOffset;
-    colComp.width = quitTexture.getWidth() + 2 * hoveredOffset;
-    textureComp.texture = &quitTexture;
-    eHandle.set<TransformComponent>(trComp);
-    eHandle.set<TypeComponent>(type);
-    eHandle.set<RenderComponent>(textureComp);
-    eHandle.set<GUIComponent>(guiComp);
-    eHandle.set<CollisionComponent>(colComp);
-    //Global gold
-    goldID = eManager.createEntity();
-    eHandle.id = goldID;
-    eHandle.add<RenderComponent>();
-    eHandle.add<TypeComponent>();
-    eHandle.add<GUIComponent>();
-    guiComp.pos.x = GUI::screenWidth - goldTexture.getWidth() - 10.0f;
-    guiComp.pos.y = GUI::screenHeight - goldTexture.getHeight() - 10.0f;
-    textureComp.texture = &goldTexture;
-    eHandle.set<TransformComponent>(trComp);
-    eHandle.set<TypeComponent>(type);
-    eHandle.set<RenderComponent>(textureComp);
-    eHandle.set<GUIComponent>(guiComp);
+    pos.x = GUI::screenWidth - 200.0f;
+    pos.y = GUI::screenHeight - 75.0f;
+    goldLabel = std::make_unique<Label>(eManager, goldText.str(), pos, size, renderer);
 }
 
 void MainMenuScreen::destroy(EntityManager& eManager) {
-    eManager.destroyEntityLater(playID);
-    eManager.destroyEntityLater(settingsID);
-    eManager.destroyEntityLater(quitID);
+    playButton->destroy(eManager);
+    upgradesButton->destroy(eManager);
+    settingsButton->destroy(eManager);
+    quitButton->destroy(eManager);
+    goldLabel->destroy(eManager);
 }
 
 void MainMenuScreen::handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) {
-    handleHover(playID, msg->mousePos, nullptr);
-    handleHover(upgradesID, msg->mousePos, nullptr);
-    handleHover(settingsID, msg->mousePos, nullptr);
-    handleHover(quitID, msg->mousePos, nullptr);
 }
 
 void MainMenuScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
-    handleClick(playID, msg->mousePos, [this]() {
-        onPlayClick();
-    });
-    handleClick(upgradesID, msg->mousePos, [this]() {
-        GameStateManager::instance().setState(GameState::UpgradeStore);
-    });
-    handleClick(settingsID, msg->mousePos, [this]() {
-        GameStateManager::instance().setState(GameState::Settings);
-    });
-    handleClick(quitID, msg->mousePos, [this]() {
-        GameStateManager::instance().setState(GameState::Quit);
-    });
 }
 
 void MainMenuScreen::onPlayClick() {
@@ -153,5 +78,8 @@ void MainMenuScreen::onPlayClick() {
 }
 
 void MainMenuScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
-
+    playButton->updateState(eManager);
+    upgradesButton->updateState(eManager);
+    settingsButton->updateState(eManager);
+    quitButton->updateState(eManager);
 }

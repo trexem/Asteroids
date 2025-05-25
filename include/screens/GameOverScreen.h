@@ -4,11 +4,12 @@
 #include "Fonts.h"
 #include "Screen.h"
 #include "texture.hpp"
+#include "screens/Components/Button.h"
 
 class GameOverScreen : public Screen {
-    Texture restartTexture = nullptr;
-    Texture mainMenuTexture = nullptr;
-    Texture quitTexture = nullptr;
+    std::unique_ptr<Button> restartButton;
+    std::unique_ptr<Button> mainMenuButton;
+    std::unique_ptr<Button> exitButton;
     uint32_t restartID, mmID, quitID;
 
     void handleMouseHover(std::shared_ptr<MouseMotionMessage> msg);

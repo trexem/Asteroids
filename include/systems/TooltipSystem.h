@@ -10,6 +10,7 @@ private:
     uint32_t tooltipEntity = 0;
     uint32_t labelEntity = 0;
     uint32_t lastHovered = 0;
+    Texture textTex;
 
     void createTooltip(EntityManager& eM, uint32_t sourceId);
     void destroyTooltip(EntityManager& eM);

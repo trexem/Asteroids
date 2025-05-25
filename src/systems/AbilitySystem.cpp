@@ -258,9 +258,9 @@ FPair AbilitySystem::positionLinearSpread(int index, int total, const FPair& pos
     int shotsWidthHalved = ((total - 1) * (3 + laserWidth)) / 2;
 
     FPair position;
-    float xOffset = - laserWidthHalfed - shotsWidthHalved + index * ((3 + laserWidth));
+    float xOffset = - laserWidthHalfed - shotsWidthHalved + index * ((5 + laserWidth));
     xOffset *= cosRadians;
-    float yOffset = - laserWidthHalfed - shotsWidthHalved + index * ((3 + laserWidth));
+    float yOffset = - laserWidthHalfed - shotsWidthHalved + index * ((5 + laserWidth));
     yOffset *= sinRadians;
     yOffset += abs(2 * laserWidth * sinRadians) * (-1);
     position.x = posSource.x + shipWidth  + sinShipHeight + xOffset;

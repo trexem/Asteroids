@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <string>
+#include <SDL3/SDL.h>
 
 #include "Colors.h"
 #include "Fonts.h"
@@ -10,7 +11,6 @@
 
 class EntityManager;
 class FPair;
-class SDL_Renderer;
 
 class Label {
 public: 

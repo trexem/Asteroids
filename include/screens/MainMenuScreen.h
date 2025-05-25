@@ -3,12 +3,15 @@
 #include "Screen.h"
 
 class Texture;
+class Button;
+class Label;
 
 class MainMenuScreen : public Screen {
-    Texture playTexture;
-    Texture settingsTexture;
-    Texture quitTexture;
-    Texture upgradesTexture;
+    std::unique_ptr<Button> playButton;
+    std::unique_ptr<Button> settingsButton;
+    std::unique_ptr<Button> quitButton;
+    std::unique_ptr<Button> upgradesButton;
+    std::unique_ptr<Label> goldLabel;
     Texture goldTexture;
     uint32_t playID, upgradesID, settingsID, quitID, goldID;
 

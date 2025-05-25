@@ -18,8 +18,6 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	last_tick = 0;
 	tick = 0;
 	systemManager = std::make_unique<SystemManager>();
-	const char* savePath = SDL_GetPrefPath("trexem", "WeNeedMoreAsteroids");
-	SDL_Log("SavePath is: %s", savePath);
 	GameStatsManager::instance().load();
 	systemManager->registerSystem<InputSystem>();
 	systemManager->registerSystem<PlayerSystem>(entityManager);
@@ -241,7 +239,6 @@ void Game::createShip(ShipType shipType) {
 	shipStats.fireSpeed = GameStatsManager::instance().getUpgradeValue(UpgradeType::FireRate);
 	shipStats.baseDamage = GameStatsManager::instance().getUpgradeValue(UpgradeType::Damage);
 	shipStats.armor = GameStatsManager::instance().getUpgradeValue(UpgradeType::Armor);
-	shipStats.collectionRadius = SHIP_BASE_RADIUS;
 	shipStats.collectionRadius = GameStatsManager::instance().getUpgradeValue(UpgradeType::PickupRange);
 	shipStats.projectileCount = GameStatsManager::instance().getUpgradeValue(UpgradeType::ProjectileCount);
 	entityManager.setComponentData<StatsComponent>(ship, shipStats);

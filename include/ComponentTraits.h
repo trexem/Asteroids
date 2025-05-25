@@ -108,5 +108,5 @@ template <> struct ComponentTraits<NineGridComponent> {
 };
 
 template <> struct ComponentTraits<TouchJoystickComponent> {
-    static constexpr ComponentType type = ComponentType::TouckJoystick;
+    static constexpr ComponentType type = ComponentType::TouchJoystick;
 };
