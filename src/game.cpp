@@ -7,6 +7,8 @@
 #include "SettingsManager.h"
 #include "TextureManager.h"
 #include "PackReader.h"
+#include "TextManager.h"
+#include "SystemLocale.h"
 
 #include <iostream>
 #include <SDL3/SDL_init.h>
@@ -70,6 +72,10 @@ Game::~Game() {
 }
 
 bool Game::initialize(const char* t_title, int t_x, int t_y) {
+	std::string userLang = SystemLocale::get();
+	SDL_Log("System language got is: %s", userLang.c_str());
+	TextManager::instance().loadLanguage(userLang);
+	// TextManager::instance().loadLanguage("es");
 	bool success = true;
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO)) {
 		std::cout << "SDL could not initialize! SDL_ERROR: " << SDL_GetError() << '\n';

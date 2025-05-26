@@ -1,0 +1,7 @@
+{
+    "main_menu.play": "Play",
+    "main_menu.quit": "Exit",
+    "main_menu.settings": "Settings",
+    "main_menu.upgrades": "Upgrades",
+    "main_menu.gold": "Gold: {}"
+}

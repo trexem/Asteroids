@@ -1,0 +1,7 @@
+{
+    "main_menu.play": "Jugar",
+    "main_menu.quit": "Salir",
+    "main_menu.settings": "Ajustes",
+    "main_menu.upgrades": "Mejoras",
+    "main_menu.gold": "Oro: {}"
+}
