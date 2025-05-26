@@ -25,7 +25,7 @@ void MainMenuScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     callback.onClick = [&](uint32_t entity) {
         onPlayClick();
     };
-    std::string text = TextManager::instance().get("main_menu.play");
+    std::string text = TextManager::instance().get("action.play");
     playButton = std::make_unique<Button>(eManager, text, pos, size, nullptr, renderer, 0, Fonts::Title);
     eManager.addComponent(playButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(playButton->id, callback);
@@ -34,7 +34,7 @@ void MainMenuScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::UpgradeStore);
     };
-    text = TextManager::instance().get("main_menu.upgrades");
+    text = TextManager::instance().get("action.upgrades");
     upgradesButton = std::make_unique<Button>(eManager, text, pos, size, nullptr, renderer, 0, Fonts::Title);
     eManager.addComponent(upgradesButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(upgradesButton->id, callback);
@@ -43,7 +43,7 @@ void MainMenuScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::Settings);
     };
-    text = TextManager::instance().get("main_menu.settings");
+    text = TextManager::instance().get("action.settings");
     settingsButton = std::make_unique<Button>(eManager, text, pos, size, nullptr, renderer, 0, Fonts::Title);
     eManager.addComponent(settingsButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(settingsButton->id, callback);
@@ -52,12 +52,12 @@ void MainMenuScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::Quit);
     };
-    text = TextManager::instance().get("main_menu.quit");
+    text = TextManager::instance().get("action.quit");
     quitButton = std::make_unique<Button>(eManager, text, pos, size, nullptr, renderer, 0, Fonts::Title);
     eManager.addComponent(quitButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(quitButton->id, callback);
     //Global gold
-    text = TextManager::instance().format("main_menu.gold", GameStatsManager::instance().getStats().coins);
+    text = TextManager::instance().format("label.gold", GameStatsManager::instance().getStats().coins);
     pos.x = GUI::screenWidth - 200.0f;
     pos.y = GUI::screenHeight - 75.0f;
     goldLabel = std::make_unique<Label>(eManager, text, pos, size, renderer);

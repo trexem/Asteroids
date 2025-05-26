@@ -10,6 +10,7 @@
 #include "PlayingScreen.h"
 #include "texture.hpp"
 #include "TextureManager.h"
+#include "TextManager.h"
 
 PlayingScreen::~PlayingScreen() {
     GameStatsManager::instance().addCoins(GameSessionManager::instance().getStats().gold);
@@ -34,8 +35,11 @@ void PlayingScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     timeTexture.loadFromText("00:00", Colors::White, Fonts::Subtitle);
     levelTexture.loadFromText("lvl: 1" , Colors::White, Fonts::Body);
     currentHealthTexture.createEmptyTexture(std::round(GUI::healthbarWidth), std::round(GUI::healtbarHeight));
-    goldTexture.loadFromText("gold: 0000", Colors::White, Fonts::Body);
-    enemiesTexture.loadFromText("asteroids destroyed: 0000", Colors::White, Fonts::Body);
+    int zero = 0;
+    std::string text = TextManager::instance().format("label.gold", zero);
+    goldTexture.loadFromText(text, Colors::White, Fonts::Body);
+    text = TextManager::instance().format("label.asteroidsDestroyed", zero);
+    enemiesTexture.loadFromText(text, Colors::White, Fonts::Body);
 
     TypeComponent type = EntityType::GUI;
     GUIComponent guiComp;
@@ -130,7 +134,7 @@ void PlayingScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
-    guiComp.pos.x -= goldTexture.getWidth() - 10.0f;
+    guiComp.pos.x -= goldTexture.getWidth() + 30.0f;
     textureComp.texture = &goldTexture;
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
@@ -142,7 +146,7 @@ void PlayingScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     entity.add<RenderComponent>();
     entity.add<TypeComponent>();
     entity.add<GUIComponent>();
-    guiComp.pos.x -= enemiesTexture.getWidth() - 10.0f;
+    guiComp.pos.x -= enemiesTexture.getWidth() + 100.0f;
     textureComp.texture = &enemiesTexture;
     entity.set<TransformComponent>(trComp);
     entity.set<TypeComponent>(type);
@@ -224,16 +228,14 @@ void PlayingScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
     // Gold
     if (GameSessionManager::instance().getStats().gold != lastGold) {
         lastGold = GameSessionManager::instance().getStats().gold;
-        std::ostringstream goldText;
-        goldText << "gold: " << lastGold;
-        goldTexture.loadFromText(goldText.str(), Colors::White, Fonts::Body);
+        std::string text = TextManager::instance().format("label.gold", lastGold);
+        goldTexture.loadFromText(text, Colors::White, Fonts::Body);
     }
     // Enemies
     if (GameSessionManager::instance().getStats().asteroidsDestroyed != lastEnemies) {
         lastEnemies = GameSessionManager::instance().getStats().asteroidsDestroyed;
-        std::ostringstream enemiesText;
-        enemiesText << "asteroids destroyed: " << lastEnemies;
-        enemiesTexture.loadFromText(enemiesText.str(), Colors::White, Fonts::Body);
+        std::string text = TextManager::instance().format("label.asteroidsDestroyed", lastEnemies);
+        enemiesTexture.loadFromText(text, Colors::White, Fonts::Body);
     }
 }
 

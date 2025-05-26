@@ -3,6 +3,7 @@
 #include "Colors.h"
 #include "EntityHandle.h"
 #include "Fonts.h"
+#include "TextManager.h"
 
 UpgradeButton::UpgradeButton(
     EntityManager& em,
@@ -26,10 +27,6 @@ UpgradeButton::UpgradeButton(
     };
     em.addComponent(id, ComponentType::ClickCallback);
     em.setComponentData<ClickCallbackComponent>(id, callback);
-    TooltipComponent tip;
-    tip.text = "This is a long text for testing, let's see how this looks like. Longer than yo mama, HA goteeee.";
-    em.addComponent(id, ComponentType::Tooltip);
-    em.setComponentData(id, tip);
     //Cost Text
     GUIComponent guiComp;
     RenderComponent render;
@@ -43,13 +40,28 @@ UpgradeButton::UpgradeButton(
     maxLevel = upgradesMaxLevel[static_cast<size_t>(type)];
     lastlevel = level;
     const int cost = level < maxLevel ? upgradesCost[static_cast<size_t>(type)][level] : 0;
-    costText = cost != 0 ? std::to_string(cost) : "MAX";
+    costText = cost != 0 ? std::to_string(cost) + "$" : "MAX";
     costTexture.m_renderer = renderer;
     costTexture.loadFromText(costText, Colors::White, Fonts::Body);
     render.texture = &costTexture;
     guiComp.parent = id;
     guiComp.pos = {100.0f - costTexture.getWidth() / 2.0f,
-                   110.0f + costTexture.getHeight() / 2.0f};
+                   130.0f + costTexture.getHeight() / 2.0f};
+
+    TooltipComponent tip;
+    std::string key = to_key(type);
+    float value = upgradesValues[static_cast<size_t>(type)][level];
+    float nextValue = upgradesValues[static_cast<size_t>(type)][level + 1];
+    float diff = nextValue - value;
+    if (!(type == UpgradeType::ProjectileCount || type == UpgradeType::PickupRange || type == UpgradeType::HealthRegen)) {
+        diff *= 100.0f;
+        nextValue *= 100.0f;
+    }
+    std::string text;
+    text = TextManager::instance().format("upgradeDesc." + key, diff, nextValue);
+    tip.text = text;
+    em.addComponent(id, ComponentType::Tooltip);
+    em.setComponentData(id, tip);
 
     handle.set(guiComp);
     handle.set(render);
@@ -72,7 +84,7 @@ void UpgradeButton::updateCost(EntityManager& em) {
     level = GameStatsManager::instance().getUpgradeLevel(type);
     if (level != lastlevel) {
         const int cost = level < maxLevel ? upgradesCost[static_cast<size_t>(type)][level] : 0;
-        costText = cost != 0 ? std::to_string(cost) : "MAX";
+        costText = cost != 0 ? std::to_string(cost) + "$" : "MAX";
         costTexture.loadFromText(costText, Colors::White, Fonts::Body);
         lastlevel = level;
     }

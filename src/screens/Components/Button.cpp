@@ -35,7 +35,7 @@ Button::Button(EntityManager& em, const std::string& label, FPair pos, FPair siz
     handle.id = labelID;
     LabelComponent labelComp {label};
     labelTexture.m_renderer = renderer;
-    labelTexture.loadFromText(label, color, font);
+    labelTexture.loadMultilineText(label, color, font, size.x - 20);
     render.texture = &labelTexture;
     guiComp.parent = id;
     labelPos = {size.x / 2.0f - labelTexture.getWidth() / 2.0f,

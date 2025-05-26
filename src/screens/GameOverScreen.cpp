@@ -6,6 +6,7 @@
 #include "GameStatsManager.h"
 #include "MouseMotionMessage.h"
 #include "GUI.h"
+#include "TextManager.h"
 
 void GameOverScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     //Restart
@@ -15,7 +16,8 @@ void GameOverScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::Restart);
     };
-    restartButton = std::make_unique<Button>(eManager, "Restart", pos, size, nullptr, renderer, 0, Fonts::Title);
+    std::string text = TextManager::instance().get("action.restart");
+    restartButton = std::make_unique<Button>(eManager, text, pos, size, nullptr, renderer, 0, Fonts::Title);
     eManager.addComponent(restartButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(restartButton->id, callback);
 
@@ -24,7 +26,8 @@ void GameOverScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::MainMenu);
     };
-    mainMenuButton = std::make_unique<Button>(eManager, "Main Menu", pos, size, nullptr, renderer, 0, Fonts::Title);
+    text = TextManager::instance().get("action.mainMenu");
+    mainMenuButton = std::make_unique<Button>(eManager, text, pos, size, nullptr, renderer, 0, Fonts::Title);
     eManager.addComponent(mainMenuButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(mainMenuButton->id, callback);
 
@@ -33,7 +36,8 @@ void GameOverScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::Quit);
     };
-    exitButton = std::make_unique<Button>(eManager, "Exit", pos, size, nullptr, renderer, 0, Fonts::Title);
+    text = TextManager::instance().get("action.quit");
+    exitButton = std::make_unique<Button>(eManager, text, pos, size, nullptr, renderer, 0, Fonts::Title);
     eManager.addComponent(exitButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(exitButton->id, callback);
 }

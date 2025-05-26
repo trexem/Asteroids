@@ -8,6 +8,6 @@ public class LocaleHelper {
     }
 
     public static String getFullLocale() {
-        return Locale.getDefautl().toString();
+        return Locale.getDefault().toString();
     }
 }

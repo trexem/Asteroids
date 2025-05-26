@@ -6,6 +6,7 @@
 #include "GameStateManager.h"
 #include "GUI.h"
 #include "TextureManager.h"
+#include "TextManager.h"
 
 UpgradeStoreScreen::UpgradeStoreScreen(EntityManager& eManager, SDL_Renderer* renderer) : Screen(eManager) {
 }
@@ -28,17 +29,17 @@ void UpgradeStoreScreen::create(EntityManager& eManager, SDL_Renderer* renderer)
         size = 200.0f;
         pos = {(i / 2) * (size.x + 40.0f) + 240.0f, 
             i % 2 ? GUI::screenCenter.y + 20.0f : GUI::screenCenter.y - 220.0f};
-        std::string label = to_string(type);
+        std::string key = to_key(type);
+        std::string text = TextManager::instance().get("upgradeName." + key);
         upgradeButtons.push_back(std::make_shared<UpgradeButton>(
-            eManager, label, pos, size, TextureManager::instance().get("gui/buttonIdle"), renderer, type));
+            eManager, text, pos, size, TextureManager::instance().get("gui/buttonIdle"), renderer, type));
     }
     //Global gold
-    std::ostringstream goldText;
     gold = GameStatsManager::instance().getStats().coins;
-    goldText << "gold: " << gold;
+    std::string goldText = TextManager::instance().format("label.gold", gold);
     pos.x = GUI::screenWidth - 200.0f;
     pos.y = GUI::screenHeight - 75.0f;
-    goldLabel = std::make_unique<Label>(eManager, goldText.str(), pos, size, renderer);
+    goldLabel = std::make_unique<Label>(eManager, goldText, pos, size, renderer);
 }
 
 void UpgradeStoreScreen::destroy(EntityManager& eManager) {
@@ -69,6 +70,7 @@ void UpgradeStoreScreen::update(EntityManager& eManager, SDL_Renderer* renderer)
     uint32_t newGold = GameStatsManager::instance().getStats().coins;
     if (gold != newGold) {
         gold = newGold;
-        goldLabel->setText("gold: " + std::to_string(gold));
+        std::string goldText = TextManager::instance().format("label.gold", gold);
+        goldLabel->setText(goldText);
     }
 }

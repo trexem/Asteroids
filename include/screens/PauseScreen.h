@@ -8,6 +8,7 @@ class PauseScreen : public Screen {
     std::unique_ptr<Button> continueButton;
     std::unique_ptr<Button> settingsButton;
     std::unique_ptr<Button> mainMenuButton;
+    std::unique_ptr<Button> restartButton;
     std::unique_ptr<Button> exitButton;
     
 

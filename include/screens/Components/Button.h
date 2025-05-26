@@ -10,7 +10,7 @@
 
 class EntityManager;
 class FPair;
-class SDL_Renderer;
+struct SDL_Renderer;
 
 class Button {
 public:

@@ -2,6 +2,7 @@
 #include "GameStateManager.h"
 #include "PauseScreen.h"
 #include "GUI.h"
+#include "TextManager.h"
 
 void PauseScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     // Continue
@@ -11,15 +12,26 @@ void PauseScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::Playing);
     };
-    continueButton = std::make_unique<Button>(eManager, "Continue", pos, size, nullptr, renderer, 0, Fonts::Title);
+    std::string text = TextManager::instance().get("action.continue");
+    continueButton = std::make_unique<Button>(eManager, text, pos, size, nullptr, renderer, 0, Fonts::Title);
     eManager.addComponent(continueButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(continueButton->id, callback);
+    // Restart
+    pos.y += 100.0f;
+    callback.onClick = [&](uint32_t entity) {
+        GameStateManager::instance().setState(GameState::Restart);
+    };
+    text = TextManager::instance().get("action.restart");
+    restartButton = std::make_unique<Button>(eManager, text, pos, size, nullptr, renderer, 0, Fonts::Title);
+    eManager.addComponent(restartButton->id, ComponentType::ClickCallback);
+    eManager.setComponentData(restartButton->id, callback);
     // Settings
     pos.y += 100.0f;
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::Settings);
     };
-    settingsButton = std::make_unique<Button>(eManager, "Settings", pos, size, nullptr, renderer, 0, Fonts::Title);
+    text = TextManager::instance().get("action.settings");
+    settingsButton = std::make_unique<Button>(eManager, text, pos, size, nullptr, renderer, 0, Fonts::Title);
     eManager.addComponent(settingsButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(settingsButton->id, callback);
     // Main Menu
@@ -27,7 +39,8 @@ void PauseScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::MainMenu);
     };
-    mainMenuButton = std::make_unique<Button>(eManager, "Main Menu", pos, size, nullptr, renderer, 0, Fonts::Title);
+    text = TextManager::instance().get("action.mainMenu");
+    mainMenuButton = std::make_unique<Button>(eManager, text, pos, size, nullptr, renderer, 0, Fonts::Title);
     eManager.addComponent(mainMenuButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(mainMenuButton->id, callback);
     // Exit
@@ -35,7 +48,8 @@ void PauseScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::Quit);
     };
-    exitButton = std::make_unique<Button>(eManager, "Exit", pos, size, nullptr, renderer, 0, Fonts::Title);
+    text = TextManager::instance().get("action.quit");
+    exitButton = std::make_unique<Button>(eManager, text, pos, size, nullptr, renderer, 0, Fonts::Title);
     eManager.addComponent(exitButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(exitButton->id, callback);
 }

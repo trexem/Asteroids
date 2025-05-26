@@ -5,6 +5,7 @@
 #include "GameStateManager.h"
 #include "GUI.h"
 #include "TextureManager.h"
+#include "TextManager.h"
 
 void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     checkBoxFalseTexture = TextureManager::instance().get("gui/checkBoxFalse");
@@ -38,7 +39,8 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     // Label
     pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
-    resolutionText = "Resolution: " + SettingsManager::instance().getCurrentResolutionName();
+    std::string resText = SettingsManager::instance().getCurrentResolutionName();
+    resolutionText = TextManager::instance().get("label.resolution") + resText;
     resolutionLabel = std::make_shared<Label>(eManager, resolutionText, pos, size, renderer, 0, Fonts::Subtitle);
     // Right Button
     pos.x += 700.0f;
@@ -55,7 +57,8 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     pos.y += 150;
     pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
-    fullscreenLabel = std::make_shared<Label>(eManager, "Full Screen", pos, size, renderer, 0, Fonts::Subtitle);
+    std::string text = TextManager::instance().get("label.fullscreen");
+    fullscreenLabel = std::make_shared<Label>(eManager, text, pos, size, renderer, 0, Fonts::Subtitle);
     // Button
     pos.x += 700.0f;
     size = 75.0f;
@@ -98,8 +101,8 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     // Label
     pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
-    masterText = "Master Volume: " 
-        + std::to_string(SettingsManager::instance().getVolume(VolumeSource::MasterVolume));
+    int vol = SettingsManager::instance().getVolume(VolumeSource::MasterVolume);
+    masterText = TextManager::instance().format("label.masterVolume", vol);
     masterLabel = std::make_shared<Label>(eManager, masterText, pos, size, renderer, 0, Fonts::Subtitle);
     // Right Button
     pos.x += 700.0f;
@@ -125,8 +128,8 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     // Label
     pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
-    musicText = "Music Volume: " 
-        + std::to_string(SettingsManager::instance().getVolume(VolumeSource::MusicVolume));
+    vol = SettingsManager::instance().getVolume(VolumeSource::MusicVolume);
+    musicText = TextManager::instance().format("label.masterVolume", vol);
     musicLabel = std::make_shared<Label>(eManager, musicText, pos, size, renderer, 0, Fonts::Subtitle);
     // Right Button
     pos.x += 700.0f;
@@ -152,8 +155,8 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     // Label
     pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
-    sfxText = "SFX Volume: " 
-        + std::to_string(SettingsManager::instance().getVolume(VolumeSource::SFXVolume));
+    vol = SettingsManager::instance().getVolume(VolumeSource::SFXVolume);
+    sfxText = TextManager::instance().format("label.masterVolume", vol);
     sfxLabel = std::make_shared<Label>(eManager, sfxText, pos, size, renderer, 0, Fonts::Subtitle);
     // Right Button
     pos.x += 700.0f;
@@ -204,7 +207,7 @@ void SettingsScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
 #if not defined(__ANDROID__)
     leftResolutionButton->updateState(eManager);
     rightResolutionButton->updateState(eManager);
-    std::string newResText = "Resolution: " + SettingsManager::instance().getCurrentResolutionName();
+    std::string newResText = TextManager::instance().get("label.resolution") + SettingsManager::instance().getCurrentResolutionName();
     if (resolutionText != newResText) {
         resolutionText = newResText;
         resolutionLabel->setText(resolutionText);
@@ -219,8 +222,8 @@ void SettingsScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
 
     leftMasterVolume->updateState(eManager);
     rightMasterVolume->updateState(eManager);
-    std::string newMasterText = "Master Volume: " + 
-        std::to_string(SettingsManager::instance().getVolume(VolumeSource::MasterVolume));
+    int vol = SettingsManager::instance().getVolume(VolumeSource::MasterVolume);
+    std::string newMasterText = TextManager::instance().format("label.masterVolume", vol);
     if (masterText != newMasterText) {
         masterText = newMasterText;
         masterLabel->setText(masterText);
@@ -228,8 +231,8 @@ void SettingsScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
 
     leftMusicVolume->updateState(eManager);
     rightMusicVolume->updateState(eManager);
-    std::string newMusicText = "Music Volume: " 
-        + std::to_string(SettingsManager::instance().getVolume(VolumeSource::MusicVolume));
+    vol = SettingsManager::instance().getVolume(VolumeSource::MusicVolume);
+    std::string newMusicText = TextManager::instance().format("label.masterVolume", vol);
     if (musicText != newMusicText) {
         musicText = newMusicText;
         musicLabel->setText(musicText);
@@ -237,8 +240,8 @@ void SettingsScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
 
     leftSfxVolume->updateState(eManager);
     rightSfxVolume->updateState(eManager);
-    std::string newSfxText = "SFX Volume: " 
-        + std::to_string(SettingsManager::instance().getVolume(VolumeSource::SFXVolume));
+    vol = SettingsManager::instance().getVolume(VolumeSource::SFXVolume);
+    std::string newSfxText = TextManager::instance().format("label.masterVolume", vol);
     if (sfxText != newSfxText) {
         sfxText = newSfxText;
         sfxLabel->setText(sfxText);
