@@ -22,8 +22,8 @@ constexpr float abilitiesCooldowns[static_cast<size_t>(WeaponAbilities::WeaponAb
     //Levels 0     1     2       3      4      5      6      7      8      9
     {   0.50f, 0.50f, 0.50f, 0.50f, 0.50f, 0.45f, 0.45f, 0.45f, 0.45f, 0.35f},  //LaserGun
     {   3.0f,  3.0f,   2.5f,  2.5f,  2.5f,  2.0f,  2.0f,  1.5f, 1.25f, 1.00f},  //Rocket
-    {   3.25f, 3.25f, 3.20f, 3.20f, 3.20f, 3.10f, 3.10f, 3.10f, 3.10f,  3.0f},  //Laser
-    {   3.0f,  3.0f,   2.5f,  2.5f,  2.5f,  2.0f,  2.0f,  1.5f, 1.25f, 1.00f},  //Explosives
+    {   3.25f, 3.25f, 3.20f, 3.20f, 3.20f, 3.10f, 3.10f, 3.10f,  3.0f, 2.75f},  //Laser
+    {   3.0f,  3.0f,   2.5f,  2.5f,  2.5f,  2.0f,  2.0f,  1.5f, 1.50f, 1.25f},  //Explosives
     {   3.25f, 3.25f, 3.20f, 3.20f, 3.20f, 3.10f, 3.10f, 3.10f, 3.10f, 3.05f},  //GravitySaws
 };
 
@@ -32,7 +32,7 @@ constexpr int abilitiesProjectileCount[static_cast<size_t>(WeaponAbilities::Weap
     {       1,     2,    2,      3,     3,     3,     4,     4,     4,     5},  //LaserGun
     {       1,     2,    2,      3,     3,     3,     4,     4,     4,     5},  //Rocket
     {       1,     1,    1,      1,     1,     1,     1,     1,     1,     1},  //Laser
-    {       1,     2,    2,      3,     3,     3,     4,     4,     4,     5},  //Explosives
+    {       1,     2,    2,      3,     3,     3,     4,     4,     4,     4},  //Explosives
     {       1,     2,    2,      3,     3,     3,     4,     4,     4,     5},  //GravitySaws
 };
 
@@ -47,11 +47,11 @@ constexpr float abilitiesProjectileSpeed[static_cast<size_t>(WeaponAbilities::We
 
 constexpr float abilitiesDamage[static_cast<size_t>(WeaponAbilities::WeaponAbilitiesCount)][10] {
     //Levels 0     1     2       3      4      5      6      7      8      9
-    {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},  //LaserGun
-    {       25,   25,   25,  36.5f, 36.5f, 36.5f,    50,    50, 62.5f,    75},  //Rocket
-    {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},  //Laser
-    {       25,   25,   25,  36.5f, 36.5f, 36.5f,    50,    50, 62.5f,    75},  //Explosives
-    {       10,   10,   15,     15,    20,    20,    20,    25,    30,    40},
+    {       10,   10,    15,     15,    20,    20,    20,    25,    30,    50},  //LaserGun
+    {        5, 7.5f,    10,  15.0f, 20.0f, 25.0f, 30.0f, 35.0f, 40.0f,    75},  //Rocket
+    {       10,   15,    20,     30,    40,    45,    55,    75,   100,   200},  //Laser
+    {       15,   15, 17.5f,  17.5f, 25.0f, 25.0f, 25.0f, 30.0f, 35.0f, 40.0f},  //Explosives
+    {       10,   10,    15,     15,    20,    20,    20,    25,    30,    35},
 };
 
 constexpr float abilitiesSize[static_cast<size_t>(WeaponAbilities::WeaponAbilitiesCount)][10]{
@@ -69,7 +69,7 @@ constexpr double abilitiesLifeTime[static_cast<size_t>(WeaponAbilities::WeaponAb
     {     2.0f, 2.0f, 2.0f,   2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f,  2.0f},  //Rocket
     {     1.0f, 1.0f, 1.0f,   1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f},
     {     2.0f, 2.0f, 2.0f,   2.5f,  2.5f,  2.5f,  2.5f,  2.5f,  2.5f,  3.0f},
-    {     1.0f, 1.0f, 1.2f,   1.2f,  1.4f,  1.4f,  1.7f,  1.7f,  1.7f,  2.0f},  //GravitySaw
+    {     1.0f, 1.1f, 1.2f,   1.3f,  1.4f,  1.5f,  1.6f,  1.7f,  1.8f,  2.0f},  //GravitySaw
 };
 
 constexpr std::array<const char*, static_cast<size_t>(WeaponAbilities::WeaponAbilitiesCount)> weaponIconId = {

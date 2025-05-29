@@ -22,8 +22,8 @@ void AsteroidSystem::update(EntityManager& eMgr, const double& dT) {
 
 void AsteroidSystem::generateAsteroids(EntityManager& eManager, double timePassed) {
     // insert logic with timing
-    int lvl = 1;
 	const Uint32& time = GameStateManager::instance().getGameTimeSeconds();
+    int lvl = time / 120 + 1;
 	if (time % 2 == 0 && previousT != time) {
 		for (int i = 0; i < 20; i++) {
 			generateSingleAsteroid(eManager, lvl);
@@ -209,7 +209,6 @@ void AsteroidSystem::handleDestroyAsteroidMessage(std::shared_ptr<DestroyAsteroi
 		int goldProbLevel = GameStatsManager::instance().getStats().upgrades[UpgradeType::GoldProb];
 		float goldProb = upgradesValues[static_cast<size_t>(UpgradeType::GoldProb)][goldProbLevel];
 		int randomChance = rand() % 100;
-		std::cout << "GoldProb and this chance" << goldProb << ", " << randomChance << std::endl;
 		MessageManager::instance().sendMessage(std::make_shared<PickupsSpawnMessage>(center, 1, 
 			randomChance < goldProb ? EntityType::Gold : EntityType::Experience ));
 	}
