@@ -45,7 +45,7 @@ void AudioSystem::handleExplodeMessage(std::shared_ptr<ExplodeMessage> msg) {
 }
 
 void AudioSystem::handleAbilityMessage(std::shared_ptr<AbilityMessage> msg) {
-    std::string id = weaponSoundId[static_cast<size_t>(msg->ability)];
+    std::string id = weaponId[static_cast<size_t>(msg->ability)];
     toPlay.push_back(AudioManager::instance().getSound(id));
 }
 

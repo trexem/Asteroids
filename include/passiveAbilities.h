@@ -68,17 +68,17 @@ constexpr uint8_t maxPassiveLevel[static_cast<size_t>(PassiveAbilities::PassiveA
     5   // ProjectileSpeed
 };
 
-constexpr std::array<const char*, static_cast<size_t>(PassiveAbilities::PassiveAbilitiesCount) + 2> passiveIconId = {
-    "pickupRangeIcon",
-    "cooldownReductionIcon",
-    "armorIcon",
-    "maxHealthIcon",
-    "healthRegenIcon",
-    "movementSpeedIcon",
-    "projectileCountIcon",
-    "sizeIcon",
-    "damageIcon",
-    "projectileSpeedIcon",
-    "moneyIcon",
-    "healthIcon"
+constexpr std::array<const char*, static_cast<size_t>(PassiveAbilities::PassiveAbilitiesCount) + 2> passiveId = {
+    "pickupRange",
+    "cooldownReduction",
+    "armor",
+    "maxHealth",
+    "healthRegen",
+    "movementSpeed",
+    "projectileCount",
+    "size",
+    "damage",
+    "projectileSpeed",
+    "money",
+    "health"
 };

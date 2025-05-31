@@ -38,7 +38,7 @@ constexpr int abilitiesProjectileCount[static_cast<size_t>(WeaponAbilities::Weap
 
 constexpr float abilitiesProjectileSpeed[static_cast<size_t>(WeaponAbilities::WeaponAbilitiesCount)][10] {
     //Levels 0     1     2       3      4      5      6      7      8      9
-    {     1000, 1000, 1000,   1000,  1000,  1000,  1000,  1000,  1000,  1000},  //LaserGun
+    {     1000, 1000, 1100,   1100,  1200,  1200,  1200,  1300,  1350,  1500},  //LaserGun
     {      100,  100,  200,    200,   400,   400,   600,   600,   800,  1000},  //Rocket
     {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},  //Laser
     {        0,    0,    0,      0,     0,     0,     0,     0,     0,     0},  //Explosives
@@ -72,16 +72,7 @@ constexpr double abilitiesLifeTime[static_cast<size_t>(WeaponAbilities::WeaponAb
     {     1.0f, 1.1f, 1.2f,   1.3f,  1.4f,  1.5f,  1.6f,  1.7f,  1.8f,  2.0f},  //GravitySaw
 };
 
-constexpr std::array<const char*, static_cast<size_t>(WeaponAbilities::WeaponAbilitiesCount)> weaponIconId = {
-    "laserGunIcon",
-    "rocketIcon",
-    "laserIcon",
-    "explosivesIcon",
-    "gravitySawIcon",
-    
-};
-
-constexpr std::array<const char*, static_cast<size_t>(WeaponAbilities::WeaponAbilitiesCount)> weaponSoundId = {
+constexpr std::array<const char*, static_cast<size_t>(WeaponAbilities::WeaponAbilitiesCount)> weaponId = {
     "laserGun",
     "rocket",
     "laser",

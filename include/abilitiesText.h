@@ -15,6 +15,7 @@ enum class AbilityType {
 struct AbilityChoice {
     AbilityType type;
     size_t index;
+    std::string id = "";
 };
 
 constexpr std::array<std::array<const char*, 10>, static_cast<size_t>(WeaponAbilities::WeaponAbilitiesCount)> weaponUpgradeTexts = {{

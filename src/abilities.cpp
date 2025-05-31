@@ -1,5 +1,6 @@
 #include "Components.h"
 #include "GameStatsManager.h"
+#include "TextManager.h"
 
 std::vector<AbilityChoice> getRandomAbilityChoices(const PlayerComponent& player) {
     std::vector<AbilityChoice> availableAbilities;
@@ -48,18 +49,49 @@ std::string getNextUpgradeText(const PlayerComponent& player, const AbilityChoic
         level = player.weaponLevels[index];
         level = isActive ? level + 1 : level;
         level = std::min(level, maxWeaponLevel[index]);
-        text = weaponUpgradeTexts[index][level];
+        std::string id = weaponId[index];
+        float p1 = abilitiesCooldowns[index][level];
+        float p2 = index == static_cast<size_t>(WeaponAbilities::Laser) ? abilitiesSize[index][level] * 100.0f
+            : abilitiesProjectileCount[index][level];
+        float p3 = abilitiesDamage[index][level];
+        float p4 = index == static_cast<size_t>(WeaponAbilities::LaserGun) || index == static_cast<size_t>(WeaponAbilities::LaserGun) 
+            ? abilitiesProjectileSpeed[index][level] : static_cast<float>(abilitiesLifeTime[index][level]);
+        text = isActive ? TextManager::instance().format("abilityLvlUp." + id, p1, p2, p3, p4) :
+            TextManager::instance().get("abilityDesc." + id);
     } else if (choice.type == AbilityType::Passive) {
         bool isActive = player.ownedPassives[index];
         level = player.passiveLevels[index];
         level = isActive ? level + 1 : level;
         level = std::min(level, maxPassiveLevel[index]);
-        text = passiveUpgradeTexts[index][level];
+        std::string id = passiveId[index];
+        float value = passiveValues[index][level];
+        if (static_cast<size_t>(PassiveAbilities::CooldownReduction) || 
+            index == static_cast<size_t>(PassiveAbilities::Armor)) {
+            value *= 100.0f;
+        }
+        text = isActive ? TextManager::instance().format("abilityLvlUp." + id, value) :
+            TextManager::instance().get("abilityDesc." + id);
     } else if (choice.type == AbilityType::Money) {
-        float moneyMult = (1.0f + GameStatsManager::instance().getUpgradeValue(UpgradeType::GoldValue));
-        text = ("+ %f money", 50 * moneyMult);
+        float goldMult = (1.0f + GameStatsManager::instance().getUpgradeValue(UpgradeType::GoldValue));
+        int gold = 50 * goldMult;
+        text = TextManager::instance().format("abilityDesc.money", gold);
     } else if (choice.type == AbilityType::Health) {
-        text = "+50 health";
+        text = TextManager::instance().get("abilityDesc.health");
     }
     return text;
+}
+
+std::string getAbilityTitle(const AbilityChoice& choice) {
+    const size_t index = choice.index;
+    std::string id;
+    if (choice.type == AbilityType::Passive) {
+        id = passiveId[index];
+    } else if (choice.type == AbilityType::Weapon) {
+        id = weaponId[index];
+    } else if (choice.type == AbilityType::Money) {
+        id = "money";
+    } else {
+        id = "health";
+    }
+    return TextManager::instance().get("abilityTitle." + id);
 }

@@ -210,7 +210,9 @@ void PlayerSystem::handleLevelUpMessage(std::shared_ptr<LevelUpMessage> msg) {
             playerComp.ownedWeaponsCount++;
         }
     } else if (msg->choice.type == AbilityType::Money) {
-        // #TODO add money to gameStats manager 
+        int gold = 50 * (1 + GameStatsManager::instance().getUpgradeValue(UpgradeType::GoldValue));
+        GameStatsManager::instance().addCoins(gold);
+        GameStatsManager::instance().save();
     } else if (msg->choice.type == AbilityType::Health) {
         HealthComponent hComp = eMgr.getComponentData<HealthComponent>(player);
         float maxHealth = eMgr.getComponentDataPtr<StatsComponent>(player)->maxHealth;

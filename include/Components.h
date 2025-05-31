@@ -265,4 +265,5 @@ struct TouchJoystickComponent {
 
 std::vector<AbilityChoice> getRandomAbilityChoices(const PlayerComponent& player);
 std::string getNextUpgradeText(const PlayerComponent& player, const AbilityChoice& ability);
+std::string getAbilityTitle(const AbilityChoice& ability);
 std::array<FPair, 4> getCorners(const TransformComponent& tComp, const CollisionComponent& cComp);

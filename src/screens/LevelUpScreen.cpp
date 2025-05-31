@@ -82,6 +82,7 @@ void LevelUpScreen::destroy(EntityManager& eManager) {
         eManager.destroyEntityLater(lvlUpContainers.at(i)->containerId);
         eManager.destroyEntityLater(lvlUpContainers.at(i)->textId);
         eManager.destroyEntityLater(lvlUpContainers.at(i)->iconId);
+        lvlUpContainers[i]->destroy(eManager);
     }
 }
 

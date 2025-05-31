@@ -12,6 +12,9 @@ public:
     static inline TTF_Font* Title = nullptr;
     static inline TTF_Font* Subtitle = nullptr;
     static inline TTF_Font* Body = nullptr;
+    static inline TTF_Font* LevelUpTitle = nullptr;
+    static inline TTF_Font* LevelUpBody = nullptr;
+
 
     static inline std::unordered_map<std::string, std::vector<uint8_t>> fontBuffers;
 
@@ -19,6 +22,8 @@ public:
         Title = loadFont("fonts/consola.ttf", 58, "Title");
         Subtitle = loadFont("fonts/consola.ttf", 48, "Subtitle");
         Body = loadFont("fonts/consola.ttf", 24, "Body");
+        LevelUpTitle = loadFont("fonts/consola.ttf", 28, "LevelUpTitle");
+        LevelUpBody = loadFont("fonts/consola.ttf", 18, "LevelUpBody");
     }
 
     static TTF_Font* loadFont(const std::string& route, float size, const std::string& id) {
