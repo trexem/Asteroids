@@ -37,9 +37,9 @@ void InputSystem::update(EntityManager& eMgr, const double& dT) {
         case SDL_EVENT_MOUSE_BUTTON_DOWN: {
             bool isDown = e.type == SDL_EVENT_MOUSE_BUTTON_DOWN;
             FPair rawMousePos(e.button.x, e.button.y);
-            SDL_Log("Raw mouse pos (%.2f, %.2f)", rawMousePos.x, rawMousePos.y);
+            DEBUG_LOG("Raw mouse pos (%.2f, %.2f)", rawMousePos.x, rawMousePos.y);
             FPair mousePos = adjustMousePos(rawMousePos);
-            SDL_Log("Adjusted mouse pos (%.2f, %.2f)", mousePos.x, mousePos.y);
+            DEBUG_LOG("Adjusted mouse pos (%.2f, %.2f)", mousePos.x, mousePos.y);
             clickHandler.handleClick(mousePos, isDown, e.button.button);
             break;
         }
@@ -50,12 +50,11 @@ void InputSystem::update(EntityManager& eMgr, const double& dT) {
             FPair touchPos(e.tfinger.x, e.tfinger.y);
             FPair pos = adjustTouchPos(touchPos);
             bool isDown = (e.type == SDL_EVENT_FINGER_DOWN || e.type == SDL_EVENT_FINGER_MOTION);
-            if (GameStateManager::instance().getState() == GameState::Playing && e.tfinger.x <= 0.5f) {
+            if (e.tfinger.x <= 0.5f) {
                 auto msg = std::make_shared<TouchMessage>(pos, isDown, e.tfinger.fingerID);
                 MessageManager::instance().sendMessage(msg);
-            } else {
-                clickHandler.handleClick(pos, isDown, 1); // simulate left mouse button
             }
+            clickHandler.handleClick(pos, isDown, 1); // simulate left mouse button
             break;
         }
         default:
@@ -72,8 +71,8 @@ FPair InputSystem::adjustTouchPos(FPair pos) {
     const FPair& size = SettingsManager::instance().currentScreenSize;
     const FPair& offset = SettingsManager::instance().screenPos;
     const FPair& scale = SettingsManager::instance().scale;
-    SDL_Log("ScreenSize (%.2f, %.2f)", size.x, size.y);
-    SDL_Log("Screen pos (%.2f, %.2f)", offset.x, offset.y);
-    SDL_Log("Scale (%.2f, %.2f)", scale.x, scale.y);
+    DEBUG_LOG("ScreenSize (%.2f, %.2f)", size.x, size.y);
+    DEBUG_LOG("Screen pos (%.2f, %.2f)", offset.x, offset.y);
+    DEBUG_LOG("Scale (%.2f, %.2f)", scale.x, scale.y);
     return (pos * size - offset) / scale;
 }

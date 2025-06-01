@@ -1,6 +1,7 @@
 #pragma once
 
 #include "utils.hpp"
+#include "Log.h"
 
 #include <iostream>
 #include <memory>
@@ -8,7 +9,7 @@
 
 struct SDL_Renderer_Deleter {
 	void operator()(SDL_Renderer* renderer) {
-		SDL_Log("Destroying renderer");
+		DEBUG_LOG("Destroying renderer");
 		SDL_DestroyRenderer(renderer);
 	}
 };

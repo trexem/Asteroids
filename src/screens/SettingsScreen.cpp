@@ -129,7 +129,7 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
     vol = SettingsManager::instance().getVolume(VolumeSource::MusicVolume);
-    musicText = TextManager::instance().format("label.masterVolume", vol);
+    musicText = TextManager::instance().format("label.musicVolume", vol);
     musicLabel = std::make_shared<Label>(eManager, musicText, pos, size, renderer, 0, Fonts::Subtitle);
     // Right Button
     pos.x += 700.0f;
@@ -156,7 +156,7 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     pos.x = GUI::screenWidth / 2.0f - 200.0f;
     size = 400.0f;
     vol = SettingsManager::instance().getVolume(VolumeSource::SFXVolume);
-    sfxText = TextManager::instance().format("label.masterVolume", vol);
+    sfxText = TextManager::instance().format("label.sfxVolume", vol);
     sfxLabel = std::make_shared<Label>(eManager, sfxText, pos, size, renderer, 0, Fonts::Subtitle);
     // Right Button
     pos.x += 700.0f;
@@ -232,7 +232,7 @@ void SettingsScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
     leftMusicVolume->updateState(eManager);
     rightMusicVolume->updateState(eManager);
     vol = SettingsManager::instance().getVolume(VolumeSource::MusicVolume);
-    std::string newMusicText = TextManager::instance().format("label.masterVolume", vol);
+    std::string newMusicText = TextManager::instance().format("label.musicVolume", vol);
     if (musicText != newMusicText) {
         musicText = newMusicText;
         musicLabel->setText(musicText);
@@ -241,7 +241,7 @@ void SettingsScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
     leftSfxVolume->updateState(eManager);
     rightSfxVolume->updateState(eManager);
     vol = SettingsManager::instance().getVolume(VolumeSource::SFXVolume);
-    std::string newSfxText = TextManager::instance().format("label.masterVolume", vol);
+    std::string newSfxText = TextManager::instance().format("label.sfxVolume", vol);
     if (sfxText != newSfxText) {
         sfxText = newSfxText;
         sfxLabel->setText(sfxText);

@@ -6,7 +6,7 @@
 #include <string>
 #include <SDL3/SDL_filesystem.h>
 #include <SDL3/SDL_iostream.h>
-#include <SDL3/SDL_log.h>
+#include "Log.h"
 
 
 namespace GameSave {
@@ -49,7 +49,7 @@ namespace GameSave {
 #if defined (__ANDROID__)
         char* prefPathCStr = SDL_GetPrefPath("trexem", "WeNeedMoreAsteroids");
         if (!prefPathCStr) {
-            SDL_Log("SDL_GetPrefPath failed in saveSettings.");
+            DEBUG_LOG("SDL_GetPrefPath failed in saveSettings.");
             return false;
         }
         std::string basePath = prefPathCStr;
@@ -58,11 +58,11 @@ namespace GameSave {
 #else
         std::string path = "data/settings.json";
 #endif
-        SDL_Log("Settings save path: %s", path.c_str());
+        DEBUG_LOG("Settings save path: %s", path.c_str());
         SDL_IOStream* io = SDL_IOFromFile(path.c_str(), "wb");
         if (!io) return false;
         std::string text = settings.toJson().dump(4);
-        SDL_Log("json to save settings: %s", text.c_str());
+        DEBUG_LOG("json to save settings: %s", text.c_str());
         if (SDL_WriteIO(io, text.data(), text.size()) != text.size()) {
             SDL_CloseIO(io);
             return false;
@@ -75,7 +75,7 @@ namespace GameSave {
 #if defined (__ANDROID__)
         char* prefPathCStr = SDL_GetPrefPath("trexem", "WeNeedMoreAsteroids");
         if (!prefPathCStr) {
-            SDL_Log("SDL_GetPrefPath failed in saveSettings.");
+            DEBUG_LOG("SDL_GetPrefPath failed in saveSettings.");
             return false;
         }
         std::string basePath = prefPathCStr;
@@ -84,34 +84,34 @@ namespace GameSave {
 #else
         std::string path = "data/settings.json";
 #endif
-        SDL_Log("Settings load path: %s", path.c_str());
+        DEBUG_LOG("Settings load path: %s", path.c_str());
         SDL_IOStream* io = SDL_IOFromFile(path.c_str(), "rb");
         if (!io) {
-            SDL_Log("Failed to open settings file for reading: %s", SDL_GetError());
+            DEBUG_LOG("Failed to open settings file for reading: %s", SDL_GetError());
             return false;
         }
 
         Sint64 size = SDL_GetIOSize(io);
-        SDL_Log("Reported size of settings file: %lld", (long long)size);
+        DEBUG_LOG("Reported size of settings file: %lld", (long long)size);
         if (size <= 0) {
-            SDL_Log("Settings file is empty or size error.");
+            DEBUG_LOG("Settings file is empty or size error.");
             SDL_CloseIO(io);
             return false;
         }
 
         std::string text(size, '\0');
         Sint64 read = SDL_ReadIO(io, text.data(), size);
-        SDL_Log("Bytes read from settings file: %lld", (long long)read);
+        DEBUG_LOG("Bytes read from settings file: %lld", (long long)read);
         if (read <= 0) {
-            SDL_Log("Error reading settings file or zero bytes read. SDL_GetError: %s", SDL_GetError());
+            DEBUG_LOG("Error reading settings file or zero bytes read. SDL_GetError: %s", SDL_GetError());
             SDL_CloseIO(io);
             return false;
         }
         if (read < size) {
-            SDL_Log("Partial read from settings file. Expected %lld, got %lld", (long long)size, (long long)read);
+            DEBUG_LOG("Partial read from settings file. Expected %lld, got %lld", (long long)size, (long long)read);
         }
         SDL_CloseIO(io);
-        SDL_Log("Raw content loaded from settings.json: [%s]", text.substr(0, read).c_str());
+        DEBUG_LOG("Raw content loaded from settings.json: [%s]", text.substr(0, read).c_str());
         try {
             settings.fromJson(json::parse(text));
         } catch (...) { return false; }

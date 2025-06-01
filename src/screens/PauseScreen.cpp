@@ -56,6 +56,7 @@ void PauseScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
 
 void PauseScreen::destroy(EntityManager& eManager) {
     continueButton->destroy(eManager);
+    restartButton->destroy(eManager);
     settingsButton->destroy(eManager);
     mainMenuButton->destroy(eManager);
     exitButton->destroy(eManager);
@@ -71,6 +72,7 @@ void PauseScreen::handleMouseClick(std::shared_ptr<ClickMessage> msg) {
 
 void PauseScreen::update(EntityManager& eManager, SDL_Renderer* renderer) {
     continueButton->updateState(eManager);
+    restartButton->updateState(eManager);
     settingsButton->updateState(eManager);
     mainMenuButton->updateState(eManager);
     exitButton->updateState(eManager);

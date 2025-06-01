@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <SDL3/SDL_iostream.h>
-#include <SDL3/SDL_log.h>
+#include "Log.h"
 
 bool ObfuscatedReader::load(const std::string& path, std::vector<uint8_t>& outBuffer) {
 #if defined(__ANDROID__)
@@ -27,7 +27,7 @@ bool ObfuscatedReader::load(const std::string& path, std::vector<uint8_t>& outBu
 
     char header[4];
     if (SDL_ReadIO(stream, header, sizeof(header)) != sizeof(header)) {
-        SDL_Log("Failed to read header from pack file: %s", SDL_GetError());
+        DEBUG_LOG("Failed to read header from pack file: %s", SDL_GetError());
         SDL_CloseIO(stream);
         return false;
     }

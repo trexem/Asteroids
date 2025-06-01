@@ -4,7 +4,7 @@
 #include "MessageManager.h"
 #include "GUI.h"
 
-#include <SDL3/SDL_log.h>
+#include "Log.h"
 
 SettingsManager::SettingsManager() {
     resolutions = {
@@ -25,10 +25,10 @@ SettingsManager& SettingsManager::instance() {
 
 void SettingsManager::load() {
     if (!GameSave::loadSettings(settings)) {
-        SDL_Log("Failed to load settings. Defaulting settings.");
+        DEBUG_LOG("Failed to load settings. Defaulting settings.");
         settings = GameSettings();
     } else {
-        SDL_Log("Successfully loaded settings.");
+        DEBUG_LOG("Successfully loaded settings.");
     }
     FPair loadedSize {static_cast<float>(settings.screenWidth), static_cast<float>(settings.screenHeight)};
     currentResolution = findResolutionBySize(loadedSize);
@@ -44,12 +44,12 @@ void SettingsManager::load() {
 
 void SettingsManager::save() {
     if (!GameSave::saveSettings(settings)) {
-        SDL_Log("Failed to save settings.");
+        DEBUG_LOG("Failed to save settings.");
     } else {
-        SDL_Log("Settings Successfully saved.");
+        DEBUG_LOG("Settings Successfully saved.");
     }
     scale = {currentResolution->second.x / SCREEN_WIDTH, currentResolution->second.y / SCREEN_HEIGHT};
-    SDL_Log("Scale: %f, %f", scale.x, scale.y);
+    DEBUG_LOG("Scale: %f, %f", scale.x, scale.y);
 }
 
 GameSettings& SettingsManager::get() { return settings; }
@@ -155,15 +155,15 @@ std::map<std::string, FPair>::iterator SettingsManager::findResolutionBySize(con
             resolutions.begin(), resolutions.end(), [](const auto& a, const auto& b){
                 return (a.second.x * a.second.y) < (b.second.x * b.second.y);
         });
-        SDL_Log("No resolution fits. Using smallest available: %fx%f", bestFit->second.x, bestFit->second.y);
+        DEBUG_LOG("No resolution fits. Using smallest available: %fx%f", bestFit->second.x, bestFit->second.y);
     } else {
-        SDL_Log("Best fit inside screen is: %fx%f", bestFit->second.x, bestFit->second.y);
+        DEBUG_LOG("Best fit inside screen is: %fx%f", bestFit->second.x, bestFit->second.y);
     }
     return bestFit;
 }
 
 void SettingsManager::updateResolution() {
-    SDL_Log("Updating resolution. CurrentScreenSize: (%fx%f). CurrentResolution: (%fx%f).",
+    DEBUG_LOG("Updating resolution. CurrentScreenSize: (%fx%f). CurrentResolution: (%fx%f).",
         currentScreenSize.x, currentScreenSize.y, currentResolution->second.x, currentResolution->second.y);
     MessageManager::instance().sendMessage(std::make_shared<GraphicsSettingsMessage>(
         settings.fullscreen, settings.vsync, currentScreenSize, currentResolution->second));
@@ -176,7 +176,7 @@ void SettingsManager::updateResolution() {
 void SettingsManager::setWindowSize(const int& w, const int& h) {
     currentScreenSize = { static_cast<float>(w), static_cast<float>(h) };
     currentResolution = findResolutionBySize(currentScreenSize);
-    SDL_Log("Setting window size. CurrentScreenSize: (%fx%f). CurrentResolution: (%fx%f).",
+    DEBUG_LOG("Setting window size. CurrentScreenSize: (%fx%f). CurrentResolution: (%fx%f).",
         currentScreenSize.x, currentScreenSize.y, currentResolution->second.x, currentResolution->second.y);
     settings.screenWidth = currentScreenSize.x;
     settings.screenHeight = currentScreenSize.y;
@@ -186,6 +186,6 @@ void SettingsManager::setWindowSize(const int& w, const int& h) {
     if (currentScreenSize.y > currentResolution->second.y) {
         screenPos.y = (currentScreenSize.y - currentResolution->second.y) / 2.0f;
     }
-    SDL_Log("Screen pos updated to: %fx%f", screenPos.x, screenPos.y);
+    DEBUG_LOG("Screen pos updated to: %fx%f", screenPos.x, screenPos.y);
     save();
 }

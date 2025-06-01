@@ -2,32 +2,26 @@
 
 #include "System.h"
 
+struct SystemRecord {
+    std::unique_ptr<System> system;
+    std::string name;
+};
+
 class SystemManager {
 public:
     template<typename T, typename... Args>
     T* registerSystem(Args&&... args) {
         auto system = std::make_unique<T>(std::forward<Args>(args)...);
         T* ptr = system.get();
-        systems.emplace_back(std::move(system));
+        std::string typeName = typeid(T).name();
+        systems.push_back({std::move(system), typeName});
         return ptr;
     }
 
-    void updateAll(EntityManager& eM, float dt) {
-        for (auto& system : systems) {
-            auto start = std::chrono::high_resolution_clock::now();
-            system->update(eM, dt);
-            auto end = std::chrono::high_resolution_clock::now();
-            // SDL_Log("System update time: %ld us", std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
-        }
-        // SDL_Log("Finished updating Systems");
-    }
+    void updateAll(EntityManager& eM, float dt);
 
-    void resetAll() {
-        for (auto& system : systems) {
-            system.reset();
-        }
-    }
+    void resetAll();
 
 private:
-    std::vector<std::unique_ptr<System>> systems;
+    std::vector<SystemRecord> systems;
 };

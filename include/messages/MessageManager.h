@@ -41,11 +41,8 @@ public:
     template<typename T>
     void sendMessage(std::shared_ptr<T> message) {
         size_t type = typeid(T).hash_code(); // Use the exact message type!
-        /*std::cout << "Sending Message of type: " << typeid(T).name()
-                << " (" << type << ")" << std::endl;*/
 
         if (listeners.find(type) != listeners.end()) {
-            //std::cout << "Found listener for type " << type << std::endl;
             for (auto& callback : listeners[type]) {
                 callback(message);
             }

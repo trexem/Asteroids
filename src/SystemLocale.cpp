@@ -1,7 +1,7 @@
 #include "SystemLocale.h"
 
 #include <SDL3/SDL_system.h>
-#include <SDL3/SDL_log.h>
+#include "Log.h"
 
 #if defined(_WIN32)
     #include <windows.h>
@@ -30,13 +30,13 @@ std::string SystemLocale::get() {
 
     jclass helperClass = env->FindClass("com/trexem/weneedmoreasteroids/LocaleHelper");
     if (!helperClass) {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "LocaleHelper class not found");
+        DEBUG_LOG("LocaleHelper class not found");
         return "en";
     }
 
     jmethodID methodID = env->GetStaticMethodID(helperClass, "getLanguageCode", "()Ljava/lang/String;");
     if (!methodID) {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "getLanguageCode() method not found");
+        DEBUG_LOG("getLanguageCode() method not found");
         return "en";
     }
 

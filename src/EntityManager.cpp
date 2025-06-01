@@ -1,4 +1,5 @@
 #include "EntityManager.h"
+#include "Log.h"
 
 EntityManager::EntityManager(size_t t_maxEntities) : maxEntities{t_maxEntities} {
     entities.reserve(maxEntities);
@@ -141,13 +142,13 @@ uint32_t EntityManager::findAvailableEntityID() {
 }
 
 void EntityManager::printComponentPool(uint32_t entityID) {
-    SDL_Log("Component Pools for Entity %d:", entityID);
+    DEBUG_LOG("Component Pools for Entity %d:", entityID);
     for (size_t typeIdx = 0; typeIdx < static_cast<size_t>(ComponentType::Count); ++typeIdx) {
         auto& pool = componentPools[typeIdx];
         if (entityID < pool.size() && pool[entityID]) {
-            SDL_Log("  Component Type %zu  at address %d", typeIdx, pool[entityID].get());
+            DEBUG_LOG("  Component Type %zu  at address %d", typeIdx, pool[entityID].get());
         } else {
-            SDL_Log("  Component Type %zu is empty for this entity.", typeIdx);
+            DEBUG_LOG("  Component Type %zu is empty for this entity.", typeIdx);
         }
     }
 }

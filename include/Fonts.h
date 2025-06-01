@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL3/SDL_log.h>
+#include "Log.h"
 #include <SDL3_ttf/SDL_ttf.h>
 #include <iostream>
 
@@ -23,13 +23,13 @@ public:
         Subtitle = loadFont("fonts/consola.ttf", 48, "Subtitle");
         Body = loadFont("fonts/consola.ttf", 24, "Body");
         LevelUpTitle = loadFont("fonts/consola.ttf", 28, "LevelUpTitle");
-        LevelUpBody = loadFont("fonts/consola.ttf", 18, "LevelUpBody");
+        LevelUpBody = loadFont("fonts/consola.ttf", 24, "LevelUpBody");
     }
 
     static TTF_Font* loadFont(const std::string& route, float size, const std::string& id) {
         auto buffer = PackReader::instance().readFile(normalizePath(route));
         if (buffer.empty()) {
-            SDL_Log("Failed to read font file from pack: %s", route.c_str());
+            DEBUG_LOG("Failed to read font file from pack: %s", route.c_str());
             return nullptr;
         }
 
@@ -37,13 +37,13 @@ public:
 
         SDL_IOStream* stream = SDL_IOFromMem(fontBuffers[id].data(), fontBuffers[id].size());
         if (!stream) {
-            SDL_Log("Failed to create IO stream for font: %s", route.c_str());
+            DEBUG_LOG("Failed to create IO stream for font: %s", route.c_str());
             return nullptr;
         }
 
         TTF_Font* font = TTF_OpenFontIO(stream, 1, size);
         if (font == NULL) {
-            SDL_Log("Failed to load consola font! SDL_ttf Error: %s", SDL_GetError());
+            DEBUG_LOG("Failed to load consola font! SDL_ttf Error: %s", SDL_GetError());
         }
         return font;
     }

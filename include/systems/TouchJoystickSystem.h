@@ -15,5 +15,5 @@ private:
 	EntityManager& eM;
 	TouchJoystickComponent joystick;
 	bool isOn{ false };
-	float threshold{ 50.0f };
+	float threshold{ 25.0f };
 };

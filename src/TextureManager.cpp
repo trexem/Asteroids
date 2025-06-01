@@ -1,6 +1,7 @@
 #include "TextureManager.h"
 #include "PackReader.h"
 #include "utils.hpp"
+#include "Log.h"
 
 #include <filesystem>
 #include <algorithm>
@@ -77,7 +78,7 @@ void TextureManager::loadAllFromPack(const std::string& prefix) {
 bool TextureManager::loadFromPack(const std::string& id, const std::string& virtualPath) {
     std::string path = normalizePath(virtualPath);
     if (textures.contains(id)) {
-        SDL_Log("Texture ID already exists (from pack): %s", id.c_str());
+        DEBUG_LOG("Texture ID already exists (from pack): %s", id.c_str());
         return false; 
     }
 
@@ -86,7 +87,7 @@ bool TextureManager::loadFromPack(const std::string& id, const std::string& virt
 
     SDL_IOStream* io = SDL_IOFromMem(data.data(), data.size());
     if (!io) {
-        SDL_Log("[ERROR] SDL_IOFromMem failed for %s", path.c_str());
+        DEBUG_LOG("[ERROR] SDL_IOFromMem failed for %s", path.c_str());
         return false;
     }
 
@@ -94,7 +95,7 @@ bool TextureManager::loadFromPack(const std::string& id, const std::string& virt
     SDL_CloseIO(io);
 
     if (!surface) {
-        SDL_Log("[ERROR] IMG_Load_IO failed for %s: %s", path.c_str(), SDL_GetError());
+        DEBUG_LOG("[ERROR] IMG_Load_IO failed for %s: %s", path.c_str(), SDL_GetError());
         return false;
     }
 
@@ -104,13 +105,13 @@ bool TextureManager::loadFromPack(const std::string& id, const std::string& virt
     SDL_DestroySurface(surface);
 
     if (!tex->getTexture()) {
-        SDL_Log("[ERROR] SDL_CreateTextureFromSurface failed for %s: %s", path.c_str(), SDL_GetError());
+        DEBUG_LOG("[ERROR] SDL_CreateTextureFromSurface failed for %s: %s", path.c_str(), SDL_GetError());
         return false;
     }
 
     textures.emplace(id, std::move(tex));
     keys.push_back(id);
-    SDL_Log("[LOADED] Packed Texture: %s from %s", id.c_str(), path.c_str());
+    DEBUG_LOG("[LOADED] Packed Texture: %s from %s", id.c_str(), path.c_str());
     return true;
 }
 

@@ -4,6 +4,8 @@ set(NAME asteroids)
 
 project(${NAME} VERSION 0.0.01)
 
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
 if (ANDROID)
     message(STATUS "Configuring for Android build")
     set(IS_ANDROID TRUE)
@@ -125,7 +127,9 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 endif()
- 
+
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
+
 set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/$<CONFIG>")
  
 target_include_directories(${PROJECT_NAME} PUBLIC

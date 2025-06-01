@@ -1,6 +1,6 @@
 #include "GameStatsManager.h"
 
-#include <SDL3/SDL_log.h>
+#include "Log.h"
 
 GameStatsManager& GameStatsManager::instance()  {
     static GameStatsManager instance;
@@ -9,14 +9,14 @@ GameStatsManager& GameStatsManager::instance()  {
 
 void GameStatsManager::load() {
     if (!GameSave::loadStatsFromFile(stats)) {
-        SDL_Log("Failed to load stats, defaulting.");
+        DEBUG_LOG("Failed to load stats, defaulting.");
         stats = MetaStats();
     }
 }
 
 void GameStatsManager::save() {
     if (!GameSave::saveStatsToFile(stats)) {
-        SDL_Log("Failed to save stats.");
+        DEBUG_LOG("Failed to save stats.");
     }
 }
 

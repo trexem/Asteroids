@@ -1,12 +1,14 @@
 #pragma once
 
+#include "Log.h"
+
 #include <iostream>
 #include <memory>
 #include <SDL3/SDL.h>
 
 struct SDL_Window_Deleter {
 	void operator()(SDL_Window* window) {
-		SDL_Log("Destroying Window");
+		DEBUG_LOG("Destroying Window");
 		SDL_DestroyWindow(window);
 	}
 };

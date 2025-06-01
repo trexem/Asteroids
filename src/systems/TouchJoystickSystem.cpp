@@ -6,8 +6,8 @@
 #include "Colors.h"
 #include "SettingsManager.h"
 #include "TouchJoystickSystem.h"
-
-#include <SDL3/SDL_log.h>
+#include "GameStateManager.h"
+#include "Log.h"
 
 TouchJoystickSystem::TouchJoystickSystem(EntityManager& eMgr) : eM(eMgr) {
 	MessageManager::instance().subscribe<TouchMessage>(
@@ -47,10 +47,10 @@ void TouchJoystickSystem::handleTouchMessage(std::shared_ptr<TouchMessage> msg) 
 		joystick.active = false;
 	}
 
-	if (joystick.active) {
+	if (joystick.active && GameStateManager::instance().getState() == GameState::Playing) {
 		RenderComponent render = eM.getComponentData<RenderComponent>(joystickId);
 		render.visibility = 255;
-		SDL_Log("Joystick visibility is %d", render.visibility);
+		DEBUG_LOG("Joystick visibility is %d", render.visibility);
 		eM.setComponentData(joystickId, render);
 		GUIComponent gui = eM.getComponentData<GUIComponent>(joystickId);
 		gui.pos = joystick.origin - render.texture->getSize();
@@ -65,6 +65,7 @@ void TouchJoystickSystem::handleTouchMessage(std::shared_ptr<TouchMessage> msg) 
 void TouchJoystickSystem::update(EntityManager& eMgr, const double& dT) {
 	if (joystick.active || isOn != joystick.active) {
 		FPair rawDelta = joystick.current - joystick.origin;
+        DEBUG_LOG("Raw delta (%.2f, %.2f)", rawDelta.x, rawDelta.y);
 		auto playerEntities = eMgr.getEntitiesWithComponent(ComponentType::Player);
 		for (uint32_t eID : playerEntities) {
 			MovementComponent moveComp = eMgr.getComponentData<MovementComponent>(eID);

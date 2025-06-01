@@ -31,9 +31,9 @@ void RenderSystem::render(EntityManager& eMgr) {
     FPair res = SettingsManager::instance().currentResolution->second;
     FPair pos = SettingsManager::instance().screenPos;
     
-    //SDL_Log("Rendering to resolution: %fx%f", res.x, res.y);
-    //SDL_Log("Rendering to screen pos: %fx%f", pos.x, pos.y);
-    //SDL_Log("Scren size: %fx%f", screenSize.x, screenSize.y);
+    //DEBUG_LOG("Rendering to resolution: %fx%f", res.x, res.y);
+    //DEBUG_LOG("Rendering to screen pos: %fx%f", pos.x, pos.y);
+    //DEBUG_LOG("Scren size: %fx%f", screenSize.x, screenSize.y);
     SDL_FRect screenRect = {pos.x, pos.y, res.x, res.y};
     SDL_RenderTexture(renderer->getRenderer(), screenTexture, nullptr, &screenRect);
     renderer->render();

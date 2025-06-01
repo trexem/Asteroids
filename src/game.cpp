@@ -39,12 +39,12 @@ Game::Game() : entityManager(MAX_ENTITIES) {
     );
 
 	if (!PackReader::instance().init("data.bin")) {
-		SDL_Log("Failed to load asset pack!");
+		DEBUG_LOG("Failed to load asset pack!");
 	}
 }
 
 Game::~Game() {
-	SDL_Log("Destroying Game...");
+	DEBUG_LOG("Destroying Game...");
 
 	g_ship_texture.free();
 	g_particle_texture.free();
@@ -73,7 +73,7 @@ Game::~Game() {
 
 bool Game::initialize(const char* t_title, int t_x, int t_y) {
 	std::string userLang = SystemLocale::get();
-	SDL_Log("System language got is: %s", userLang.c_str());
+	DEBUG_LOG("System language got is: %s", userLang.c_str());
 	TextManager::instance().loadLanguage(userLang);
 	// TextManager::instance().loadLanguage("es");
 	bool success = true;
@@ -96,24 +96,24 @@ bool Game::initialize(const char* t_title, int t_x, int t_y) {
 			aux = std::max(w, h);
 			h = std::min(w, h);
 			w = aux;
-			SDL_Log("Window Creation size: %d, %d", w, h);
+			DEBUG_LOG("Window Creation size: %d, %d", w, h);
 			SettingsManager::instance().setWindowSize(w, h);
 		}
 		if (!m_window.getWindow()) {
-			SDL_Log("Window could not be created! SDL_Error: %s", SDL_GetError());
+			DEBUG_LOG("Window could not be created! SDL_Error: %s", SDL_GetError());
 			success = false;
 		} else {
 			renderSystem = systemManager->registerSystem<RenderSystem>(m_window.getWindow(), "", &camera);
 			if (!renderSystem->getRenderer()) {
-				SDL_Log("Renderer could not be created! SDL Error: %s", SDL_GetError());
+				DEBUG_LOG("Renderer could not be created! SDL Error: %s", SDL_GetError());
 				success = false;
 			} else {
 				//init SDL_ttf
 				if (!TTF_Init()) {
-					SDL_Log("SDL_ttf could not initialize! SDL_ttf Error: %s", SDL_GetError());
+					DEBUG_LOG("SDL_ttf could not initialize! SDL_ttf Error: %s", SDL_GetError());
 					success = false;
 				} else {
-					SDL_Log("Fonts Loaded Successfully");
+					DEBUG_LOG("Fonts Loaded Successfully");
 				}
 			}
 		}
@@ -122,7 +122,7 @@ bool Game::initialize(const char* t_title, int t_x, int t_y) {
 #if defined(__ANDROID__)
 	SDL_Rect screenSize;
 	SDL_GetDisplayBounds(1, &screenSize);
-	SDL_Log("Android screen size: %dx%d", screenSize.w, screenSize.h);
+	DEBUG_LOG("Android screen size: %dx%d", screenSize.w, screenSize.h);
 	SettingsManager::instance().setWindowSize(std::max(screenSize.w, screenSize.h), std::min(screenSize.w, screenSize.h));
 #endif
 	return success;
@@ -159,7 +159,7 @@ void Game::restart() {
 	entityManager.clearGameEntities();
 	GameSessionManager::instance().reset();
 	counted_frames = 0;
-	createShip(ShipType::TANK);
+	createShip(ShipType::FREE_MOVE);
 	asteroidSystem->restart(entityManager);
 	asteroidSystem->generateAsteroids(entityManager, 0.0);
 	GameStateManager::instance().setState(GameState::Playing);
@@ -173,46 +173,47 @@ void Game::gameLoop() {
 		if (GameStateManager::instance().getState() == GameState::Quit) break;
 		//Calculate time between previous movement and now
 		timeStep = step_timer.getTicks() / 1000.0;
-		systemManager->updateAll(entityManager, timeStep);
-		auto start = std::chrono::high_resolution_clock::now();
-		auto end = std::chrono::high_resolution_clock::now();
-		if (GameStateManager::instance().getState() == GameState::Restart) {
-			restart();
-		}
-		// std::cout << "ScreenManager time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
-		if (GameStateManager::instance().getState() == GameState::Quit) break;
-		//restart step 
-		step_timer.start();
-		//Render PAUSE text while game is paused
-		if (GameStateManager::instance().getState() != GameState::Playing) {
-			step_timer.pause();
-		}
-		//Destroy entities
-		entityManager.applyPendindDestructions();
-		//display in window the render
-		renderSystem->render(entityManager);
-		++counted_frames;
+        step_timer.start();
+        systemManager->updateAll(entityManager, timeStep);
+        if (GameStateManager::instance().getState() == GameState::Restart) {
+            restart();
+        }
+
+        if (GameStateManager::instance().getState() == GameState::Quit) break;
+        //restart step
+        //Render PAUSE text while game is paused
+        if (GameStateManager::instance().getState() != GameState::Playing) {
+            step_timer.pause();
+        }
+        //Destroy entities
+        entityManager.applyPendindDestructions();
+        //display in window the render
+        auto start = std::chrono::high_resolution_clock::now();
+        renderSystem->render(entityManager);
+        auto end = std::chrono::high_resolution_clock::now();
+        DEBUG_LOG("[RenderSystem] update time: %lld us", std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
+        ++counted_frames;
 
 		if (shouldUpdateSettings) updateGraphicsSettings();
 		if (pendingFullScreenChange) updateFullScreen();
 
 		//Wait time to cap FPS at 60
-		int frame_ticks = cap_timer.getTicks();
+		Uint32 frame_ticks = cap_timer.getTicks();
 		start = std::chrono::high_resolution_clock::now();
 		if (frame_ticks < SCREEN_TICKS_PER_FRAME) {
 			//Wait remaining time
 			SDL_Delay(SCREEN_TICKS_PER_FRAME - frame_ticks);
 		}
 		end = std::chrono::high_resolution_clock::now();
-		// std::cout << "Waiting time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us\n";
+		DEBUG_LOG("Waiting time: %lld us", std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
 		auto loopTimeEnd = std::chrono::high_resolution_clock::now();
-		// std::cout << "*#*# LOOP time: " << std::chrono::duration_cast<std::chrono::microseconds>(loopTimeEnd - loopTimeStart).count() << " us #*#*\n";
+		DEBUG_LOG("*#*#  LOOP time: %lld us  *#*#", std::chrono::duration_cast<std::chrono::microseconds>(loopTimeEnd - loopTimeStart).count());
 	}
 }
 
 void Game::createShip(ShipType shipType) {
 	uint32_t ship = entityManager.createEntity();
-	SDL_Log("Ship eID: %d", ship);
+	DEBUG_LOG("Ship eID: %d", ship);
 	entityManager.addComponent(ship, ComponentType::Player);
 	entityManager.addComponent(ship, ComponentType::Physics);
 	entityManager.addComponent(ship, ComponentType::Stats);
@@ -315,7 +316,7 @@ void Game::updateGraphicsSettings() {
 void Game::updateFullScreen() {
 	int w, h;
 	SDL_GetRenderOutputSize(renderSystem->getRenderer(), &w, &h);
-	SDL_Log("REAL Window size after fullscreen toggle: %dx%d", w, h);
+	DEBUG_LOG("REAL Window size after fullscreen toggle: %dx%d", w, h);
 	std::cout <<  std::endl;
 
 	SettingsManager::instance().setWindowSize(w, h);

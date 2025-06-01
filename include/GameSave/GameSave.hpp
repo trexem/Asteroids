@@ -9,7 +9,7 @@
 #include <vector>
 #include <SDL3/SDL_filesystem.h>
 #include <SDL3/SDL_iostream.h>
-#include <SDL3/SDL_log.h>
+#include "Log.h"
 
 namespace GameSave {
     using json = nlohmann::json;
@@ -63,7 +63,7 @@ namespace GameSave {
 #if defined (__ANDROID__)
         char* prefPathCStr = SDL_GetPrefPath("trexem", "WeNeedMoreAsteroids");
         if (!prefPathCStr) {
-            SDL_Log("SDL_GetPrefPath failed in saveSettings.");
+            DEBUG_LOG("SDL_GetPrefPath failed in saveSettings.");
             return false;
         }
         std::string basePath = prefPathCStr;
@@ -89,7 +89,7 @@ namespace GameSave {
 #if defined (__ANDROID__)
         char* prefPathCStr = SDL_GetPrefPath("trexem", "WeNeedMoreAsteroids");
         if (!prefPathCStr) {
-            SDL_Log("SDL_GetPrefPath failed in saveSettings.");
+            DEBUG_LOG("SDL_GetPrefPath failed in saveSettings.");
             return false;
         }
         std::string basePath = prefPathCStr;
@@ -110,7 +110,7 @@ namespace GameSave {
         SDL_CloseIO(io);
 
         if (read != size) return false;
-        SDL_Log("Raw content loaded from stats.json: [%s]", simpleObfuscate(encrypted.substr(0, read)).c_str());
+        DEBUG_LOG("Raw content loaded from stats.json: [%s]", simpleObfuscate(encrypted.substr(0, read)).c_str());
         try {
             stats.fromJson(json::parse(simpleObfuscate(encrypted)));
         } catch (...) { return false; }
