@@ -3,7 +3,7 @@
 
 int runGame() {
 	Game game;
-	bool is_initialized = game.initialize("Asteroids - by trexem",
+	bool is_initialized = game.initialize("We Need More Asteroids - by trexem",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED
 	);

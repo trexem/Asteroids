@@ -53,7 +53,7 @@ UpgradeButton::UpgradeButton(
     float value = upgradesValues[static_cast<size_t>(type)][level];
     float nextValue = upgradesValues[static_cast<size_t>(type)][level + 1];
     float diff = nextValue - value;
-    if (!(type == UpgradeType::ProjectileCount || type == UpgradeType::PickupRange || type == UpgradeType::HealthRegen)) {
+    if (!(type == UpgradeType::ProjectileCount || type == UpgradeType::PickupRange || type == UpgradeType::HealthRegen || type == UpgradeType::GoldProb)) {
         diff *= 100.0f;
         nextValue *= 100.0f;
     }

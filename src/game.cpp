@@ -159,7 +159,7 @@ void Game::restart() {
 	entityManager.clearGameEntities();
 	GameSessionManager::instance().reset();
 	counted_frames = 0;
-	createShip(ShipType::FREE_MOVE);
+	createShip(ShipType::TANK);
 	asteroidSystem->restart(entityManager);
 	asteroidSystem->generateAsteroids(entityManager, 0.0);
 	GameStateManager::instance().setState(GameState::Playing);

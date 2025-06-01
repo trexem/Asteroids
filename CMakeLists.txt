@@ -72,7 +72,7 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 
 if (IS_ANDROID)
   add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        COMMAND ${CMAKE_COMMAND} -E copy
             ${PROJECT_SOURCE_DIR}/data.bin
             ${PROJECT_SOURCE_DIR}/android/app/src/main/assets/data.bin
         COMMENT "Copying data.bin to android assets"
@@ -80,15 +80,6 @@ if (IS_ANDROID)
 endif()
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
-
-set(DATA_SOURCE_DIR "${PROJECT_SOURCE_DIR}/data")
-set(DATA_OUTPUT_DIR "${CMAKE_BINARY_DIR}/$<CONFIG>/data")
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${DATA_SOURCE_DIR}
-        ${DATA_OUTPUT_DIR}
-)
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -100,15 +91,33 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 if (MSVC)
   target_compile_options(${PROJECT_NAME} PRIVATE /std:c++latest)
   add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        COMMAND ${CMAKE_COMMAND} -E copy
             ${PROJECT_SOURCE_DIR}/data.bin
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/data.bin
         COMMENT "Copying data.bin to output directory"
     )
   add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        COMMAND ${CMAKE_COMMAND} -E copy
             ${PROJECT_SOURCE_DIR}/.env
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/.env
+        COMMENT "Copying .env to output directory"
+    )
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_SOURCE_DIR}/EULA.txt
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/EULA.txt
+        COMMENT "Copying .env to output directory"
+    )
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_SOURCE_DIR}/COPYRIGHT.txt
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/COPYRIGHT.txt
+        COMMENT "Copying .env to output directory"
+    )
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_SOURCE_DIR}/NOTICES.txt
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/NOTICES.txt
         COMMENT "Copying .env to output directory"
     )
 endif()
