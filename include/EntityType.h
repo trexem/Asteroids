@@ -21,6 +21,7 @@ enum EntityType : uint32_t {
     Explosive       = 1 << 10,
     Gold            = 1 << 11,
     Background      = 1 << 12,
+    Ligthning       = 1 << 13,
 };
 
 inline const std::unordered_map<EntityType, std::string> EntityTypeNames = {
@@ -36,6 +37,8 @@ inline const std::unordered_map<EntityType, std::string> EntityTypeNames = {
     {EntityType::Laser,     "Laser"},
     {EntityType::Explosive, "Explosive"},
     {EntityType::Gold,      "Gold"},
+    {EntityType::Background,"Background"},
+    {EntityType::Ligthning, "Lightning"},
 };
 
 std::string getEntityTypeName(EntityType type);

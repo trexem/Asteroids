@@ -74,6 +74,10 @@ public:
         return *this - project(normal);
     }
 
+    FPair lerp(const FPair& to, float t) const {
+        return (*this) * (1.0f - t) + to * t;
+    }
+
     ~FPair() = default;
     float angleTowards(FPair p) {
         return atan2(p.x - x, y - p.y);

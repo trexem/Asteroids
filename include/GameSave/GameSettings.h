@@ -56,7 +56,7 @@ namespace GameSave {
         SDL_free(prefPathCStr);
         std::string path = basePath + "settings.json";
 #else
-        std::string path = "data/settings.json";
+        std::string path = "settings.json";
 #endif
         DEBUG_LOG("Settings save path: %s", path.c_str());
         SDL_IOStream* io = SDL_IOFromFile(path.c_str(), "wb");
@@ -82,7 +82,7 @@ namespace GameSave {
         SDL_free(prefPathCStr);
         std::string path = basePath + "settings.json";
 #else
-        std::string path = "data/settings.json";
+        std::string path = "settings.json";
 #endif
         DEBUG_LOG("Settings load path: %s", path.c_str());
         SDL_IOStream* io = SDL_IOFromFile(path.c_str(), "rb");

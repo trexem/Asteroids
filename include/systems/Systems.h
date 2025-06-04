@@ -21,3 +21,4 @@
 #include "AudioSystem.h"
 #include "TooltipSystem.h"
 #include "TouchJoystickSystem.h"
+#include "ProximitySystem.h"

@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+class KeyboardMessage;
+
 class GameStateManager {
 public:
     static GameStateManager& instance();
@@ -20,9 +22,12 @@ public:
 private:
     GameState state{GameState::Quit};
     Timer timer;
-    GameStateManager() = default;
+    GameStateManager();
     ~GameStateManager() = default;
+
 
     GameStateManager(const GameStateManager&) = delete;
     GameStateManager& operator=(const GameStateManager&) = delete;
+
+    void handleKeyboardMessage(std::shared_ptr<KeyboardMessage> msg);
 };

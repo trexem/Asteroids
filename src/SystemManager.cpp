@@ -8,9 +8,9 @@ void SystemManager::updateAll(EntityManager& eM, float dt) {
         auto start = std::chrono::high_resolution_clock::now();
         system.system->update(eM, dt);
         auto end = std::chrono::high_resolution_clock::now();
-        DEBUG_LOG("[%s] update time: %lld us", system.name.c_str(), std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
+        // DEBUG_LOG("[%s] update time: %lld us", system.name.c_str(), std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
     }
-    DEBUG_LOG("Finished updating Systems");
+    // DEBUG_LOG("Finished updating Systems");
 }
 
 void SystemManager::resetAll() {

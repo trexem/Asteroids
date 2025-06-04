@@ -1,5 +1,10 @@
 #include "AbilitySystem.h"
 #include "GameStateManager.h"
+#include "SpatialGridBuilder.h"
+#include "EntityHandle.h"
+#include "MessageManager.h"
+#include "CollisionMessage.h"
+#include "Log.h"
 
 AbilitySystem::AbilitySystem(EntityManager& eManager, SDL_Renderer* renderer) : eMgr(eManager) {
     // Subscribe to AbilityMessages
@@ -31,6 +36,9 @@ void AbilitySystem::handleAbilityMessage(std::shared_ptr<AbilityMessage> msg) {
         break;
     case WeaponAbilities::Explosives:
         spawnExplosives(msg->eID);
+        break;
+    case WeaponAbilities::TeslaGun:
+        shootTeslaGun(msg->eID);
     default:
         break;
     }
@@ -277,4 +285,106 @@ FPair AbilitySystem::positionRadialSpread(int index, int total, const FPair& pos
     float xOffset = radius * cos(angle);
     float yOffset = radius * sin(angle);
     return {posSource.x + whSource.x / 2.0f + xOffset, posSource.y + whSource.y / 2.0f + yOffset};
+}
+
+void AbilitySystem::shootTeslaGun(uint32_t eID) {
+    const size_t abilityIndex = static_cast<size_t>(WeaponAbilities::TeslaGun);
+    auto [player, stats, transform, render] = getPlayerComponents(eID);
+    unsigned int level = player->weaponLevels[abilityIndex];
+    int bounces = abilitiesProjectileCount[abilityIndex][level] + stats->projectileCount;
+
+    float range = abilitiesSize[abilityIndex][level] * stats->extraSize;
+    float rangeSq = range * range;
+    auto playerProx = eMgr.getComponentData<ProximityTrackerComponent>(eID);
+    DEBUG_LOG("Trying to shoot tesla");
+    if (playerProx.closest.has_value()) {
+        if (playerProx.distance <= rangeSq) {
+            uint32_t current = eID, closest = *playerProx.closest;
+            FPair seekerPos, targetPos;
+            float seekerRadius, targetRadius, iterDist;
+            std::vector<bool> visited(eMgr.maxEntities, false);
+            DEBUG_LOG("Trying to shoot tesla. Now in range");
+            for (int bounce = 0; bounce < bounces; ++bounce) {
+                if (closest == 0) {
+                    visited[current] = true;
+                    seekerPos = eMgr.getComponentData<TransformComponent>(current).position;
+                    seekerRadius = eMgr.getComponentDataPtr<CollisionComponent>(current)->getBoundingRadius();
+
+                    iterDist = std::numeric_limits<float>::max();
+                    const auto& candidates = SpatialGrid::instance().getNearbyEntities(seekerPos, range, visited);
+                    for (auto target : candidates) {
+                        if (target == current) continue;
+                        if (!eMgr.hasComponent<TypeComponent>(target)) continue;
+                        auto targetType = eMgr.getComponentData<TypeComponent>(target).type;
+                        if (targetType != EntityType::Asteroid) continue;
+
+                        float targetRadius = eMgr.getComponentDataPtr<CollisionComponent>(target)->getBoundingRadius();
+                        targetPos = eMgr.getComponentData<TransformComponent>(target).position;
+
+                        float distSq = getSquaredDistanceBetweenCircles(seekerPos, seekerRadius, targetPos, targetRadius);
+
+                        if (distSq <= rangeSq && distSq < iterDist) {
+                            closest = target;
+                            iterDist = distSq;
+                        }
+                    }
+                    if (closest == 0) break;
+                }
+
+                DEBUG_LOG("Tesla gun shot, lightning component creation, bounce %d", bounce);
+                if (!eMgr.entityExists(current)) break;
+                if (!eMgr.entityExists(closest)) break;
+                uint32_t lightingId = eMgr.createEntity();
+                EntityHandle handle = {lightingId, eMgr};
+                handle.add<TypeComponent>();
+                handle.add<LightningComponent>();
+                handle.add<LifeTimeComponent>();
+                handle.add<DamageComponent>();
+                LightningComponent lightningComp;
+                lightningComp.sourcePos = eMgr.getComponentData<TransformComponent>(current).position
+                    + eMgr.getComponentData<CollisionComponent>(current).getBoundingRadius();
+                lightningComp.targetPos = eMgr.getComponentData<TransformComponent>(closest).position
+                    + eMgr.getComponentData<CollisionComponent>(closest).getBoundingRadius();
+                lightningComp.path = generateLightningBoltPath(lightningComp.sourcePos, lightningComp.targetPos);
+                handle.set(lightningComp);
+                LifeTimeComponent lifeComp;
+                lifeComp.lifeTime = 0.2;
+                handle.set(lifeComp);
+                TypeComponent type = EntityType::Ligthning;
+                handle.set(type);
+                DamageComponent damage;
+                damage.damage = abilitiesDamage[abilityIndex][level];
+                handle.set(damage);
+
+                std::vector<uint32_t> ids;
+                ids.push_back(lightingId);
+                ids.push_back(closest);
+                MessageManager::instance().sendMessage(std::make_shared<CollisionMessage>(ids));
+
+                current = closest;
+                closest = 0;
+            }
+        }
+    }
+}
+
+std::vector<FPair> AbilitySystem::generateLightningBoltPath(FPair from, FPair to, int segments, float maxOffset) {
+    std::vector<FPair> path;
+    path.push_back(from);
+
+    for (int i = 1; i < segments; ++i) {
+        float t = (float)i / (float)segments;
+        FPair pos = from.lerp(to, t);
+
+        float offsetAmount = maxOffset * (1.0f - std::abs(0.5f - t) * 2.0f); // strongest offset in middle
+
+        float angle = randFloat(0, PI);
+        pos.x += std::cos(angle) * offsetAmount;
+        pos.y += std::sin(angle) * offsetAmount;
+
+        path.push_back(pos);
+    }
+
+    path.push_back(to);
+    return path;
 }

@@ -18,6 +18,7 @@ public:
     void drawGameEntities(EntityManager& eM);
     void drawGUI(EntityManager& eM);
     void update(EntityManager& eMgr, const double& dT) override {}
+    void debugRenderProximityLines(EntityManager& eM);
 private:
     std::shared_ptr<Renderer> renderer;
     Camera* camera;

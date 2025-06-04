@@ -9,6 +9,7 @@
 #include "PackReader.h"
 #include "TextManager.h"
 #include "SystemLocale.h"
+#include "SpatialGridBuilder.h"
 
 #include <iostream>
 #include <SDL3/SDL_init.h>
@@ -34,6 +35,7 @@ Game::Game() : entityManager(MAX_ENTITIES) {
 	systemManager->registerSystem<HealthSystem>();
 	systemManager->registerSystem<GUIInteractionSystem>(entityManager);
 	systemManager->registerSystem<TooltipSystem>();
+	systemManager->registerSystem<ProximitySystem>();
 	MessageManager::instance().subscribe<GraphicsSettingsMessage>(
         [this](std::shared_ptr<GraphicsSettingsMessage> msg) { handleGraphicsSettingsMessage(msg); }
     );
@@ -174,6 +176,9 @@ void Game::gameLoop() {
 		//Calculate time between previous movement and now
 		timeStep = step_timer.getTicks() / 1000.0;
         step_timer.start();
+
+		SpatialGrid::instance().build(entityManager);
+
         systemManager->updateAll(entityManager, timeStep);
         if (GameStateManager::instance().getState() == GameState::Restart) {
             restart();
@@ -223,6 +228,7 @@ void Game::createShip(ShipType shipType) {
 	entityManager.addComponent(ship, ComponentType::Type);
 	entityManager.addComponent(ship, ComponentType::Health);
 	entityManager.addComponent(ship, ComponentType::Animation);
+	entityManager.addComponent(ship, ComponentType::ProximityTracker);
 	 //Transform
 	TransformComponent shipTransform;
 	shipTransform.position = GUI::screenCenter;
@@ -260,14 +266,16 @@ void Game::createShip(ShipType shipType) {
 	// shipPlayer.passiveLevels[static_cast<size_t>(PassiveAbilities::PickupRadius)] = 8;
 	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::LaserGun)] = true;
 	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::LaserGun)] = 0;
-	/*shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::GravitySaws)] = true;
-	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::GravitySaws)] = 1;
-	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Rocket)] = true;
-	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Rocket)] = 9;
-	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Laser)] = true;
-	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Laser)] = 9;
-	shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Explosives)] = true;
-	shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Explosives)] = 9;*/
+	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::GravitySaws)] = true;
+	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::GravitySaws)] = 1;
+	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Rocket)] = true;
+	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Rocket)] = 9;
+	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Laser)] = true;
+	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Laser)] = 9;
+	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::Explosives)] = true;
+	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::Explosives)] = 9;
+	// shipPlayer.ownedWeapons[static_cast<size_t>(WeaponAbilities::TeslaGun)] = true;
+	// shipPlayer.weaponLevels[static_cast<size_t>(WeaponAbilities::TeslaGun)] = 9;
 	shipPlayer.ownedWeaponsCount = 1;
 	// shipPlayer.currentXp = 100;
 	entityManager.setComponentData<PlayerComponent>(ship, shipPlayer);
@@ -293,6 +301,9 @@ void Game::createShip(ShipType shipType) {
 	AnimationComponent anim;
 	anim.animations[Animation::Damage].frames = TextureManager::instance().getAnimationFrames("ship", "Damage");
 	entityManager.setComponentData<AnimationComponent>(ship, anim);
+	// Proximity Tracker
+	ProximityTrackerComponent prox;
+	entityManager.setComponentData(ship, prox);
 }
 
 void Game::handleGraphicsSettingsMessage(std::shared_ptr<GraphicsSettingsMessage> msg) {

@@ -51,6 +51,8 @@ private:
     void spawnGravitySaws(uint32_t eID);
     void spawnLaser(uint32_t eID);
     void spawnExplosives(uint32_t eID);
+    void shootTeslaGun(uint32_t eID);
+    std::vector<FPair> generateLightningBoltPath(FPair from, FPair to, int segments = 8, float maxOffset = 16.0f);
     EntityManager& eMgr;
     std::vector<ExplosionConfig> explosions;
     FPair laserSize;

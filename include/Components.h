@@ -4,6 +4,7 @@
 #include <bitset>
 #include <functional>
 #include <unordered_map>
+#include <optional>
 
 #include "abilitiesText.h"
 #include "Animation.h"
@@ -47,6 +48,8 @@ enum class ComponentType {
     Tooltip,
     NineGrid,
     TouchJoystick,
+    ProximityTracker,
+    Lightning,
 
     Count
 };
@@ -128,7 +131,7 @@ struct DamageComponent {
 struct PlayerComponent {
     ShipType type;
     int level {1};
-    int xpToNextLevel{100};
+    int xpToNextLevel{30};
     int currentXp{0};
     uint8_t ownedWeaponsCount {0};
     uint8_t ownedPassivesCount {0};
@@ -261,6 +264,19 @@ struct TouchJoystickComponent {
     FPair origin;
     FPair current;
     float radius = 80.0f;
+};
+
+struct ProximityTrackerComponent {
+    std::optional<uint32_t> closest;
+    float distance = 0;
+    bool hasLifeTime = false;
+    double lifeTime = 0.2f;
+};
+
+struct LightningComponent {
+    FPair sourcePos;
+    FPair targetPos;
+    std::vector<FPair> path;
 };
 
 std::vector<AbilityChoice> getRandomAbilityChoices(const PlayerComponent& player);

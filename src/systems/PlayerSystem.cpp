@@ -36,10 +36,10 @@ void PlayerSystem::handleKeyboardInput(std::shared_ptr<KeyboardMessage> msg) {
 
     for (uint32_t eID : playerEntities) {
         MovementComponent moveComp = eMgr.getComponentData<MovementComponent>(eID);
-        if (msg->key == SDLK_W) moveComp.moveState[MoveState::MOVE_UP] = msg->pressed;
-        if (msg->key == SDLK_S) moveComp.moveState[MoveState::MOVE_DOWN] = msg->pressed;
-        if (msg->key == SDLK_A) moveComp.moveState[MoveState::MOVE_LEFT] = msg->pressed;
-        if (msg->key == SDLK_D) moveComp.moveState[MoveState::MOVE_RIGHT] = msg->pressed;
+        if (msg->key == SDLK_W || msg->key == SDLK_UP) moveComp.moveState[MoveState::MOVE_UP] = msg->pressed;
+        if (msg->key == SDLK_S || msg->key == SDLK_DOWN) moveComp.moveState[MoveState::MOVE_DOWN] = msg->pressed;
+        if (msg->key == SDLK_A || msg->key == SDLK_LEFT) moveComp.moveState[MoveState::MOVE_LEFT] = msg->pressed;
+        if (msg->key == SDLK_D || msg->key == SDLK_RIGHT) moveComp.moveState[MoveState::MOVE_RIGHT] = msg->pressed;
         eMgr.setComponentData<MovementComponent>(eID, moveComp);
     }
 }
@@ -180,7 +180,7 @@ void PlayerSystem::handlePickupPickedMessage(std::shared_ptr<PickupPickedMessage
         if (playerComp.currentXp >= playerComp.xpToNextLevel) {
             playerComp.level++;
             playerComp.currentXp -= playerComp.xpToNextLevel;
-            playerComp.xpToNextLevel = 50 + playerComp.level * 50;
+            playerComp.xpToNextLevel = playerComp.level * EXP_TO_LEVEL_UP;
             GameStateManager::instance().setState(GameState::LevelUp);
         }
         eMgr.setComponentData<PlayerComponent>(msg->playerID, playerComp);

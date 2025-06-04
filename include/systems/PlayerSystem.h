@@ -10,6 +10,7 @@ class LevelUpMessage;
 
 class PlayerSystem : public System {
 public:
+    const int EXP_TO_LEVEL_UP = 30;
     PlayerSystem(EntityManager& eMgr);
     void update(EntityManager& eMgr, const double& dT) override;
 

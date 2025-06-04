@@ -31,6 +31,8 @@ class RenderSystem;
 class AsteroidSystem;
 class SystemManager;
 
+using CellMap = std::unordered_map<std::pair<int, int>, std::vector<uint32_t>, pair_hash>;
+
 class Game {
 public:
 
@@ -66,4 +68,6 @@ private:
 	void handleGraphicsSettingsMessage(std::shared_ptr<GraphicsSettingsMessage> msg);
 	void updateGraphicsSettings();
 	void updateFullScreen();
+
+	CellMap spatialGrid;
 };

@@ -54,8 +54,11 @@ std::string getNextUpgradeText(const PlayerComponent& player, const AbilityChoic
         float p2 = index == static_cast<size_t>(WeaponAbilities::Laser) ? abilitiesSize[index][level] * 100.0f
             : abilitiesProjectileCount[index][level];
         float p3 = abilitiesDamage[index][level];
-        float p4 = index == static_cast<size_t>(WeaponAbilities::LaserGun) || index == static_cast<size_t>(WeaponAbilities::LaserGun) 
+        float p4 = index == static_cast<size_t>(WeaponAbilities::LaserGun) || index == static_cast<size_t>(WeaponAbilities::Rocket) 
             ? abilitiesProjectileSpeed[index][level] : static_cast<float>(abilitiesLifeTime[index][level]);
+        if (index == static_cast<size_t>(WeaponAbilities::TeslaGun)) {
+            p4 = abilitiesSize[index][level];
+        }
         text = isActive ? TextManager::instance().format("abilityLvlUp." + id, p1, p2, p3, p4) :
             TextManager::instance().get("abilityDesc." + id);
     } else if (choice.type == AbilityType::Passive) {

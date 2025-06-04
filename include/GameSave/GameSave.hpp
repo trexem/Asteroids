@@ -70,7 +70,7 @@ namespace GameSave {
         SDL_free(prefPathCStr);
         std::string path = basePath + "stats.json";
 #else
-        std::string path = "data/stats.json";
+        std::string path = "stats.json";
 #endif
         SDL_IOStream* io = SDL_IOFromFile(path.c_str(), "wb");
         if (!io) return false;
@@ -96,7 +96,7 @@ namespace GameSave {
         SDL_free(prefPathCStr);
         std::string path = basePath + "stats.json";
 #else
-        std::string path = "data/stats.json";
+        std::string path = "stats.json";
 #endif
         SDL_IOStream* io = SDL_IOFromFile(path.c_str(), "rb");
         if (!io) return false;

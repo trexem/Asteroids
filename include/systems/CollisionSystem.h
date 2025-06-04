@@ -9,7 +9,7 @@
 #include <unordered_set>
 
 class CollisionSystem : public System {
-    const int CELL_SIZE = 100;
+    const int CELL_SIZE = 75;
 public:
     void update(EntityManager& eMgr, const double& dT) override;
     bool checkCollision(const TransformComponent& transA, const CollisionComponent& colA,

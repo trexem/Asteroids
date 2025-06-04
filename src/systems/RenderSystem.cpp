@@ -131,6 +131,44 @@ void RenderSystem::drawGameEntities(EntityManager& eM) {
             // }
         }
     }
+    Texture* lightningTex = TextureManager::instance().get("lightning_segment");
+    for (uint32_t eID : eM.getEntitiesWithComponent(ComponentType::Lightning)) {
+        auto* lightning = eM.getComponentDataPtr<LightningComponent>(eID);
+        if (!lightning) continue;
+
+        for (size_t i = 1; i < lightning->path.size(); ++i) {
+            FPair from = lightning->path[i - 1] - camera->position;
+            FPair to = lightning->path[i] - camera->position;
+
+            FPair dir = (to - from).normalized();
+            float tipInset = 3.0f;
+
+            FPair adjustedFrom = from - dir * tipInset;
+
+            float dx = to.x - adjustedFrom.x;
+            float dy = to.y - adjustedFrom.y;
+            float angle = std::atan2f(dy, dx) * RAD2DEG;
+            float length = std::sqrt(dx * dx + dy * dy);
+
+            SDL_FRect dst = {
+                adjustedFrom.x,
+                adjustedFrom.y,
+                length,
+                lightningTex->getHeight() // or fixed height
+            };
+
+            SDL_FPoint center = {0, lightningTex->getHeight() / 2.0f};
+
+            lightningTex->renderEx(
+                dst.x, dst.y,
+                nullptr,
+                angle,
+                &center,
+                SDL_FLIP_NONE,
+                {length, lightningTex->getHeight()}
+            );
+        }
+    }
 }
 
 void RenderSystem::drawGUI(EntityManager& eM) {

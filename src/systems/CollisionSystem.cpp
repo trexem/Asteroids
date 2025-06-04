@@ -1,92 +1,67 @@
 #include "CollisionSystem.h"
 #include "utils.hpp"
 #include "GameStateManager.h"
+#include "SpatialGridBuilder.h"
 
 #include <iostream>
 
 void CollisionSystem::update(EntityManager& eMgr, const double& dT) {
     if (GameStateManager::instance().getState() == GameState::Playing) {
         std::unordered_map<std::pair<int, int>, std::vector<uint32_t>, pair_hash> spatialGrid;
-        std::vector<uint32_t> physicsEntities = eMgr.getEntitiesWithComponent(ComponentType::Physics);
-        // std::cout << "PhysicsEntities count: " << physicsEntities.size() << std::endl;
-        for (uint32_t entity : physicsEntities) {
-            TransformComponent* trans = eMgr.getComponentDataPtr<TransformComponent>(entity);
-            CollisionComponent* col = eMgr.getComponentDataPtr<CollisionComponent>(entity);
-            if (!trans || !col) continue;
-
-            auto corners = getCorners(*trans, *col);
-
-            // Find the AABB that encloses the rotated OBB
-            float minX = std::min({corners[0].x, corners[1].x, corners[2].x, corners[3].x});
-            float maxX = std::max({corners[0].x, corners[1].x, corners[2].x, corners[3].x});
-            float minY = std::min({corners[0].y, corners[1].y, corners[2].y, corners[3].y});
-            float maxY = std::max({corners[0].y, corners[1].y, corners[2].y, corners[3].y});
-
-            int minCellX = static_cast<int>(minX) / CELL_SIZE;
-            int minCellY = static_cast<int>(minY) / CELL_SIZE;
-            int maxCellX = static_cast<int>(maxX) / CELL_SIZE;
-            int maxCellY = static_cast<int>(maxY) / CELL_SIZE;
-
-            for (int x = minCellX; x <= maxCellX; ++x) {
-                for (int y = minCellY; y <= maxCellY; ++y) {
-                    // std::cout << "adding " << entity << " to grid: " << x << ", " << y << std::endl;
-                    spatialGrid[{x, y}].push_back(entity);
-                }
-            }
-        }
+        spatialGrid = SpatialGrid::instance().getGrid();
         // std::cout << "SpatialGrid count: " << spatialGrid.size() << std::endl;
         for (auto& cell : spatialGrid) {
-        auto& entities = cell.second;
+            auto& entities = cell.second;
 
-        for (size_t i = 0; i < entities.size(); ++i) {
-            uint32_t a = entities[i];
-            if (eMgr.isDestroyed(a) || eMgr.isMarkedForDestruction(a)) continue;
-            TransformComponent transA = eMgr.getComponentData<TransformComponent>(a);
-            CollisionComponent colA = eMgr.getComponentData<CollisionComponent>(a);
-            TypeComponent* typeA = eMgr.getComponentDataPtr<TypeComponent>(a);
-            if (!typeA) continue;
+            for (size_t i = 0; i < entities.size(); ++i) {
+                uint32_t a = entities[i];
+                if (eMgr.isDestroyed(a) || eMgr.isMarkedForDestruction(a)) continue;
+                TransformComponent transA = eMgr.getComponentData<TransformComponent>(a);
+                CollisionComponent colA = eMgr.getComponentData<CollisionComponent>(a);
+                TypeComponent* typeA = eMgr.getComponentDataPtr<TypeComponent>(a);
+                if (!typeA) continue;
 
-            for (size_t j = i + 1; j < entities.size(); ++j) {
-                uint32_t b = entities[j];
-                if (eMgr.isDestroyed(b) || eMgr.isMarkedForDestruction(b)) continue;
-                TransformComponent transB = eMgr.getComponentData<TransformComponent>(b);
-                CollisionComponent colB = eMgr.getComponentData<CollisionComponent>(b);
-                TypeComponent* typeB = eMgr.getComponentDataPtr<TypeComponent>(b);
-                if (!typeB) continue;
-                EntityType tA = typeA->type;
-                EntityType tB = typeB->type;
-                if (TypesSet::shouldIgnoreCollision(tA, tB)) {
-                    continue;
-                }
-                // std::cout << "Checking Collision for: " << tA << " and " << tB << std::endl;
-                if (checkCollision(transA, colA, transB, colB)) {
-                    // std::cout << "Collision detected" << std::endl;
-                    if (TypesSet::shouldPlayerPick(tA, tB)) {
-                        uint32_t player = tA & EntityType::Player ? a : b;
-                        uint32_t pickupID = player == a ? b : a;
-                        EntityType pType = pickupID == a ? tA : tB;
-                        PickupComponent* pComp = eMgr.getComponentDataPtr<PickupComponent>(pickupID);
-                        auto msg = std::make_shared<PickupPickedMessage>(a, pComp->value, pType);
-                        eMgr.destroyEntityLater(b);
-                        MessageManager::instance().sendMessage(msg);
+                for (size_t j = i + 1; j < entities.size(); ++j) {
+                    uint32_t b = entities[j];
+                    if (eMgr.isDestroyed(b) || eMgr.isMarkedForDestruction(b)) continue;
+                    TransformComponent transB = eMgr.getComponentData<TransformComponent>(b);
+                    CollisionComponent colB = eMgr.getComponentData<CollisionComponent>(b);
+                    TypeComponent* typeB = eMgr.getComponentDataPtr<TypeComponent>(b);
+                    if (!typeB) continue;
+                    EntityType tA = typeA->type;
+                    EntityType tB = typeB->type;
+                    if (TypesSet::shouldIgnoreCollision(tA, tB)) {
                         continue;
-                    } else if (TypesSet::sameType(EntityType::Asteroid, tA, tB)) {
+                    }
+                    // std::cout << "Checking Collision for: " << tA << " and " << tB << std::endl;
+                    if (checkCollision(transA, colA, transB, colB)) {
+                        // std::cout << "Collision detected" << std::endl;
+                        if (TypesSet::shouldPlayerPick(tA, tB)) {
+                            uint32_t player = tA & EntityType::Player ? a : b;
+                            uint32_t pickupID = player == a ? b : a;
+                            EntityType pType = pickupID == a ? tA : tB;
+                            PickupComponent* pComp = eMgr.getComponentDataPtr<PickupComponent>(pickupID);
+                            auto msg = std::make_shared<PickupPickedMessage>(a, pComp->value, pType);
+                            eMgr.destroyEntityLater(b);
+                            MessageManager::instance().sendMessage(msg);
+                            continue;
+                        } else if (TypesSet::sameType(EntityType::Asteroid, tA, tB)) {
+                            std::vector<uint32_t> ids;
+                            ids.push_back(a);
+                            ids.push_back(b);
+                            auto msg = std::make_shared<AsteroidAsteroidCollisionMessage>(ids);
+                            MessageManager::instance().sendMessage(msg);
+                            continue;
+                        }
                         std::vector<uint32_t> ids;
                         ids.push_back(a);
                         ids.push_back(b);
-                        auto msg = std::make_shared<AsteroidAsteroidCollisionMessage>(ids);
+                        auto msg = std::make_shared<CollisionMessage>(ids);
                         MessageManager::instance().sendMessage(msg);
-                        continue;
                     }
-                    std::vector<uint32_t> ids;
-                    ids.push_back(a);
-                    ids.push_back(b);
-                    auto msg = std::make_shared<CollisionMessage>(ids);
-                    MessageManager::instance().sendMessage(msg);
                 }
             }
         }
-    }
     }
 }
 
