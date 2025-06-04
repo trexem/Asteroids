@@ -28,7 +28,7 @@ constexpr float passiveValues[static_cast<size_t>(PassiveAbilities::PassiveAbili
     { 200, 250, 300, 350, 400, 500, 600, 700, 800, 1000},
 
     // CooldownReduction (percentage)
-    {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.35f, 0.40f, 0.50f},
+    {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.35f, 0.40f, 0.45f},
     
     // Armor (damage reduction)
     {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.35f, 0.40f, 0.50f},

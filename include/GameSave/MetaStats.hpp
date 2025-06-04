@@ -26,7 +26,7 @@ enum class UpgradeType {
 constexpr float upgradesValues[static_cast<size_t>(UpgradeType::UpgradesCount)][11] {
     { 0.75f,   1.0f,  1.25f,    1.5f,  1.75f,    2.0f, 2.25f,  2.5f, 2.75f,   3.0f,   3.5f}, //Speed
     {  1.0f,  1.05f,   1.1f,   1.15f,   1.2f,   1.25f,  1.3f,  1.4f,  1.5f,  1.75f,   2.0f}, //Damage Multiplier
-    {  0.0f,   0.1f,   0.2f,    0.3f,   0.4f,   0.5f}, //Fire rate Multiplier
+    {  0.0f,   0.1f,   0.2f,    0.3f,   0.4f,   0.45f}, //Fire rate Multiplier
     {  0.0f,   1.0f,   2.0f,    3.0f}, //Projectile Count
     {  0.0f, 0.025f,  0.05f,    0.1f,  0.15f,    0.3f,  0.5f,  1.0f,  1.5f,   2.5f,   5.0f}, //Experience
     {  1.0f,   2.0f,   3.0f,    4.0f,   5.0f,    6.0f,  7.0f,  8.0f,  9.0f,  10.0f,  15.0f}, //GoldProb

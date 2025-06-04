@@ -26,7 +26,7 @@ void ProximitySystem::update(EntityManager& eMgr, const double& dT) {
         auto start = std::chrono::high_resolution_clock::now();
         const auto& candidates = SpatialGrid::instance().getNearbyEntities(seekerPos, maxRange, visited);
         auto end = std::chrono::high_resolution_clock::now();
-        DEBUG_LOG("getNearbyEntities update time: %lld us", std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
+        // DEBUG_LOG("getNearbyEntities update time: %lld us", std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
         
         start = std::chrono::high_resolution_clock::now();
         for (auto target : candidates) {
@@ -48,10 +48,10 @@ void ProximitySystem::update(EntityManager& eMgr, const double& dT) {
             if (distSq < maxRangeSq && distSq < proxComp->distance) {
                 proxComp->closest = target;
                 proxComp->distance = distSq;
-                DEBUG_LOG("Closest: %d with distance %f", target, distSq);
+                // DEBUG_LOG("Closest: %d with distance %f", target, distSq);
             }
         }
         end = std::chrono::high_resolution_clock::now();
-        DEBUG_LOG("target for loop update time: %lld us", std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
+        // DEBUG_LOG("target for loop update time: %lld us", std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
     }
 }

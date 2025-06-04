@@ -13,8 +13,8 @@ class FPair;
 
 class Screen : public std::enable_shared_from_this<Screen> {
     std::unordered_set<uint32_t> hoveredEntities;
-    std::vector<std::function<void()>> unsubscribers;
 protected:
+    std::vector<std::function<void()>> unsubscribers;
     EntityManager& eManager;
 public:
     Screen(EntityManager& eM);

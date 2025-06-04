@@ -194,12 +194,12 @@ void RenderSystem::drawGUI(EntityManager& eM) {
         rComp->texture->setAlphaMod(rComp->visibility);
         if (eM.hasComponent<NineGridComponent>(eID)) {
             const NineGridComponent& grid = eM.getComponentData<NineGridComponent>(eID);
-            SDL_FRect dst = { pos.x, pos.y, rComp->exactSize.x, rComp->exactSize.y };
+            SDL_FRect dst = { pos.x, pos.y, rComp->exactSize.x * rComp->size, rComp->exactSize.y * rComp->size};
             rComp->texture->render9Grid(
                 nullptr,                // full texture
                 grid.left, grid.right,
                 grid.top, grid.bottom,
-                0.0f,                   // no scaling of corners
+                rComp->size,                   // no scaling of corners
                 &dst
             );
         } else {

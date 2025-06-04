@@ -5,6 +5,7 @@
 #include "GameSettings.h"
 #include "screens/Components/Button.h"
 #include "screens/Components/Label.h"
+#include "screens/Components/Box.h"
 
 class Texture;
 using GameSettings = GameSave::GameSettings;
@@ -14,7 +15,8 @@ class SettingsScreen : public Screen {
     std::shared_ptr<Button> leftMasterVolume, rightMasterVolume;
     std::shared_ptr<Button> leftMusicVolume, rightMusicVolume;
     std::shared_ptr<Button> leftSfxVolume, rightSfxVolume;
-    std::shared_ptr<Button> vsyncButton, fullScreenButton, backButton;
+    std::shared_ptr<Button> backButton;
+    std::shared_ptr<Box> fullScreenButton, vsyncButton;
     std::shared_ptr<Label> resolutionLabel, fullscreenLabel;
     std::shared_ptr<Label> vsyncLabel, masterLabel;
     std::shared_ptr<Label> musicLabel, sfxLabel;

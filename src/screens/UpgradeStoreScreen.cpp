@@ -63,8 +63,8 @@ void UpgradeStoreScreen::update(EntityManager& eManager, SDL_Renderer* renderer)
         b->updateCost(eManager);
         b->updateState(eManager);
         GUIState state = eManager.getComponentData<GUIStateComponent>(b->id).state;
-        RenderComponent render = eManager.getComponentData<RenderComponent>(b->id);
-        eManager.setComponentData(b->id, render);
+        RenderComponent render = eManager.getComponentData<RenderComponent>(b->box->id);
+        eManager.setComponentData(b->box->id, render);
     }
     backButton->updateState(eManager);
     uint32_t newGold = GameStatsManager::instance().getStats().coins;

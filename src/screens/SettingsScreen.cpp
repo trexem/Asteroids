@@ -62,7 +62,7 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     // Button
     pos.x += 700.0f;
     size = 75.0f;
-    fullScreenButton = std::make_shared<Button>(eManager, "", pos, size, checkBoxFalseTexture, renderer);
+    fullScreenButton = std::make_shared<Box>(eManager, pos, size, checkBoxFalseTexture);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().get().fullscreen = !SettingsManager::instance().get().fullscreen;
         SettingsManager::instance().updateResolution();
@@ -79,7 +79,7 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     // Button
     pos.x += 700.0f;
     size = 75.0f;
-    vsyncButton = std::make_shared<Button>(eManager, "", pos, size, checkBoxFalseTexture, renderer);
+    vsyncButton = std::make_shared<Box>(eManager, pos, size, checkBoxFalseTexture);
     callback.onClick = [&] (uint32_t entity) {
         SettingsManager::instance().get().vsync = !SettingsManager::instance().get().vsync;
         SettingsManager::instance().updateResolution();

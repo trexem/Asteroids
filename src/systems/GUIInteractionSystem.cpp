@@ -20,7 +20,7 @@ void GUIInteractionSystem::handleMouseMotionMessage(std::shared_ptr<MouseMotionM
     for (uint32_t e : eM.getEntitiesWithComponent(ComponentType::GUIState)) {
         auto gui = eM.getComponentDataPtr<GUIComponent>(e);
         auto state = eM.getComponentData<GUIStateComponent>(e);
-        if (state.state == GUIState::Disabled) continue;
+        if (state.state == GUIState::Disabled || state.state == GUIState::Selected) continue;
         SDL_FRect bounds {gui->pos.x, gui->pos.y, gui->size.x, gui->size.y};
         if (msg->mousePos.x >= bounds.x && msg->mousePos.x <= bounds.x + bounds.w &&
             msg->mousePos.y >= bounds.y && msg->mousePos.y <= bounds.y + bounds.h) {
@@ -45,7 +45,7 @@ void GUIInteractionSystem::handleMouseClickMessage(std::shared_ptr<ClickMessage>
     for (uint32_t e : eM.getEntitiesWithComponent(ComponentType::GUIState)) {
         auto gui = eM.getComponentDataPtr<GUIComponent>(e);
         auto state = eM.getComponentData<GUIStateComponent>(e);
-        if (state.state == GUIState::Disabled) continue;
+        if (state.state == GUIState::Disabled || state.state == GUIState::Selected) continue;
         SDL_FRect bounds {gui->pos.x, gui->pos.y, gui->size.x, gui->size.y};
         bool inside = msg->mousePos.x >= bounds.x && msg->mousePos.x <= bounds.x + bounds.w &&
                     msg->mousePos.y >= bounds.y && msg->mousePos.y <= bounds.y + bounds.h;

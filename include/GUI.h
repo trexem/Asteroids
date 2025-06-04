@@ -8,7 +8,7 @@ public:
     inline static FPair screenTopCenter = {screenWidth / 2.0f, 0};
     inline static float containerWidth = screenWidth * 0.21875f;
     inline static float containerHeight = screenHeight * 0.629f;
-    inline static float containerGap = screenWidth * 0.010416f;
+    inline static float containerGap = screenWidth * 0.03125f;
     inline static float healthbarWidth = screenWidth * 0.02604166f;
     inline static float healtbarHeight = screenHeight * 0.370370f;
 

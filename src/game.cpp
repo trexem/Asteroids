@@ -196,7 +196,7 @@ void Game::gameLoop() {
         auto start = std::chrono::high_resolution_clock::now();
         renderSystem->render(entityManager);
         auto end = std::chrono::high_resolution_clock::now();
-        DEBUG_LOG("[RenderSystem] update time: %lld us", std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
+        // DEBUG_LOG("[RenderSystem] update time: %lld us", std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
         ++counted_frames;
 
 		if (shouldUpdateSettings) updateGraphicsSettings();
@@ -210,9 +210,9 @@ void Game::gameLoop() {
 			SDL_Delay(SCREEN_TICKS_PER_FRAME - frame_ticks);
 		}
 		end = std::chrono::high_resolution_clock::now();
-		DEBUG_LOG("Waiting time: %lld us", std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
+		// DEBUG_LOG("Waiting time: %lld us", std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
 		auto loopTimeEnd = std::chrono::high_resolution_clock::now();
-		DEBUG_LOG("*#*#  LOOP time: %lld us  *#*#", std::chrono::duration_cast<std::chrono::microseconds>(loopTimeEnd - loopTimeStart).count());
+		// DEBUG_LOG("*#*#  LOOP time: %lld us  *#*#", std::chrono::duration_cast<std::chrono::microseconds>(loopTimeEnd - loopTimeStart).count());
 	}
 }
 
