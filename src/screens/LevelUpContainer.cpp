@@ -62,7 +62,7 @@ LevelUpContainer::LevelUpContainer(EntityManager& eManager, AbilityChoice choice
     eManager.addComponent(textId, ComponentType::Type);
     eManager.addComponent(textId, ComponentType::GUI);
     textureComp.texture = &abilityText;
-    guiComp.pos.x = pos.x + GUI::containerGap;
+    guiComp.pos.x = pos.x + GUI::containerGap / 2.0f;
     guiComp.pos.y += GUI::containerGap + abilityIcon->getHeight();
     eManager.setComponentData<TransformComponent>(textId, trComp);
     eManager.setComponentData<TypeComponent>(textId, type);

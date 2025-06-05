@@ -115,6 +115,9 @@ namespace GameSave {
         try {
             settings.fromJson(json::parse(text));
         } catch (...) { return false; }
+#if defined (__ANDROID__)
+        settings.fullscreen = true;
+#endif
         return true;
     }
 }

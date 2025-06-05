@@ -50,10 +50,8 @@ void InputSystem::update(EntityManager& eMgr, const double& dT) {
             FPair touchPos(e.tfinger.x, e.tfinger.y);
             FPair pos = adjustTouchPos(touchPos);
             bool isDown = (e.type == SDL_EVENT_FINGER_DOWN || e.type == SDL_EVENT_FINGER_MOTION);
-            if (e.tfinger.x <= 0.5f) {
-                auto msg = std::make_shared<TouchMessage>(pos, isDown, e.tfinger.fingerID);
-                MessageManager::instance().sendMessage(msg);
-            }
+            auto msg = std::make_shared<TouchMessage>(pos, isDown, e.tfinger.fingerID);
+            MessageManager::instance().sendMessage(msg);
             clickHandler.handleClick(pos, isDown, 1); // simulate left mouse button
             break;
         }

@@ -69,7 +69,8 @@ std::string getNextUpgradeText(const PlayerComponent& player, const AbilityChoic
         std::string id = passiveId[index];
         float value = passiveValues[index][level];
         if (index == static_cast<size_t>(PassiveAbilities::CooldownReduction) ||
-            index == static_cast<size_t>(PassiveAbilities::Armor)) {
+            index == static_cast<size_t>(PassiveAbilities::Armor) ||
+            index == static_cast<size_t>(PassiveAbilities::Damage)) {
             value *= 100.0f;
         }
         text = isActive ? TextManager::instance().format("abilityLvlUp." + id, value) :

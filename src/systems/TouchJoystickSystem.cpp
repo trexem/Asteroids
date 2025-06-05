@@ -8,6 +8,7 @@
 #include "TouchJoystickSystem.h"
 #include "GameStateManager.h"
 #include "Log.h"
+#include "GUI.h"
 
 TouchJoystickSystem::TouchJoystickSystem(EntityManager& eMgr) : eM(eMgr) {
 	MessageManager::instance().subscribe<TouchMessage>(
@@ -36,7 +37,7 @@ TouchJoystickSystem::TouchJoystickSystem(EntityManager& eMgr) : eM(eMgr) {
 }
 
 void TouchJoystickSystem::handleTouchMessage(std::shared_ptr<TouchMessage> msg) {
-	if (!joystick.active && msg->isDown) {
+	if (!joystick.active && msg->isDown && msg->pos.x <= 0.5f * GUI::screenWidth) {
 		joystick.active = true;
 		joystick.fingerID = msg->id;
 		joystick.origin = msg->pos;
