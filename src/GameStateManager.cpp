@@ -15,6 +15,7 @@ GameStateManager& GameStateManager::instance() {
 void GameStateManager::setState(GameState newState) {
     std::cout << "Setting state to: " << newState << std::endl;
     if (state != newState) {
+        lastState = state;
         state = newState;
         if (state != GameState::Playing) {
             timer.pause();

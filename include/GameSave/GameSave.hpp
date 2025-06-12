@@ -25,6 +25,9 @@ namespace GameSave {
         uint32_t coins = 0;
         std::map<UpgradeType, int> upgrades;
         std::vector<ShipType> unlockedShips;
+        uint32_t maxKills = 0;
+        uint32_t maxLevel = 0;
+        uint16_t maxTime = 0;
         json toJson() {
             json j;
             j["coins"] = coins;
@@ -40,6 +43,9 @@ namespace GameSave {
                 shipsJson.push_back(to_string(ship));
             }
             j["unlockedShips"] = shipsJson;
+            j["maxKills"] = maxKills;
+            j["maxLevel"] = maxLevel;
+            j["maxTime"] = maxTime;
 
             return j;
         }
@@ -56,6 +62,9 @@ namespace GameSave {
             for (auto& v : j["unlockedShips"]) {
                 unlockedShips.push_back(shipTypeFromString(v));
             }
+            j.at("maxKills").get_to(maxKills);
+            j.at("maxLevel").get_to(maxLevel);
+            j.at("maxTime").get_to(maxTime);
         }
     };
 

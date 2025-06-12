@@ -180,7 +180,7 @@ struct PickupComponent {
 
 struct AnimationComponent {
     std::unordered_map<Animation, AnimationState> animations;
-    Animation current = Animation::None;
+    Animation current = Animation::Idle;
     float timeAccumulator = 0.0f;
     int currentFrame = 0;
     bool playing = false;

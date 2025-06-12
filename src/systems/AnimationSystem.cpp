@@ -1,4 +1,5 @@
 #include "AnimationSystem.h"
+#include "Log.h"
 
 #include <iostream>
 
@@ -29,6 +30,8 @@ void AnimationSystem::update(EntityManager& eMgr, const double& dT) {
         auto& state = anim.animations[anim.current];
         anim.timeAccumulator += dT;
 
+        // DEBUG_LOG("Animating entity: %d, for animation %d, frame %d", eID, anim.current, anim.currentFrame);
+
         if (anim.timeAccumulator >= state.frameDuration) {
             anim.timeAccumulator -= state.frameDuration;
             anim.currentFrame++;
@@ -37,8 +40,14 @@ void AnimationSystem::update(EntityManager& eMgr, const double& dT) {
                 if (state.looping) {
                     anim.currentFrame = 0;
                 } else {
-                    anim.playing = false;
-                    anim.currentFrame = static_cast<int>(state.frames.size()) - 1;
+                    if (!anim.animations[Animation::Idle].frames.empty()) {
+                        anim.current = Animation::Idle;
+                        anim.currentFrame = 0;
+                        anim.playing = true;
+                    } else {
+                        anim.playing = false;
+                        anim.currentFrame = static_cast<int>(state.frames.size()) - 1;
+                    }
                 }
             }
         }

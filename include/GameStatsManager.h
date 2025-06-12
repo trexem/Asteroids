@@ -16,6 +16,7 @@ public:
 
     void addCoins(int amount);
     bool spendCoins(int amount);
+    void setNewMax(uint32_t kills, uint32_t level, uint32_t time);
 
     int getUpgradeLevel(UpgradeType type) const;
     float getUpgradeValue(UpgradeType type) const;

@@ -147,7 +147,7 @@ void RenderSystem::drawGameEntities(EntityManager& eM) {
 
             float dx = to.x - adjustedFrom.x;
             float dy = to.y - adjustedFrom.y;
-            float angle = std::atan2f(dy, dx) * RAD2DEG;
+            float angle = atan2f(dy, dx) * RAD2DEG;
             float length = std::sqrt(dx * dx + dy * dy);
 
             SDL_FRect dst = {

@@ -13,14 +13,31 @@
 #include "screens/Components/Label.h"
 #include "texture.hpp"
 #include "TextManager.h"
+#include "TextureManager.h"
 
 MainMenuScreen::~MainMenuScreen() {
 }
 
 void MainMenuScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
+    //Background
+    FPair pos {0.0f, 0.0f};
+    FPair size {1920.0f, 1080.0f};
+    backgroundID = eManager.createEntity();
+    EntityHandle handle{backgroundID, eManager};
+    handle.add<GUIComponent>();
+    handle.add<RenderComponent>();
+    TypeComponent type = EntityType::GUI;
+    GUIComponent guiComp;
+    guiComp.pos = pos;
+    guiComp.size = size;
+    RenderComponent renderComp;
+    renderComp.texture = TextureManager::instance().get("gui/mainMenuBG");
+    handle.set(type);
+    handle.set(guiComp);
+    handle.set(renderComp);
     // Play button
-    FPair pos {GUI::screenCenter.x - 250.0f, GUI::screenCenter.y - 200.0f};
-    FPair size {500.0f, 100.0f};
+    pos = {GUI::screenCenter.x - 400.0f, GUI::screenCenter.y - 50.0f};
+    size = {800.0f, 100.0f};
     ClickCallbackComponent callback;
     callback.onClick = [&](uint32_t entity) {
         onPlayClick();
@@ -30,7 +47,7 @@ void MainMenuScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     eManager.addComponent(playButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(playButton->id, callback);
     //Upgrades
-    pos.y += 100.0f;
+    pos.y += 120.0f;
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::UpgradeStore);
     };
@@ -39,7 +56,7 @@ void MainMenuScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     eManager.addComponent(upgradesButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(upgradesButton->id, callback);
     //Settings
-    pos.y += 100.0f;
+    pos.y += 120.0f;
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::Settings);
     };
@@ -48,7 +65,7 @@ void MainMenuScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     eManager.addComponent(settingsButton->id, ComponentType::ClickCallback);
     eManager.setComponentData(settingsButton->id, callback);
     //Quit
-    pos.y += 100.0f;
+    pos.y += 120.0f;
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::Quit);
     };
@@ -58,9 +75,23 @@ void MainMenuScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     eManager.setComponentData(quitButton->id, callback);
     //Global gold
     text = TextManager::instance().format("label.gold", GameStatsManager::instance().getStats().coins);
-    pos.x = GUI::screenWidth - 200.0f;
-    pos.y = GUI::screenHeight - 75.0f;
+    pos.x = GUI::screenWidth - 300.0f;
+    pos.y += 100.0f;
     goldLabel = std::make_unique<Label>(eManager, text, pos, size, renderer);
+    //Max Kills
+    text = TextManager::instance().format("label.maxKills", GameStatsManager::instance().getStats().maxKills);
+    pos.x = 150.0f;
+    pos.y = GUI::screenHeight - 200.0f;
+    maxKills = std::make_unique<Label>(eManager, text, pos, size, renderer);
+    //Max Level
+    text = TextManager::instance().format("label.maxLevel", GameStatsManager::instance().getStats().maxLevel);
+    pos.y += 50.0f;
+    maxLevel = std::make_unique<Label>(eManager, text, pos, size, renderer);
+    //Max Time
+    std::string time = formatTimeMMSS(GameStatsManager::instance().getStats().maxTime);
+    text = TextManager::instance().format("label.maxTime", time);
+    pos.y += 50.0f;
+    maxTime = std::make_unique<Label>(eManager, text, pos, size, renderer);
 }
 
 void MainMenuScreen::destroy(EntityManager& eManager) {
@@ -69,6 +100,7 @@ void MainMenuScreen::destroy(EntityManager& eManager) {
     settingsButton->destroy(eManager);
     quitButton->destroy(eManager);
     goldLabel->destroy(eManager);
+    eManager.destroyEntityLater(backgroundID);
 }
 
 void MainMenuScreen::handleMouseHover(std::shared_ptr<MouseMotionMessage> msg) {

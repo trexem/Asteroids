@@ -23,6 +23,7 @@ public:
 private:
     void changeScreen(GameState newState);
     void updateState();
+    bool isOverlayState(GameState state);
     EntityManager& eMgr;
     SDL_Renderer* renderer;
     GameState currentGameState{GameState::Quit};

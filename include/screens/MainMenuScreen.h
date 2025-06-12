@@ -12,8 +12,10 @@ class MainMenuScreen : public Screen {
     std::unique_ptr<Button> quitButton;
     std::unique_ptr<Button> upgradesButton;
     std::unique_ptr<Label> goldLabel;
-    Texture goldTexture;
-    uint32_t playID, upgradesID, settingsID, quitID, goldID;
+    std::unique_ptr<Label> maxKills;
+    std::unique_ptr<Label> maxLevel;
+    std::unique_ptr<Label> maxTime;
+    uint32_t playID, upgradesID, settingsID, quitID, goldID, backgroundID;
 
     void handleMouseHover(std::shared_ptr<MouseMotionMessage> msg);
     void handleMouseClick(std::shared_ptr<ClickMessage> msg);

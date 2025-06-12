@@ -41,3 +41,9 @@ float GameStatsManager::getUpgradeValue(UpgradeType type) const {
     int lvl = getUpgradeLevel(type);
     return upgradesValues[static_cast<size_t>(type)][lvl];
 }
+
+void GameStatsManager::setNewMax(uint32_t kills, uint32_t level, uint32_t time) {
+    if (kills > stats.maxKills) stats.maxKills = kills;
+    if (level > stats.maxLevel) stats.maxLevel = level;
+    if (time > stats.maxTime) stats.maxTime = time;
+}

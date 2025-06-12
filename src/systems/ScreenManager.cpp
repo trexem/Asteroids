@@ -10,8 +10,10 @@ ScreenManager::~ScreenManager() {
         overlayScreen->clearSubscriptions();
         overlayScreen->destroy(eMgr);
     }
-    screen->clearSubscriptions();
-    screen->destroy(eMgr);
+    if (screen) {
+        screen->clearSubscriptions();
+        screen->destroy(eMgr);
+    }
     overlayScreen = nullptr;
     screen = nullptr;
 }
@@ -22,7 +24,9 @@ void ScreenManager::update(EntityManager& eMgr, const double& dT) {
     if (overlayScreen) {
         overlayScreen->update(eMgr, renderer);
     }
-    screen->update(eMgr, renderer);
+    if (screen) {
+        screen->update(eMgr, renderer);
+    }
 }
 
 void ScreenManager::updateState() {
@@ -33,19 +37,42 @@ void ScreenManager::updateState() {
 }
 
 void ScreenManager::changeScreen(GameState newState) {
-    if ((newState == GameState::LevelUp || newState == GameState::Paused)) {
+    if (isOverlayState(newState)) {
         // Only add overlay
         if (!overlayScreen || newState != currentOverlayState) {
-                if (overlayScreen) {
+            if (overlayScreen) {
                 overlayScreen->clearSubscriptions();
                 overlayScreen->destroy(eMgr);
             }
             switch (newState) {
+            case GameState::MainMenu:
+                if (screen) {
+                    screen->clearSubscriptions();
+                    screen->destroy(eMgr);
+                    screen.reset();
+                }
+                overlayScreen = std::make_shared<MainMenuScreen>(eMgr);
+                break;
+            case GameState::Settings:
+                overlayScreen = std::make_shared<SettingsScreen>(eMgr);
+                break;
+            case GameState::UpgradeStore:
+                overlayScreen = std::make_shared<UpgradeStoreScreen>(eMgr, renderer);
+                break;
             case GameState::LevelUp:
                 overlayScreen = std::make_shared<LevelUpScreen>(eMgr);
                 break;
             case GameState::Paused:
                 overlayScreen = std::make_shared<PauseScreen>(eMgr);
+                break;
+            case GameState::GameOver:
+                if (screen) {
+                    screen->clearSubscriptions();
+                    screen->destroy(eMgr);
+                    screen.reset();
+                }
+                overlayScreen = std::make_shared<GameOverScreen>(eMgr);
+                break;
             default:
                 break;
             }
@@ -67,20 +94,8 @@ void ScreenManager::changeScreen(GameState newState) {
                 screen->destroy(eMgr);
             }
             switch (newState) {
-                case GameState::MainMenu:
-                    screen = std::make_shared<MainMenuScreen>(eMgr);
-                    break;
-                case GameState::Settings:
-                    screen = std::make_shared<SettingsScreen>(eMgr);
-                    break;
                 case GameState::Playing:
                     screen = std::make_shared<PlayingScreen>(eMgr);
-                    break;
-                case GameState::UpgradeStore:
-                    screen = std::make_shared<UpgradeStoreScreen>(eMgr, renderer);
-                    break;
-                case GameState::GameOver:
-                    screen = std::make_shared<GameOverScreen>(eMgr);
                     break;
                 default:
                     break;
@@ -95,4 +110,18 @@ void ScreenManager::changeScreen(GameState newState) {
         }
     }
     currentGameState = newState;
+}
+
+bool ScreenManager::isOverlayState(GameState state) {
+    switch (state) {
+    case GameState::LevelUp:
+    case GameState::Paused:
+    case GameState::MainMenu:
+    case GameState::Settings:
+    case GameState::UpgradeStore:
+    case GameState::GameOver:
+        return true;
+    default:
+        return false;
+    }
 }

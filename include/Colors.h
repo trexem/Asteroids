@@ -13,4 +13,5 @@ public:
     static constexpr SDL_Color Asteroid    = {112, 68, 17, 255};
     static constexpr SDL_Color Disabled    = {50, 50, 50, 255};
     static constexpr SDL_Color Lightning   = {240, 251, 62, 255};
+    static constexpr SDL_Color TitleGreen  = {95, 249, 72, 255};
 };

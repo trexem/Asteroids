@@ -13,8 +13,6 @@
 #include "TextManager.h"
 
 PlayingScreen::~PlayingScreen() {
-    GameStatsManager::instance().addCoins(GameSessionManager::instance().getStats().gold);
-    GameStatsManager::instance().save();
     std::cout << "PlayingScreen destroyed\n";
 }
 
@@ -182,6 +180,9 @@ void PlayingScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
 }
 
 void PlayingScreen::destroy(EntityManager& eManager) {
+    GameStatsManager::instance().addCoins(GameSessionManager::instance().getStats().gold);
+    GameStatsManager::instance().setNewMax(lastEnemies, previousLvl, currentSeconds);
+    GameStatsManager::instance().save();
     eManager.destroyEntityLater(xpContainerID);
     eManager.destroyEntityLater(currentXpID);
     eManager.destroyEntityLater(timeID);

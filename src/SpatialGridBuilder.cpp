@@ -53,7 +53,7 @@ std::vector<uint32_t> SpatialGrid::getNearbyEntities(const FPair& pos, float rad
     auto t1 = high_resolution_clock::now();
     int range = static_cast<int>(std::ceil(radius / CELL_SIZE));
     int cellCount = (2 * range + 1) * (2 * range + 1);
-    printf("range: %d cells: %d\n", range, cellCount);
+    // printf("range: %d cells: %d\n", range, cellCount);
     int cellX = static_cast<int>(pos.x * INV_CELL_SIZE);
     int cellY = static_cast<int>(pos.y * INV_CELL_SIZE);
     auto t2 = high_resolution_clock::now();
@@ -86,8 +86,8 @@ std::vector<uint32_t> SpatialGrid::getNearbyEntities(const FPair& pos, float rad
     auto query = duration_cast<microseconds>(t3 - t2).count();
     auto reset = duration_cast<microseconds>(t4 - t3).count();
 
-    printf("Grid: %dus [alloc %dus, calc %dus, lookup %dus, reset %dus] | lookups: %d, results: %zu, inserts: %d\n",
-        total, alloc, calc, query, reset, lookups, result.size(), inserts);
+    // printf("Grid: %dus [alloc %dus, calc %dus, lookup %dus, reset %dus] | lookups: %d, results: %zu, inserts: %d\n",
+    //    total, alloc, calc, query, reset, lookups, result.size(), inserts);
 
     return result;
 }

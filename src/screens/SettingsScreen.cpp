@@ -20,7 +20,7 @@ void SettingsScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     backButton = std::make_shared<Button>(eManager, "", pos, size, backButtonTexture, renderer);
     ClickCallbackComponent callback;
     callback.onClick = [&] (uint32_t entity) {
-        GameStateManager::instance().setState(GameState::MainMenu);
+        GameStateManager::instance().setState(GameStateManager::instance().getLastState());
     };
     eManager.addComponent(backButton->id, ComponentType::ClickCallback);
     eManager.setComponentData<ClickCallbackComponent>(backButton->id, callback);

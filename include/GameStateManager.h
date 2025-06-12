@@ -18,9 +18,11 @@ public:
     Uint32 getGameTimeSeconds();
 
     GameState getState() const { return state; }
+    GameState getLastState() const { return lastState; }
 
 private:
     GameState state{GameState::Quit};
+    GameState lastState{GameState::Quit};
     Timer timer;
     GameStateManager();
     ~GameStateManager() = default;

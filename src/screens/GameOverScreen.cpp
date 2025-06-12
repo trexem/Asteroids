@@ -10,8 +10,8 @@
 
 void GameOverScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
     //Restart
-    FPair pos {GUI::screenCenter.x - 250.0f, GUI::screenCenter.y - 200.0f};
-    FPair size {500.0f, 100.0f};
+    FPair pos {GUI::screenCenter.x - 450.0f, GUI::screenCenter.y - 200.0f};
+    FPair size {900.0f, 100.0f};
     ClickCallbackComponent callback;
     callback.onClick = [&](uint32_t entity) {
         GameStateManager::instance().setState(GameState::Restart);

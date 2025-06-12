@@ -7,7 +7,7 @@
 void ProximitySystem::update(EntityManager& eMgr, const double& dT) {
     std::vector<bool> visited(eMgr.maxEntities, false);
     auto proxEntities = eMgr.getEntitiesWithComponent(ComponentType::ProximityTracker);
-    DEBUG_LOG("Prox entities: %d", proxEntities.size());
+    // DEBUG_LOG("Prox entities: %d", proxEntities.size());
     
     for (auto seeker : proxEntities) {
         auto* proxComp = eMgr.getComponentDataPtr<ProximityTrackerComponent>(seeker);

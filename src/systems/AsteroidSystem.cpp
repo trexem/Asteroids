@@ -77,6 +77,10 @@ void AsteroidSystem::generateSingleAsteroid(EntityManager& eManager, int lvl) {
 	//Animation
 	AnimationComponent anim;
 	anim.animations[Animation::Damage].frames = TextureManager::instance().getAnimationFrames("asteroid", "Damage");
+	anim.animations[Animation::Idle].frames = TextureManager::instance().getAnimationFrames("asteroidIdle");
+	anim.animations[Animation::Idle].frameDuration = 0.16666f;
+	anim.animations[Animation::Idle].looping = true;
+	anim.playing = true;
 	eManager.setComponentData<AnimationComponent>(asteroid, anim);
 	asteroids.emplace(asteroid);
 	//Damage to Player
@@ -98,8 +102,7 @@ FPair AsteroidSystem::generatePosition(EntityManager& eManager) {
 			double movementAngle = playerTransform->rotDegrees * DEG2RAD; //Bias to spawn asteroids only in this direction
 			if (playerPhys->velocity < 0) { //if player is going backwards the spawn should be biased the other way
 				movementAngle = -movementAngle;
-			}
-			else if (playerPhys->velocity == 0) { //If player is not moving we spawn it anywhere
+			} else if (playerPhys->velocity == 0) { //If player is not moving we spawn it anywhere
 				movementAngle = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * TAU;
 			}
 
