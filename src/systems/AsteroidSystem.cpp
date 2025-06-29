@@ -47,6 +47,8 @@ void AsteroidSystem::generateSingleAsteroid(EntityManager& eManager, int lvl) {
 	// Asteroid Texture
 	RenderComponent astTexture;
 	astTexture.texture = TextureManager::instance().get("asteroid");
+	astTexture.exactSize = {100.0f, 100.0f};
+	astTexture.isStretched = true;
 	//astTexture.texture->colorMod(Colors::Asteroid);
 	eManager.setComponentData<RenderComponent>(asteroid, astTexture);
 	// Asteroid Transform
@@ -64,7 +66,7 @@ void AsteroidSystem::generateSingleAsteroid(EntityManager& eManager, int lvl) {
 	// Asteroid Collider
 	CollisionComponent astCollision;
 	astCollision.shape = Shape::Circle;
-	astCollision.radius = astTexture.texture->getWidth() / 2.0f;
+	astCollision.radius = astTexture.exactSize.x / 2.0f;
 	eManager.setComponentData<CollisionComponent>(asteroid, astCollision);
 	// Asteroid type
 	TypeComponent type = EntityType::Asteroid;

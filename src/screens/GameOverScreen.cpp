@@ -7,8 +7,11 @@
 #include "MouseMotionMessage.h"
 #include "GUI.h"
 #include "TextManager.h"
+#include "AdsBridge.h"
 
 void GameOverScreen::create(EntityManager& eManager, SDL_Renderer* renderer) {
+    showInterstitialAd();
+
     //Restart
     FPair pos {GUI::screenCenter.x - 450.0f, GUI::screenCenter.y - 200.0f};
     FPair size {900.0f, 100.0f};

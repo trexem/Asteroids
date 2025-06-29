@@ -161,7 +161,7 @@ void Game::restart() {
 	entityManager.clearGameEntities();
 	GameSessionManager::instance().reset();
 	counted_frames = 0;
-	createShip(ShipType::FREE_MOVE);
+	createShip(ShipType::TANK);
 	asteroidSystem->restart(entityManager);
 	asteroidSystem->generateAsteroids(entityManager, 0.0);
 	GameStateManager::instance().setState(GameState::Playing);
@@ -253,7 +253,8 @@ void Game::createShip(ShipType shipType) {
 	shipStats.baseDamage = GameStatsManager::instance().getUpgradeValue(UpgradeType::Damage);
 	shipStats.armor = GameStatsManager::instance().getUpgradeValue(UpgradeType::Armor);
 	shipStats.collectionRadius = GameStatsManager::instance().getUpgradeValue(UpgradeType::PickupRange);
-	shipStats.projectileCount = GameStatsManager::instance().getUpgradeValue(UpgradeType::ProjectileCount);
+	shipStats.projectileCount = static_cast<int>
+            (GameStatsManager::instance().getUpgradeValue(UpgradeType::ProjectileCount));
 	entityManager.setComponentData<StatsComponent>(ship, shipStats);
 	// Physics
 	PhysicsComponent shipPhys;

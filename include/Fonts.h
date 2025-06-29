@@ -19,11 +19,11 @@ public:
     static inline std::unordered_map<std::string, std::vector<uint8_t>> fontBuffers;
 
     static void loadFonts() {
-        Title = loadFont("fonts/Steve.ttf", 83, "Title");
-        Subtitle = loadFont("fonts/Steve.ttf", 48, "Subtitle");
-        Body = loadFont("fonts/Steve.ttf", 24, "Body");
-        LevelUpTitle = loadFont("fonts/Steve.ttf", 28, "LevelUpTitle");
-        LevelUpBody = loadFont("fonts/Steve.ttf", 24, "LevelUpBody");
+        Title = loadFont("fonts/consola.ttf", 83, "Title");
+        Subtitle = loadFont("fonts/consola.ttf", 48, "Subtitle");
+        Body = loadFont("fonts/consola.ttf", 24, "Body");
+        LevelUpTitle = loadFont("fonts/consola.ttf", 28, "LevelUpTitle");
+        LevelUpBody = loadFont("fonts/consola.ttf", 24, "LevelUpBody");
     }
 
     static TTF_Font* loadFont(const std::string& route, float size, const std::string& id) {
@@ -43,7 +43,7 @@ public:
 
         TTF_Font* font = TTF_OpenFontIO(stream, 1, size);
         if (font == NULL) {
-            DEBUG_LOG("Failed to load Steve font! SDL_ttf Error: %s", SDL_GetError());
+            DEBUG_LOG("Failed to load consola font! SDL_ttf Error: %s", SDL_GetError());
         }
         return font;
     }

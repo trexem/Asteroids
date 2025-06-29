@@ -1,5 +1,6 @@
 plugins {
      id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -7,9 +8,9 @@ android {
     compileSdkVersion 35
     defaultConfig {
         applicationId "com.trexem.weneedmoreasteroids"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 35
-        versionCode 3
+        versionCode 4
         versionName "0.1.2-alpha"
         externalNativeBuild {
             cmake {
@@ -47,9 +48,13 @@ android {
     buildFeatures {
         prefab true
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.getkeepsafe.relinker:relinker:1.4.5"
+    implementation 'com.google.android.gms:play-services-ads:24.4.0'
 }
