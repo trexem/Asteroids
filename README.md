@@ -1,3 +1,5 @@
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/trexem/WeNeedMoreAsteroids)
+
 # ASTEROIDS GAME by trexem
 Mostly testing and playing with SDL3, it is still WIP so be patient, I'm learning about it. I'm trying to achieve an ECS-Message Architecture.
 
